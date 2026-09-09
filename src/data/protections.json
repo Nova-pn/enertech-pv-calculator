@@ -1,0 +1,42 @@
+{
+  "protections": [
+    {
+      "id": "eaton-pvgard-fd-1000v",
+      "manufacturer": "Eaton",
+      "model": "PVGard FD frame 1000 V DC",
+      "ratedCurrentARaw": "30-100",
+      "ratedCurrentMinA": 30.0,
+      "ratedCurrentMaxA": 100.0,
+      "ratedVoltageDcV": 1000,
+      "breakingCapacitykA": 3,
+      "poles": 4,
+      "standard": "UL 489B",
+      "markets": [
+        "International",
+        "Amérique du Nord",
+        "Europe"
+      ],
+      "sourceUrl": "https://www.eaton.com/content/dam/eaton/markets/solar/eaton-solar-circuit-protection-application-guide.pdf",
+      "verificationLevel": "OFFICIEL"
+    },
+    {
+      "id": "eaton-pvgard-mdl-1000v",
+      "manufacturer": "Eaton",
+      "model": "PVGard MDL frame 1000 V DC",
+      "ratedCurrentARaw": "450-600",
+      "ratedCurrentMinA": 450.0,
+      "ratedCurrentMaxA": 600.0,
+      "ratedVoltageDcV": 1000,
+      "breakingCapacitykA": 7.5,
+      "poles": 3,
+      "standard": "UL 489B",
+      "markets": [
+        "International",
+        "Amérique du Nord",
+        "Europe"
+      ],
+      "sourceUrl": "https://www.eaton.com/content/dam/eaton/markets/solar/eaton-solar-circuit-protection-application-guide.pdf",
+      "verificationLevel": "OFFICIEL"
+    }
+  ]
+}

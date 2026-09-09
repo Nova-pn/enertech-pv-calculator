@@ -1,0 +1,40 @@
+{
+  "cables": [
+    {
+      "id": "pv-cable-h1z2z2k-4mm2",
+      "manufacturer": "Fabricants TÜV (KUKA / équivalents)",
+      "model": "H1Z2Z2-K 1x4 mm²",
+      "crossSectionMm2": 4,
+      "maxVoltageDcV": 1800,
+      "resistanceOhmPerKm": 5.09,
+      "currentCarryingCapacityA": 55,
+      "temperatureRange": "-40 °C à +120 °C",
+      "standard": "EN 50618 / TÜV 2PfG 1169",
+      "markets": [
+        "International",
+        "Europe",
+        "Afrique"
+      ],
+      "sourceUrl": "https://www.kukacable.com/products/969.html",
+      "verificationLevel": "OFFICIEL"
+    },
+    {
+      "id": "pv-cable-h1z2z2k-6mm2",
+      "manufacturer": "Fabricants TÜV (KUKA / équivalents)",
+      "model": "H1Z2Z2-K 1x6 mm²",
+      "crossSectionMm2": 6,
+      "maxVoltageDcV": 1800,
+      "resistanceOhmPerKm": 3.39,
+      "currentCarryingCapacityA": 70,
+      "temperatureRange": "-40 °C à +120 °C",
+      "standard": "EN 50618 / TÜV 2PfG 1169",
+      "markets": [
+        "International",
+        "Europe",
+        "Afrique"
+      ],
+      "sourceUrl": "https://www.kukacable.com/products/969.html",
+      "verificationLevel": "OFFICIEL"
+    }
+  ]
+}
