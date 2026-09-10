@@ -131,9 +131,9 @@ export default function StepBattery() {
         <button
           disabled={!valide}
           onClick={() => navigate('/dimensionnement/onduleur')}
-          className="bg-forest-900 disabled:bg-forest-200 disabled:text-ink/40 hover:bg-forest-700 text-white font-medium px-5 py-2.5 rounded-md transition-colors"
+          className="bg-forest-900 disabled:bg-forest-200 disabled:text-ink/40 hover:bg-forest-700 hover:shadow-md text-white font-medium px-5 py-2.5 rounded-md transition-all"
         >
-          Continuer — Onduleur
+          Continuer vers l’onduleur
         </button>
       </div>
     </div>

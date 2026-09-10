@@ -14,7 +14,7 @@ enertech-pv-calculator/
 ├── vite.config.ts
 ├── postcss.config.js
 ├── public/
-│   └── favicon.svg
+│   └── favicon.png
 ├── README.md
 └── src/
     ├── main.tsx                  # point d'entrée
@@ -117,16 +117,24 @@ Aucune variable d'environnement n'est nécessaire : l'application ne dépend d'a
 
 Aucune. Tous les calculs et la génération du PDF s'exécutent dans le navigateur.
 
-## 8. Modifier le nom et le logo « EnerTech »
+## 8. Le logo EnerTech
+
+Le logo officiel (fourni par vous) est intégré à trois endroits, tous dérivés d'un seul jeu de fichiers dans
+`src/assets/logo/` :
+
+- `enertech-logo-full.jpg` — logo complet (emblème + texte), utilisé en grand sur la page d'accueil.
+- `enertech-emblem.jpg` — emblème seul (sans le texte « EnerTech »), utilisé en petit dans l'en-tête via le
+  composant `src/components/LogoMark.tsx`, et dans le rapport PDF via `src/assets/logo/logoBase64.ts`.
+- `public/favicon.png` — favicon, généré à partir de l'emblème.
+
+Ces trois fichiers sont de simples recadrages du logo original fourni — aucune couleur ni forme n'a été modifiée.
+Pour changer de logo plus tard, il suffit de remplacer ces fichiers (en conservant les mêmes noms), et de
+régénérer `logoBase64.ts` pour le PDF (un script Python de quelques lignes avec `base64.b64encode` suffit, voir
+le contenu actuel du fichier pour le format attendu).
 
 - Nom affiché dans l'en-tête : `src/components/Layout.tsx`, texte `EnerTech`.
 - Nom affiché sur la page d'accueil : `src/components/Home.tsx`.
 - Titre de l'onglet du navigateur : `index.html`, balise `<title>`.
-- Logo : remplacez `public/favicon.svg` par votre propre fichier (gardez le même nom, ou mettez à jour la référence
-  dans `index.html`).
-- Logo dans le rapport PDF : le rapport actuel utilise un titre texte dans `src/pdf/generateReport.ts`. Pour ajouter
-  une image, utilisez `doc.addImage(base64Logo, 'PNG', x, y, largeur, hauteur)` en haut de la fonction
-  `generateReport`.
 - Couleurs de la marque : `src/index.css`, bloc `@theme` (variables `--color-forest-*` et `--color-sun*`).
 
 ## 9. Ajouter des équipements aux catalogues (panneaux, batteries, onduleurs, régulateurs, câbles, protections)

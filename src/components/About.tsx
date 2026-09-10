@@ -9,9 +9,9 @@ export default function About() {
       </p>
       <p className="text-ink/75 leading-relaxed mb-4">
         L'application calcule le bilan énergétique, la puissance PV nécessaire, le nombre de panneaux, la
-        configuration série/parallèle du champ, le dimensionnement de la batterie, de l'onduleur, du régulateur
+        configuration série/parallèle du champ, le dimensionnement de la batterie, de l'onduleur, du contrôleur
         (MPPT ou PWM) et du câblage/protection DC, à partir des formules techniques usuelles du domaine. Un
-        catalogue de panneaux, batteries, onduleurs, régulateurs, câbles et protections DC réels — sourcés depuis
+        catalogue de panneaux, batteries, onduleurs, contrôleurs, câbles et protections DC réels — sourcés depuis
         les fiches techniques des fabricants — permet de sélectionner un modèle plutôt que de saisir chaque
         caractéristique à la main. Aucune caractéristique d'équipement n'est générée automatiquement : seules les
         valeurs présentes dans le catalogue ou saisies manuellement sont utilisées.

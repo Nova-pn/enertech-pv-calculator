@@ -3,6 +3,7 @@ import autoTable from 'jspdf-autotable';
 import type { ProjectState } from '../types';
 import type { Results } from '../engine/useResults';
 import { energieQuotidienneAppareil } from '../engine/calculations';
+import { ENERTECH_EMBLEM_BASE64, ENERTECH_EMBLEM_ASPECT } from '../assets/logo/logoBase64';
 
 const FOREST = '#0f3d2e';
 const INK = '#14181b';
@@ -12,10 +13,14 @@ export function generateReport(state: ProjectState, results: Results) {
   const marginX = 40;
   let y = 50;
 
+  // Logo officiel EnerTech (fourni par l'utilisateur, rogné uniquement — aucune couleur/forme modifiée).
+  const logoW = 40;
+  const logoH = logoW * ENERTECH_EMBLEM_ASPECT;
+  doc.addImage(ENERTECH_EMBLEM_BASE64, 'JPEG', marginX, y - 30, logoW, logoH);
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(18);
   doc.setTextColor(FOREST);
-  doc.text('EnerTech PV Calculator', marginX, y);
+  doc.text('EnerTech PV Calculator', marginX + logoW + 12, y);
   y += 22;
   doc.setFontSize(13);
   doc.setTextColor(INK);
@@ -24,7 +29,7 @@ export function generateReport(state: ProjectState, results: Results) {
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(9);
   doc.setTextColor('#666666');
-  doc.text(`Généré le ${new Date().toLocaleDateString('fr-FR')}`, marginX, y);
+  doc.text(`Généré le ${new Date().toLocaleDateString('fr-FR')} — Architecture : ${state.info.architectureSysteme}`, marginX, y);
   y += 20;
 
   doc.setDrawColor(FOREST);
@@ -38,6 +43,7 @@ export function generateReport(state: ProjectState, results: Results) {
     startY: y,
     margin: { left: marginX },
     theme: 'plain',
+
     styles: { fontSize: 9, cellPadding: 2 },
     body: [
       ['Nom du projet', state.info.nomProjet || '[À compléter]'],
@@ -56,14 +62,14 @@ export function generateReport(state: ProjectState, results: Results) {
   autoTable(doc, {
     startY: y,
     margin: { left: marginX },
-    head: [['Appareil', 'P (W)', 'Qté', 'h/j', 'Coeff.', 'Démarrage', 'Énergie/j (Wh)']],
+    head: [['Appareil', 'P nominale (W)', 'P démarrage (W)', 'Qté', 'h/j', 'Coeff.', 'Énergie/j (Wh)']],
     body: state.appareils.map((a) => [
       a.nom,
       a.puissanceW.toString(),
+      a.puissanceDemarrageW !== null && Number.isFinite(a.puissanceDemarrageW) ? a.puissanceDemarrageW.toString() : 'Non renseignée',
       a.quantite.toString(),
       a.heuresParJour.toString(),
       a.coefficient.toString(),
-      a.demarrageImportant ? 'Oui' : 'Non',
       energieQuotidienneAppareil(a).toFixed(0),
     ]),
     styles: { fontSize: 8.5, cellPadding: 3 },
@@ -72,7 +78,7 @@ export function generateReport(state: ProjectState, results: Results) {
   y = (doc as any).lastAutoTable.finalY + 10;
   doc.setFontSize(9);
   doc.text(
-    `Total : ${results.bilan.puissanceTotaleW.toFixed(0)} W  |  ${(results.bilan.energieJourWh / 1000).toFixed(2)} kWh/jour  |  ${(results.bilan.energieMoisWh / 1000).toFixed(1)} kWh/mois  |  ${(results.bilan.energieAnneeWh / 1000).toFixed(0)} kWh/an`,
+    `Nominale : ${results.bilan.puissanceTotaleW.toFixed(0)} W  |  Démarrage : ${results.onduleur.puissanceDemarrageConnue ? results.onduleur.puissanceDemarrageTotaleW.toFixed(0) + ' W' : 'non renseignée'}  |  ${(results.bilan.energieJourWh / 1000).toFixed(2)} kWh/jour  |  ${(results.bilan.energieMoisWh / 1000).toFixed(1)} kWh/mois  |  ${(results.bilan.energieAnneeWh / 1000).toFixed(0)} kWh/an`,
     marginX,
     y
   );
@@ -136,7 +142,7 @@ export function generateReport(state: ProjectState, results: Results) {
   y = (doc as any).lastAutoTable.finalY + 20;
 
   y = ensureSpace(doc, y, 120);
-  section(doc, "Dimensionnement de l'onduleur et du régulateur", marginX, y);
+  section(doc, state.info.architectureSysteme === 'Hybride' ? 'Dimensionnement du convertisseur hybride et du contrôleur' : "Dimensionnement de l'onduleur et du contrôleur", marginX, y);
   y += 16;
   autoTable(doc, {
     startY: y,
@@ -144,15 +150,16 @@ export function generateReport(state: ProjectState, results: Results) {
     theme: 'plain',
     styles: { fontSize: 9, cellPadding: 2 },
     body: [
-      ['Puissance continue estimée', `${(results.onduleur.puissanceContinueW / 1000).toFixed(2)} kW`],
+      ['Puissance nominale totale', `${(results.onduleur.puissanceContinueW / 1000).toFixed(2)} kW`],
+      ['Puissance de démarrage totale', results.onduleur.puissanceDemarrageConnue ? `${(results.onduleur.puissanceDemarrageTotaleW / 1000).toFixed(2)} kW` : 'Non renseignée'],
       ['Marge onduleur', `${state.onduleurParams.margePourcent} %`],
       ['Puissance minimale recommandée', `${(results.onduleur.puissanceMinRecommandeeW / 1000).toFixed(2)} kW`],
-      ['Onduleur choisi', state.onduleurChoisi ? `${state.onduleurChoisi.manufacturer} ${state.onduleurChoisi.model}` : '[À compléter]'],
-      ['Charges à démarrage important', results.onduleur.aChargesDemarrage ? 'Oui — vérifier la puissance de démarrage réelle' : 'Non signalée'],
-      ['Type de régulateur', state.regulateurParams.type],
-      ['Marge régulateur', `${state.regulateurParams.margePourcent} %`],
-      ['Courant recommandé (régulateur)', `${results.regulateur.courantAvecMargeA.toFixed(1)} A`],
-      ['Régulateur choisi', state.regulateurChoisi ? `${state.regulateurChoisi.manufacturer} ${state.regulateurChoisi.model}` : '[À compléter]'],
+      [state.info.architectureSysteme === 'Hybride' ? 'Convertisseur choisi' : 'Onduleur choisi', state.onduleurChoisi ? `${state.onduleurChoisi.manufacturer} ${state.onduleurChoisi.model}` : '[À compléter]'],
+      ['Charges à démarrage important signalées', results.onduleur.aChargesDemarrage ? 'Oui' : 'Non signalées'],
+      ['Type de contrôleur', state.regulateurParams.type],
+      ['Marge contrôleur', `${state.regulateurParams.margePourcent} %`],
+      ['Courant recommandé (contrôleur)', `${results.regulateur.courantAvecMargeA.toFixed(1)} A`],
+      ['Contrôleur choisi', state.regulateurChoisi ? `${state.regulateurChoisi.manufacturer} ${state.regulateurChoisi.model}` : '[À compléter]'],
       ['Calibre choisi', `${state.regulateurParams.calibreChoisi} A`],
       ['Calibre suffisant', results.regulateur.calibreSuffisant ? 'Oui' : 'Non — augmenter le calibre'],
     ],

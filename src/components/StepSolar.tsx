@@ -94,8 +94,8 @@ export default function StepSolar() {
         <Stat label="Écart / besoin" value={`${dimensionnement.ecartPourcent >= 0 ? '+' : ''}${dimensionnement.ecartPourcent.toFixed(1)} %`} />
       </div>
 
-      <h3 className="font-display font-medium text-forest-950 mb-3">Limites de l'onduleur / régulateur</h3>
-      <p className="text-xs text-ink/55 mb-4 max-w-lg">Ces valeurs proviennent de la fiche technique de votre onduleur ou régulateur MPPT — elles servent à valider la configuration série/parallèle.</p>
+      <h3 className="font-display font-medium text-forest-950 mb-3">Limites de l'onduleur / contrôleur</h3>
+      <p className="text-xs text-ink/55 mb-4 max-w-lg">Ces valeurs proviennent de la fiche technique de votre onduleur ou contrôleur MPPT — elles servent à valider la configuration série/parallèle.</p>
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
         <Field label="Tension PV max (V)">
           <NumberInput value={state.limites.tensionPvMax} min={0} onChange={(v) => updateLimites({ tensionPvMax: v })} />
@@ -125,9 +125,9 @@ export default function StepSolar() {
         <button
           disabled={!valide}
           onClick={() => navigate('/dimensionnement/batterie')}
-          className="bg-forest-900 disabled:bg-forest-200 disabled:text-ink/40 hover:bg-forest-700 text-white font-medium px-5 py-2.5 rounded-md transition-colors"
+          className="bg-forest-900 disabled:bg-forest-200 disabled:text-ink/40 hover:bg-forest-700 hover:shadow-md text-white font-medium px-5 py-2.5 rounded-md transition-all"
         >
-          Continuer — Batterie
+          Continuer vers la batterie
         </button>
       </div>
     </div>

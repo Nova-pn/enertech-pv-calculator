@@ -99,7 +99,7 @@ export function calculerNombrePanneaux(puissanceNecessaireW: number, panneau: Pa
 /**
  * Teste toutes les combinaisons série/parallèle raisonnables pour atteindre (au moins)
  * le nombre total de panneaux requis, et retourne la première configuration compatible
- * avec les limites de l'onduleur/régulateur. Si aucune ne convient, retourne la config
+ * avec les limites de l'onduleur/contrôleur. Si aucune ne convient, retourne la config
  * la plus proche avec les raisons de l'incompatibilité — jamais une fausse compatibilité.
  */
 export function trouverConfigurationSeriParallele(
@@ -280,18 +280,42 @@ export interface DimensionnementOnduleur {
   puissanceContinueW: number;
   puissanceMinRecommandeeW: number;
   aChargesDemarrage: boolean;
+  puissanceDemarrageTotaleW: number;
+  puissanceDemarrageConnue: boolean;
 }
 
-/** P_onduleur_min = P_simultanée × (1 + marge) */
+/**
+ * Puissance minimale recommandée = max(puissance nominale totale × (1 + marge), puissance de démarrage totale).
+ * La marge s'applique à la puissance nominale ; la puissance de démarrage n'est jamais ignorée quand elle est
+ * connue, mais n'est jamais non plus inventée quand elle ne l'est pas — seuls les appareils dont la puissance de
+ * démarrage a été explicitement renseignée entrent dans le total.
+ */
 export function calculerOnduleur(appareils: Appareil[], margePourcent: number): DimensionnementOnduleur {
   const puissanceContinueW = puissanceSimultanee(appareils);
-  const puissanceMinRecommandeeW = puissanceContinueW * (1 + margePourcent / 100);
+
+  const appareilsAvecDemarrageConnu = appareils.filter(
+    (a) => a.puissanceDemarrageW !== null && a.puissanceDemarrageW !== undefined && Number.isFinite(a.puissanceDemarrageW) && a.puissanceDemarrageW > 0
+  );
+  const puissanceDemarrageConnue = appareilsAvecDemarrageConnu.length > 0;
+  const puissanceDemarrageTotaleW = appareilsAvecDemarrageConnu.reduce(
+    (s, a) => s + (a.puissanceDemarrageW as number) * (Number.isFinite(a.quantite) ? a.quantite : 0),
+    0
+  );
+
+  const puissanceNominaleAvecMargeW = puissanceContinueW * (1 + margePourcent / 100);
+  const puissanceMinRecommandeeW = puissanceDemarrageConnue
+    ? Math.max(puissanceNominaleAvecMargeW, puissanceDemarrageTotaleW)
+    : puissanceNominaleAvecMargeW;
+
+  // "Charge à démarrage important" reste signalé même sans valeur chiffrée : c'est un signal qualitatif distinct
+  // de la puissance de démarrage quantifiée, qui invite à vérifier la fiche technique.
   const aChargesDemarrage = appareils.some((a) => a.demarrageImportant);
-  return { puissanceContinueW, puissanceMinRecommandeeW, aChargesDemarrage };
+
+  return { puissanceContinueW, puissanceMinRecommandeeW, aChargesDemarrage, puissanceDemarrageTotaleW, puissanceDemarrageConnue };
 }
 
 // ---------------------------------------------------------------------------
-// 6. Régulateur MPPT
+// 6. Contrôleur MPPT
 // ---------------------------------------------------------------------------
 
 export interface DimensionnementRegulateur {
@@ -320,8 +344,8 @@ export function calculerRegulateur(
 }
 
 // ---------------------------------------------------------------------------
-// 6bis. Régulateur PWM (formule différente du MPPT : pas de conversion, le
-// courant du régulateur doit couvrir le courant de court-circuit du champ)
+// 6bis. Contrôleur PWM (formule différente du MPPT : pas de conversion, le
+// courant du contrôleur doit couvrir le courant de court-circuit du champ)
 // ---------------------------------------------------------------------------
 
 export interface DimensionnementRegulateurPWM {
@@ -330,7 +354,7 @@ export interface DimensionnementRegulateurPWM {
   calibreSuffisant: boolean;
 }
 
-/** Pour un PWM, le régulateur est quasiment en direct sur le champ : I_recommandé = Isc_champ × (1 + marge). */
+/** Pour un PWM, le contrôleur est quasiment en direct sur le champ : I_recommandé = Isc_champ × (1 + marge). */
 export function calculerRegulateurPWM(
   courantIscChampA: number,
   margePourcent: number,
@@ -490,7 +514,7 @@ export function construireAvertissements(args: {
     });
   }
 
-  const labelRegulateur = regulateurType === 'PWM' ? 'régulateur PWM' : 'régulateur MPPT';
+  const labelRegulateur = regulateurType === 'PWM' ? 'contrôleur PWM' : 'contrôleur MPPT';
   if (regulateur.calibreSuffisant) {
     avertissements.push({
       niveau: 'vert',
@@ -510,7 +534,7 @@ export function construireAvertissements(args: {
       avertissements.push({
         niveau: 'vert',
         titre: 'Chute de tension du câblage acceptable',
-        explication: `${chuteDeTension.chutePourcent.toFixed(2)} % sur la ligne DC champ → régulateur.`,
+        explication: `${chuteDeTension.chutePourcent.toFixed(2)} % sur la ligne DC champ → contrôleur.`,
       });
     } else {
       avertissements.push({

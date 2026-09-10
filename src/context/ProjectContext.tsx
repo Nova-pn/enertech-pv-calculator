@@ -9,10 +9,11 @@ const defaultState: ProjectState = {
     typeInstallation: 'Résidentielle',
     tensionSysteme: 24,
     objectif: 'Autoconsommation',
+    architectureSysteme: 'Simple',
   },
   appareils: [
-    { id: crypto.randomUUID(), nom: 'Réfrigérateur', puissanceW: 150, quantite: 1, heuresParJour: 10, coefficient: 1, demarrageImportant: true },
-    { id: crypto.randomUUID(), nom: 'Ampoule LED', puissanceW: 10, quantite: 6, heuresParJour: 6, coefficient: 1, demarrageImportant: false },
+    { id: crypto.randomUUID(), nom: 'Réfrigérateur', puissanceW: 150, quantite: 1, heuresParJour: 10, coefficient: 1, demarrageImportant: true, puissanceDemarrageW: null },
+    { id: crypto.randomUUID(), nom: 'Ampoule LED', puissanceW: 10, quantite: 6, heuresParJour: 6, coefficient: 1, demarrageImportant: false, puissanceDemarrageW: null },
   ],
   solaire: { hsp: 5, rendementGlobal: 0.75 },
   panneau: { puissanceW: 550, voc: 49.5, vmp: 41.5, isc: 14.0, imp: 13.3 },
@@ -90,7 +91,7 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
       ...s,
       appareils: [
         ...s.appareils,
-        { id: crypto.randomUUID(), nom: 'Nouvel appareil', puissanceW: 0, quantite: 0, heuresParJour: 1, coefficient: 1, demarrageImportant: false },
+        { id: crypto.randomUUID(), nom: 'Nouvel appareil', puissanceW: 0, quantite: 0, heuresParJour: 1, coefficient: 1, demarrageImportant: false, puissanceDemarrageW: null },
       ],
     }));
 

@@ -16,6 +16,7 @@ export interface ProjectInfo {
   typeInstallation: 'Résidentielle' | 'Commerciale' | 'Site isolé' | 'Système hybride' | 'Autre';
   tensionSysteme: TensionSysteme;
   objectif: 'Autoconsommation' | 'Site isolé' | 'Secours' | 'Système hybride';
+  architectureSysteme: 'Simple' | 'Hybride';
 }
 
 export interface Appareil {
@@ -26,6 +27,8 @@ export interface Appareil {
   heuresParJour: number;
   coefficient: number;
   demarrageImportant: boolean;
+  /** Puissance de démarrage en W, connue explicitement — jamais déduite du nom de l'appareil. undefined/null = non renseignée. */
+  puissanceDemarrageW: number | null;
 }
 
 export interface ParametresSolaires {

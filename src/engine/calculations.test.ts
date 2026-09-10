@@ -27,6 +27,7 @@ const appareil = (over: Partial<Appareil> = {}): Appareil => ({
   heuresParJour: 10,
   coefficient: 1,
   demarrageImportant: false,
+  puissanceDemarrageW: null,
   ...over,
 });
 
@@ -178,10 +179,51 @@ describe('onduleur', () => {
   it('détecte les charges à démarrage important sans inventer de courant de démarrage', () => {
     const res = calculerOnduleur([appareil({ demarrageImportant: true })], 20);
     expect(res.aChargesDemarrage).toBe(true);
+    expect(res.puissanceDemarrageConnue).toBe(false); // signal qualitatif seulement, aucune valeur chiffrée fournie
+  });
+
+  it("n'ignore jamais la puissance nominale même quand la puissance de démarrage est connue et plus faible", () => {
+    const res = calculerOnduleur([appareil({ puissanceW: 2000, quantite: 1, puissanceDemarrageW: 500 })], 20);
+    expect(res.puissanceDemarrageConnue).toBe(true);
+    expect(res.puissanceDemarrageTotaleW).toBe(500);
+    // 2000 × 1,2 = 2400 W > 500 W de démarrage → la nominale domine, elle n'est pas ignorée
+    expect(res.puissanceMinRecommandeeW).toBe(2400);
+  });
+
+  it('retient la puissance de démarrage quand elle dépasse la puissance nominale avec marge', () => {
+    const res = calculerOnduleur([appareil({ puissanceW: 500, quantite: 1, puissanceDemarrageW: 3000 })], 20);
+    expect(res.puissanceDemarrageTotaleW).toBe(3000);
+    expect(res.puissanceMinRecommandeeW).toBe(3000); // 500×1,2=600 < 3000
+  });
+
+  it('cumule la puissance de démarrage sur plusieurs appareils et applique la quantité', () => {
+    const res = calculerOnduleur(
+      [
+        appareil({ puissanceW: 150, quantite: 1, puissanceDemarrageW: 450 }),
+        appareil({ id: '2', puissanceW: 100, quantite: 3, puissanceDemarrageW: 200 }),
+      ],
+      0
+    );
+    expect(res.puissanceDemarrageTotaleW).toBe(450 + 200 * 3);
+  });
+
+  it('ne compte pas les appareils dont la puissance de démarrage est non renseignée', () => {
+    const res = calculerOnduleur(
+      [appareil({ puissanceW: 150, puissanceDemarrageW: null }), appareil({ id: '2', puissanceW: 100, puissanceDemarrageW: 300 })],
+      0
+    );
+    expect(res.puissanceDemarrageConnue).toBe(true);
+    expect(res.puissanceDemarrageTotaleW).toBe(300); // seul le 2e appareil compte
+  });
+
+  it('ne déclare aucune puissance de démarrage connue quand aucun appareil ne la renseigne', () => {
+    const res = calculerOnduleur([appareil({ puissanceDemarrageW: null }), appareil({ id: '2', puissanceDemarrageW: null })], 20);
+    expect(res.puissanceDemarrageConnue).toBe(false);
+    expect(res.puissanceDemarrageTotaleW).toBe(0);
   });
 });
 
-describe('régulateur PWM', () => {
+describe('contrôleur PWM', () => {
   it("calcule le courant recommandé à partir de l'Isc du champ, pas de la puissance", () => {
     const res = calculerRegulateurPWM(20, 25, 30);
     expect(res.courantIscChampA).toBe(20);
@@ -261,7 +303,7 @@ describe("exemple de référence PWM (Isc 13 A, 2 strings, marge 25 %)", () => {
     expect(res.courantAvecMargeA).toBeCloseTo(32.5, 5);
   });
 });
-describe('régulateur MPPT', () => {
+describe('contrôleur MPPT', () => {
   it('calcule le courant théorique et le courant avec marge', () => {
     const res = calculerRegulateur(2500, 48, 25, 80);
     expect(res.courantTheoriqueA).toBeCloseTo(2500 / 48, 5);

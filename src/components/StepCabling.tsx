@@ -46,7 +46,7 @@ export default function StepCabling() {
       <StepHeader
         num="7"
         titre="Câblage et protection DC"
-        description="Section de câble entre le champ PV et le régulateur, et calibre de la protection DC côté champ."
+        description="Section de câble entre le champ PV et le contrôleur, et calibre de la protection DC côté champ."
       />
 
       {!champDimensionne && (
@@ -66,7 +66,7 @@ export default function StepCabling() {
 
       <h3 className="font-display font-medium text-forest-950 mb-3">Câble PV</h3>
       <div className="grid sm:grid-cols-2 gap-6 mb-4">
-        <Field label="Longueur aller (m)" hint="Distance à sens unique entre le champ et le régulateur (le calcul prend en compte l'aller-retour).">
+        <Field label="Longueur aller (m)" hint="Distance à sens unique entre le champ et le contrôleur (le calcul prend en compte l'aller-retour).">
           <NumberInput value={state.cablage.longueurAllerM} min={0} onChange={(v) => updateCablage({ longueurAllerM: v })} />
         </Field>
         <Field label="Chute de tension maximale visée (%)">
@@ -171,8 +171,8 @@ export default function StepCabling() {
       )}
 
       <div className="mt-8 flex justify-end">
-        <Link to="/resultats" className="bg-forest-900 hover:bg-forest-700 text-white font-medium px-5 py-2.5 rounded-md transition-colors">
-          Voir les résultats du dimensionnement
+        <Link to="/resultats" className="bg-forest-900 hover:bg-forest-700 hover:shadow-md text-white font-medium px-5 py-2.5 rounded-md transition-all">
+          Voir les résultats
         </Link>
       </div>
     </div>

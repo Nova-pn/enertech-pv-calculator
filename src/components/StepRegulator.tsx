@@ -30,16 +30,24 @@ export default function StepRegulator() {
 
   return (
     <div className="max-w-2xl">
-      <StepHeader num="6" titre="Dimensionnement du régulateur" description="Choisissez d'abord le type de régulateur, puis un modèle dans le catalogue — la fiche du modèle s'affiche ensuite." />
+      <StepHeader num="6" titre="Dimensionnement du contrôleur" description="Choisissez d'abord le type de contrôleur, puis un modèle dans le catalogue — la fiche du modèle s'affiche ensuite." />
+
+      {state.info.architectureSysteme === 'Hybride' && (
+        <div className="mb-6 rounded-md px-4 py-3 text-sm border border-forest-200 bg-forest-100/60">
+          Système hybride : selon le modèle choisi à l'étape « Onduleur », la gestion du champ PV peut déjà être
+          intégrée au convertisseur hybride plutôt que confiée à un contrôleur séparé. Vérifiez la fiche technique
+          du convertisseur choisi avant de dupliquer un contrôleur externe.
+        </div>
+      )}
 
       {!champDimensionne && (
         <div className="mb-6 rounded-md px-4 py-3 text-sm border border-sun-dark/50 bg-sun/10">
           Le champ photovoltaïque n'est pas encore dimensionné (aucun panneau requis à l'étape 3). Renseignez le
-          bilan de consommation et les paramètres solaires avant de dimensionner le régulateur.
+          bilan de consommation et les paramètres solaires avant de dimensionner le contrôleur.
         </div>
       )}
 
-      <Field label="Type de régulateur">
+      <Field label="Type de contrôleur">
         <div className="flex gap-2">
           {(['MPPT', 'PWM'] as const).map((t) => (
             <button
@@ -90,7 +98,7 @@ export default function StepRegulator() {
         )}
       </div>
 
-      <h3 className="font-display font-medium text-forest-950 mb-3">Choisir un régulateur {type} dans le catalogue</h3>
+      <h3 className="font-display font-medium text-forest-950 mb-3">Choisir un contrôleur {type} dans le catalogue</h3>
       <EquipmentPicker
         key={type}
         items={catalogueFiltre}
@@ -98,7 +106,7 @@ export default function StepRegulator() {
         getLabel={(r) => `${r.manufacturer} ${r.model} — ${r.maxChargeCurrentA} A`}
         getSearchText={(r) => `${r.manufacturer} ${r.model}`}
         onSelect={choisirRegulateur}
-        placeholder={`Rechercher un régulateur ${type}…`}
+        placeholder={`Rechercher un contrôleur ${type}…`}
         renderDetails={(r) => (
           <dl className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-1.5 text-xs font-mono-num">
             <Spec label="Courant max" value={`${r.maxChargeCurrentA} A`} />
@@ -111,7 +119,7 @@ export default function StepRegulator() {
         )}
       />
 
-      <Field label="Calibre du régulateur (A)" hint="Préremplu par le modèle choisi dans le catalogue, modifiable.">
+      <Field label="Calibre du contrôleur (A)" hint="Préremplu par le modèle choisi dans le catalogue, modifiable.">
         <div className="flex flex-wrap gap-2 mt-1">
           {calibresCourants.map((c) => (
             <button
@@ -142,21 +150,21 @@ export default function StepRegulator() {
             : !tensionChoisieDisponible
             ? 'Données insuffisantes pour vérifier la compatibilité de tension : la fiche de ce modèle ne fournit pas de tension PV maximale exploitable.'
             : tensionCompatible
-            ? `Tension d'entrée du régulateur (${choisi.maxPvVoltageV} V) compatible avec la Voc du champ (${configPV.vocChamp.toFixed(1)} V).`
-            : `Tension d'entrée du régulateur (${choisi.maxPvVoltageV} V) insuffisante face à la Voc du champ (${configPV.vocChamp.toFixed(1)} V).`}
+            ? `Tension d'entrée du contrôleur (${choisi.maxPvVoltageV} V) compatible avec la Voc du champ (${configPV.vocChamp.toFixed(1)} V).`
+            : `Tension d'entrée du contrôleur (${choisi.maxPvVoltageV} V) insuffisante face à la Voc du champ (${configPV.vocChamp.toFixed(1)} V).`}
         </div>
       )}
 
       {type === 'MPPT' && (
         <p className="text-xs text-ink/55 mt-4 max-w-lg leading-relaxed">
-          Vérifiez également, sur la fiche technique du régulateur, sa plage de tension MPPT face à la Vmp du champ
+          Vérifiez également, sur la fiche technique du contrôleur, sa plage de tension MPPT face à la Vmp du champ
           ({configPV.vmpChamp.toFixed(1)} V) — cette plage n'est pas toujours publiée par les fabricants.
         </p>
       )}
 
       <div className="mt-8 flex justify-end">
-        <Link to="/dimensionnement/cablage" className="bg-forest-900 hover:bg-forest-700 text-white font-medium px-5 py-2.5 rounded-md transition-colors">
-          Continuer — Câblage et protection DC
+        <Link to="/dimensionnement/cablage" className="bg-forest-900 hover:bg-forest-700 hover:shadow-md text-white font-medium px-5 py-2.5 rounded-md transition-all">
+          Continuer vers le câblage
         </Link>
       </div>
     </div>

@@ -37,6 +37,30 @@ export default function StepProject() {
           <SelectInput value={info.typeInstallation} onChange={(v) => updateInfo({ typeInstallation: v })} options={typesInstallation} />
         </Field>
 
+        <Field
+          label="Architecture du système"
+          hint={
+            info.architectureSysteme === 'Simple'
+              ? 'Champ PV → contrôleur de charge → batterie → onduleur → charges (deux équipements distincts).'
+              : 'Champ PV et batterie gérés par un seul convertisseur hybride intégré, plutôt que par un contrôleur et un onduleur séparés.'
+          }
+        >
+          <div className="flex gap-2">
+            {(['Simple', 'Hybride'] as const).map((a) => (
+              <button
+                key={a}
+                type="button"
+                onClick={() => updateInfo({ architectureSysteme: a })}
+                className={`px-4 py-2 rounded-md text-sm border transition-colors ${
+                  info.architectureSysteme === a ? 'bg-forest-900 text-white border-forest-900' : 'border-forest-200 hover:border-forest-500'
+                }`}
+              >
+                {a}
+              </button>
+            ))}
+          </div>
+        </Field>
+
         <Field label="Tension du système">
           <div className="flex flex-wrap gap-2">
             {tensions.map((t) => (
@@ -80,9 +104,9 @@ export default function StepProject() {
         <button
           disabled={!valide}
           onClick={() => navigate('/dimensionnement/consommation')}
-          className="bg-forest-900 disabled:bg-forest-200 disabled:text-ink/40 hover:bg-forest-700 text-white font-medium px-5 py-2.5 rounded-md transition-colors"
+          className="bg-forest-900 disabled:bg-forest-200 disabled:text-ink/40 hover:bg-forest-700 hover:shadow-md text-white font-medium px-5 py-2.5 rounded-md transition-all"
         >
-          Continuer — Bilan de consommation
+          Continuer vers le bilan de consommation
         </button>
       </div>
     </div>

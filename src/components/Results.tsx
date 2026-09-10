@@ -24,10 +24,10 @@ export default function Results() {
 
   return (
     <div>
-      <div className="flex flex-wrap items-start justify-between gap-4 mb-8">
+      <div className="flex flex-wrap items-start justify-between gap-4 mb-8 pb-5 border-b border-forest-200">
         <div>
-          <p className="font-mono-num text-xs text-forest-700 mb-1">RÉSULTATS</p>
-          <h2 className="font-display text-2xl font-semibold text-forest-950">
+          <p className="font-mono-num text-xs tracking-widest text-forest-700 mb-1.5">RÉSULTATS</p>
+          <h2 className="font-display text-2xl sm:text-3xl font-semibold text-forest-950">
             {state.info.nomProjet || 'Dimensionnement'}
           </h2>
           <p className="text-sm text-ink/60 mt-1">
@@ -37,9 +37,9 @@ export default function Results() {
         <div className="flex gap-2">
           <button
             onClick={() => generateReport(state, results)}
-            className="bg-forest-900 hover:bg-forest-700 text-white text-sm font-medium px-4 py-2.5 rounded-md transition-colors"
+            className="bg-forest-900 hover:bg-forest-700 hover:shadow-md text-white text-sm font-medium px-4 py-2.5 rounded-md transition-all"
           >
-            Télécharger le rapport PDF
+            Générer le rapport PDF
           </button>
           <button
             onClick={handleReset}
@@ -70,9 +70,13 @@ export default function Results() {
           </p>
         </Card>
 
-        <Card titre="Onduleur">
+        <Card titre={state.info.architectureSysteme === 'Hybride' ? 'Convertisseur hybride' : 'Onduleur'}>
           <BigStat value={(results.onduleur.puissanceMinRecommandeeW / 1000).toFixed(2)} unit="kW minimum" />
           <p className="text-xs text-ink/55 mt-2">
+            Nominale {(results.onduleur.puissanceContinueW / 1000).toFixed(2)} kW
+            {results.onduleur.puissanceDemarrageConnue && ` — démarrage ${(results.onduleur.puissanceDemarrageTotaleW / 1000).toFixed(2)} kW`}
+          </p>
+          <p className="text-xs text-ink/55 mt-1">
             {state.onduleurChoisi
               ? `${state.onduleurChoisi.manufacturer} ${state.onduleurChoisi.model}`
               : results.onduleur.aChargesDemarrage
@@ -81,7 +85,7 @@ export default function Results() {
           </p>
         </Card>
 
-        <Card titre={`Régulateur ${state.regulateurParams.type}`}>
+        <Card titre={`Contrôleur ${state.regulateurParams.type}`}>
           <BigStat value={results.regulateur.courantAvecMargeA.toFixed(1)} unit="A recommandés" />
           <p className="text-xs text-ink/55 mt-2">
             {state.regulateurParams.type} — Calibre choisi : {state.regulateurParams.calibreChoisi} A
@@ -142,7 +146,7 @@ export default function Results() {
 
 function Card({ titre, children }: { titre: string; children: React.ReactNode }) {
   return (
-    <div className="border border-forest-200 rounded-lg p-5 bg-white">
+    <div className="border border-forest-200 rounded-lg p-5 bg-white hover:shadow-md hover:border-forest-300 transition-all">
       <p className="text-xs text-ink/55 mb-2">{titre}</p>
       {children}
     </div>
