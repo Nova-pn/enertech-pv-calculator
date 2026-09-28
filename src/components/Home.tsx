@@ -1,17 +1,18 @@
 import { Link } from 'react-router-dom';
 import fullLogo from '../assets/logo/enertech-logo-full.jpg';
-
-const fonctionnalites = [
-  { num: '01', titre: 'Bilan énergétique', desc: "Listez vos appareils et obtenez la consommation quotidienne, mensuelle et annuelle, avec puissance nominale et puissance de démarrage." },
-  { num: '02', titre: 'Champ photovoltaïque', desc: 'Choisissez un panneau réel dans le catalogue ou saisissez vos propres caractéristiques.' },
-  { num: '03', titre: 'Batterie', desc: "Capacité en Ah et configuration série/parallèle, filtrable par technologie (AGM, GEL, Lithium…)." },
-  { num: '04', titre: 'Onduleur', desc: 'Puissance nominale et puissance de démarrage prises en compte séparément, catalogue de modèles réels.' },
-  { num: '05', titre: 'Contrôleur MPPT ou PWM', desc: "Vous choisissez le type et le modèle ; le calcul et la vérification s'adaptent en conséquence." },
-  { num: '06', titre: 'Câblage et protection DC', desc: 'Section de câble théorique, chute de tension et calibre de protection, à partir de catalogues réels.' },
-  { num: '07', titre: 'Rapport PDF', desc: 'Un document complet et professionnel à remettre au client ou archiver.' },
-];
+import { useI18n } from '../i18n';
 
 export default function Home() {
+  const { t } = useI18n();
+  const fonctionnalites = [
+    { num: '01', titre: t('energyBalance'), desc: t('totalNominalPower') },
+    { num: '02', titre: t('solar'), desc: t('choosePanel') },
+    { num: '03', titre: t('battery'), desc: t('requiredCapacity') },
+    { num: '04', titre: t('inverter'), desc: t('recommendedMinimum') },
+    { num: '05', titre: t('controller'), desc: t('chooseController', { type: 'MPPT / PWM' }) },
+    { num: '06', titre: t('cabling'), desc: t('maxVoltageDrop') },
+    { num: '07', titre: t('reportPdf'), desc: t('generatePdf') },
+  ];
   return (
     <div>
       <section className="bg-forest-950 text-forest-100">
@@ -20,12 +21,12 @@ export default function Home() {
             <div className="bg-white rounded-xl shadow-lg inline-block p-3 sm:p-4 mb-8">
               <img src={fullLogo} alt="EnerTech" className="h-20 sm:h-28 w-auto block" />
             </div>
-            <p className="font-mono-num text-xs tracking-widest text-sun mb-3">DIMENSIONNEMENT PHOTOVOLTAÏQUE</p>
+            <p className="font-mono-num text-xs tracking-widest text-sun mb-3">{t('solar')}</p>
             <h1 className="font-display text-4xl sm:text-6xl font-semibold leading-[1.05] mb-6">
               PV <span className="text-sun">Calculator</span>
             </h1>
             <p className="text-lg sm:text-xl text-forest-100/85 mb-3">
-              Calculateur professionnel de dimensionnement photovoltaïque.
+              {t('completeTool')}
             </p>
             <p className="text-forest-200/70 mb-10 max-w-xl leading-relaxed">
               Dimensionnez votre installation à partir de votre consommation électrique : champ PV, batterie,
@@ -38,13 +39,13 @@ export default function Home() {
                 to="/dimensionnement/projet"
                 className="inline-flex items-center gap-2 bg-sun hover:bg-sun-dark text-forest-950 font-body font-semibold px-6 py-3 rounded-md shadow-lg shadow-sun/10 transition-all hover:shadow-xl"
               >
-                Commencer le dimensionnement
+                {t('start')}
               </Link>
               <Link
                 to="/a-propos"
                 className="inline-flex items-center gap-2 border border-forest-200/30 hover:border-forest-200/60 text-forest-100 font-body font-medium px-6 py-3 rounded-md transition-colors"
               >
-                En savoir plus
+                {t('learnMore')}
               </Link>
             </div>
           </div>
@@ -52,9 +53,9 @@ export default function Home() {
       </section>
 
       <section className="max-w-6xl mx-auto px-4 sm:px-6 py-14 sm:py-20">
-        <p className="font-mono-num text-xs tracking-widest text-forest-700 mb-2">FONCTIONNALITÉS</p>
+        <p className="font-mono-num text-xs tracking-widest text-forest-700 mb-2">{t('features')}</p>
         <h2 className="font-display text-2xl sm:text-3xl font-semibold text-forest-950 mb-10">
-          Un outil de dimensionnement complet
+          {t('completeTool')}
         </h2>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">

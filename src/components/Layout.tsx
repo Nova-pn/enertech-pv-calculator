@@ -1,20 +1,22 @@
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import LogoMark from './LogoMark';
-
-const steps = [
-  { to: '/dimensionnement/projet', label: 'Projet', num: '1' },
-  { to: '/dimensionnement/consommation', label: 'Consommation', num: '2' },
-  { to: '/dimensionnement/solaire', label: 'Champ PV', num: '3' },
-  { to: '/dimensionnement/batterie', label: 'Batterie', num: '4' },
-  { to: '/dimensionnement/onduleur', label: 'Onduleur', num: '5' },
-  { to: '/dimensionnement/regulateur', label: 'Contrôleur', num: '6' },
-  { to: '/dimensionnement/cablage', label: 'Câblage & protection', num: '7' },
-  { to: '/resultats', label: 'Résultats', num: '8' },
-];
+import { languages, useI18n } from '../i18n';
 
 export default function Layout() {
   const location = useLocation();
+  const { language, setLanguage, t } = useI18n();
   const dansLeWizard = location.pathname.startsWith('/dimensionnement') || location.pathname === '/resultats';
+
+  const translatedSteps = [
+    { to: '/dimensionnement/projet', label: t('project'), num: '1' },
+    { to: '/dimensionnement/consommation', label: t('consumption'), num: '2' },
+    { to: '/dimensionnement/solaire', label: t('solar'), num: '3' },
+    { to: '/dimensionnement/batterie', label: t('battery'), num: '4' },
+    { to: '/dimensionnement/onduleur', label: t('inverter'), num: '5' },
+    { to: '/dimensionnement/regulateur', label: t('controller'), num: '6' },
+    { to: '/dimensionnement/cablage', label: t('cabling'), num: '7' },
+    { to: '/resultats', label: t('results'), num: '8' },
+  ];
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -27,19 +29,25 @@ export default function Layout() {
               <span className="hidden sm:inline text-[11px] text-forest-200/70 font-body tracking-wide">PV CALCULATOR</span>
             </span>
           </NavLink>
-          <nav className="flex gap-5 text-sm font-body">
+          <nav className="flex flex-wrap items-center justify-end gap-3 sm:gap-5 text-sm font-body">
             <NavLink to="/" end className={({ isActive }) => (isActive ? 'text-sun font-medium' : 'text-forest-200 hover:text-white transition-colors')}>
-              Accueil
+              {t('home')}
             </NavLink>
             <NavLink
               to="/dimensionnement/projet"
               className={() => (dansLeWizard ? 'text-sun font-medium' : 'text-forest-200 hover:text-white transition-colors')}
             >
-              Dimensionnement
+              {t('sizing')}
             </NavLink>
             <NavLink to="/a-propos" className={({ isActive }) => (isActive ? 'text-sun font-medium' : 'text-forest-200 hover:text-white transition-colors')}>
-              À propos
+              {t('about')}
             </NavLink>
+            <label className="inline-flex items-center gap-1.5 text-forest-100/80" title={t('language')}>
+              <span aria-hidden="true">{languages.find((item) => item.value === language)?.flag}</span>
+              <select aria-label={t('language')} value={language} onChange={(event) => setLanguage(event.target.value as typeof language)} className="bg-forest-900 border border-forest-700 rounded px-1.5 py-1 text-xs text-white">
+                {languages.map((item) => <option key={item.value} value={item.value}>{item.flag} {item.label}</option>)}
+              </select>
+            </label>
           </nav>
         </div>
       </header>
@@ -48,7 +56,7 @@ export default function Layout() {
         <div className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-10 grid grid-cols-1 md:grid-cols-[210px_1fr] gap-6 md:gap-10">
           <aside className="md:sticky md:top-8 md:self-start">
             <ol className="flex md:flex-col gap-1 overflow-x-auto md:overflow-visible pb-2 md:pb-0">
-              {steps.map((s) => (
+              {translatedSteps.map((s) => (
                 <li key={s.to} className="shrink-0">
                   <NavLink
                     to={s.to}

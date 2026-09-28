@@ -3,6 +3,7 @@ import { useProject } from '../context/ProjectContext';
 import { useResults } from '../engine/useResults';
 import { generateReport } from '../pdf/generateReport';
 import type { NiveauValidation } from '../types';
+import { useI18n } from '../i18n';
 
 const badgeStyles: Record<NiveauValidation, string> = {
   vert: 'bg-forest-100 text-forest-900 border-forest-500',
@@ -10,10 +11,9 @@ const badgeStyles: Record<NiveauValidation, string> = {
   rouge: 'bg-alert/10 text-alert border-alert',
 };
 
-const badgeLabel: Record<NiveauValidation, string> = { vert: 'OK', orange: 'À vérifier', rouge: 'Incompatible' };
-
 export default function Results() {
   const { state, reset } = useProject();
+  const { language, t } = useI18n();
   const results = useResults(state);
   const navigate = useNavigate();
 
@@ -26,51 +26,51 @@ export default function Results() {
     <div>
       <div className="flex flex-wrap items-start justify-between gap-4 mb-8 pb-5 border-b border-forest-200">
         <div>
-          <p className="font-mono-num text-xs tracking-widest text-forest-700 mb-1.5">RÉSULTATS</p>
+          <p className="font-mono-num text-xs tracking-widest text-forest-700 mb-1.5">{t('results')}</p>
           <h2 className="font-display text-2xl sm:text-3xl font-semibold text-forest-950">
-            {state.info.nomProjet || 'Dimensionnement'}
+            {state.info.nomProjet || t('defaultSizing')}
           </h2>
           <p className="text-sm text-ink/60 mt-1">
-            {state.info.localisation || 'Localisation non renseignée'} — {state.info.typeInstallation} — {state.info.tensionSysteme} V
+            {state.info.localisation || t('unknownLocation')} — {state.info.typeInstallation} — {state.info.tensionSysteme} V
           </p>
         </div>
         <div className="flex gap-2">
           <button
-            onClick={() => generateReport(state, results)}
+            onClick={() => generateReport(state, results, language)}
             className="bg-forest-900 hover:bg-forest-700 hover:shadow-md text-white text-sm font-medium px-4 py-2.5 rounded-md transition-all"
           >
-            Générer le rapport PDF
+            {t('generatePdf')}
           </button>
           <button
             onClick={handleReset}
             className="border border-forest-200 hover:border-forest-500 text-sm font-medium px-4 py-2.5 rounded-md transition-colors"
           >
-            Recommencer
+            {t('restart')}
           </button>
         </div>
       </div>
 
       <div className="grid sm:grid-cols-2 gap-5 mb-8">
-        <Card titre="Bilan énergétique">
+        <Card titre={t('energyBalance')}>
           <BigStat value={`${(results.bilan.energieJourWh / 1000).toFixed(2)}`} unit="kWh/jour" />
           <p className="text-xs text-ink/55 mt-2">{(results.bilan.energieMoisWh / 1000).toFixed(1)} kWh/mois · {(results.bilan.energieAnneeWh / 1000).toFixed(0)} kWh/an</p>
         </Card>
 
-        <Card titre="Champ photovoltaïque">
+        <Card titre={t('solar')}>
           <BigStat value={(results.dimensionnementPanneaux.puissanceInstalleeW / 1000).toFixed(2)} unit="kWc installés" />
           <p className="text-xs text-ink/55 mt-2">
             {results.dimensionnementPanneaux.nombrePanneaux} × {state.panneau.puissanceW} W (besoin : {results.puissancePvW.toFixed(0)} W)
           </p>
         </Card>
 
-        <Card titre="Batterie">
+        <Card titre={t('battery')}>
           <BigStat value={results.besoinBatterie.capaciteAh.toFixed(0)} unit="Ah nécessaires" />
           <p className="text-xs text-ink/55 mt-2">
             {state.batterie.technologie} — {results.configBatterie.enSerie}S × {results.configBatterie.enParallele}P
           </p>
         </Card>
 
-        <Card titre={state.info.architectureSysteme === 'Hybride' ? 'Convertisseur hybride' : 'Onduleur'}>
+        <Card titre={state.info.architectureSysteme === 'Hybride' ? t('hybridSizing') : t('inverter')}>
           <BigStat value={(results.onduleur.puissanceMinRecommandeeW / 1000).toFixed(2)} unit="kW minimum" />
           <p className="text-xs text-ink/55 mt-2">
             Nominale {(results.onduleur.puissanceContinueW / 1000).toFixed(2)} kW
@@ -85,7 +85,7 @@ export default function Results() {
           </p>
         </Card>
 
-        <Card titre={`Contrôleur ${state.regulateurParams.type}`}>
+        <Card titre={`${t('controller')} ${state.regulateurParams.type}`}>
           <BigStat value={results.regulateur.courantAvecMargeA.toFixed(1)} unit="A recommandés" />
           <p className="text-xs text-ink/55 mt-2">
             {state.regulateurParams.type} — Calibre choisi : {state.regulateurParams.calibreChoisi} A
@@ -99,7 +99,7 @@ export default function Results() {
         </Card>
 
         {(state.cableChoisi || state.protectionChoisie) && (
-          <Card titre="Câblage & protection DC">
+          <Card titre={t('cablingProtection')}>
             {results.chuteDeTension && (
               <BigStat value={results.chuteDeTension.chutePourcent.toFixed(2)} unit="% de chute en ligne" />
             )}
@@ -121,13 +121,13 @@ export default function Results() {
         </div>
       )}
 
-      <h3 className="font-display font-medium text-forest-950 mb-3">Indicateurs de validation</h3>
+      <h3 className="font-display font-medium text-forest-950 mb-3">{t('validationIndicators')}</h3>
       <div className="space-y-2">
         {results.avertissements.map((av, i) => (
           <div key={i} className={`border-l-4 rounded-md px-4 py-3 text-sm ${badgeStyles[av.niveau]}`}>
             <div className="flex items-center gap-2 mb-1">
               <span className="text-[10px] font-mono-num uppercase tracking-wide px-1.5 py-0.5 rounded border border-current">
-                {badgeLabel[av.niveau]}
+                {av.niveau === 'vert' ? 'OK' : av.niveau === 'orange' ? t('insufficient') : t('incompatibleConfig')}
               </span>
               <span className="font-medium">{av.titre}</span>
             </div>

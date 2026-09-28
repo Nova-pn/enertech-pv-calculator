@@ -4,11 +4,13 @@ import type { ProjectState } from '../types';
 import type { Results } from '../engine/useResults';
 import { energieQuotidienneAppareil } from '../engine/calculations';
 import { ENERTECH_EMBLEM_BASE64, ENERTECH_EMBLEM_ASPECT } from '../assets/logo/logoBase64';
+import { translate, type Language } from '../i18n';
 
 const FOREST = '#0f3d2e';
 const INK = '#14181b';
 
-export function generateReport(state: ProjectState, results: Results) {
+export function generateReport(state: ProjectState, results: Results, language: Language = 'fr') {
+  const t = (key: string, vars?: Record<string, string | number>) => translate(language, key, vars);
   const doc = new jsPDF({ unit: 'pt', format: 'a4' });
   const marginX = 40;
   let y = 50;
@@ -24,7 +26,7 @@ export function generateReport(state: ProjectState, results: Results) {
   y += 22;
   doc.setFontSize(13);
   doc.setTextColor(INK);
-  doc.text('Rapport de dimensionnement photovoltaïque', marginX, y);
+  doc.text(t('reportPdf'), marginX, y);
   y += 16;
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(9);
@@ -37,7 +39,7 @@ export function generateReport(state: ProjectState, results: Results) {
   y += 20;
 
   // --- Informations du projet ---
-  section(doc, 'Informations du projet', marginX, y);
+  section(doc, t('projectInfo'), marginX, y);
   y += 16;
   autoTable(doc, {
     startY: y,
@@ -57,7 +59,7 @@ export function generateReport(state: ProjectState, results: Results) {
   y = (doc as any).lastAutoTable.finalY + 20;
 
   // --- Bilan de consommation ---
-  section(doc, 'Bilan de consommation', marginX, y);
+  section(doc, t('consumptionBalance'), marginX, y);
   y += 16;
   autoTable(doc, {
     startY: y,
@@ -85,7 +87,7 @@ export function generateReport(state: ProjectState, results: Results) {
   y += 24;
 
   y = ensureSpace(doc, y, 140);
-  section(doc, 'Paramètres solaires et champ photovoltaïque', marginX, y);
+  section(doc, t('solarParams'), marginX, y);
   y += 16;
   autoTable(doc, {
     startY: y,
@@ -116,7 +118,7 @@ export function generateReport(state: ProjectState, results: Results) {
   y = (doc as any).lastAutoTable.finalY + 20;
 
   y = ensureSpace(doc, y, 140);
-  section(doc, 'Dimensionnement de la batterie', marginX, y);
+  section(doc, t('batterySizing'), marginX, y);
   y += 16;
   autoTable(doc, {
     startY: y,
@@ -142,7 +144,7 @@ export function generateReport(state: ProjectState, results: Results) {
   y = (doc as any).lastAutoTable.finalY + 20;
 
   y = ensureSpace(doc, y, 120);
-  section(doc, state.info.architectureSysteme === 'Hybride' ? 'Dimensionnement du convertisseur hybride et du contrôleur' : "Dimensionnement de l'onduleur et du contrôleur", marginX, y);
+  section(doc, state.info.architectureSysteme === 'Hybride' ? t('hybridSizing') : t('inverterSizing'), marginX, y);
   y += 16;
   autoTable(doc, {
     startY: y,
@@ -167,7 +169,7 @@ export function generateReport(state: ProjectState, results: Results) {
   y = (doc as any).lastAutoTable.finalY + 24;
 
   y = ensureSpace(doc, y, 100);
-  section(doc, 'Câblage et protection DC', marginX, y);
+  section(doc, t('cablingProtection'), marginX, y);
   y += 16;
   autoTable(doc, {
     startY: y,

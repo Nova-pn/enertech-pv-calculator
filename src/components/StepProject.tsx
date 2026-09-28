@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useProject } from '../context/ProjectContext';
 import { Field, TextInput, SelectInput, NumberInput, ErrorText } from './Fields';
 import StepHeader from './StepHeader';
+import { useI18n } from '../i18n';
 
 const typesInstallation = ['Résidentielle', 'Commerciale', 'Site isolé', 'Système hybride', 'Autre'] as const;
 const objectifs = ['Autoconsommation', 'Site isolé', 'Secours', 'Système hybride'] as const;
@@ -9,6 +10,7 @@ const tensions = [12, 24, 48] as const;
 
 export default function StepProject() {
   const { state, updateInfo } = useProject();
+  const { t } = useI18n();
   const navigate = useNavigate();
   const { info } = state;
 
@@ -17,28 +19,28 @@ export default function StepProject() {
 
   return (
     <div className="max-w-xl">
-      <StepHeader num="1" titre="Informations du projet" description="Ces informations identifient le projet et figureront dans le rapport PDF." />
+      <StepHeader num="1" titre={t('projectInfo')} description="Ces informations identifient le projet et figureront dans le rapport PDF." />
 
       <div className="space-y-5">
-        <Field label="Nom du projet">
+        <Field label={t('projectName')}>
           <TextInput value={info.nomProjet} onChange={(v) => updateInfo({ nomProjet: v })} placeholder="Ex. : Villa Akpakpa" />
-          {!info.nomProjet && <ErrorText>Le nom du projet est requis.</ErrorText>}
+          {!info.nomProjet && <ErrorText>{t('requiredProjectName')}</ErrorText>}
         </Field>
 
-        <Field label="Nom du client">
+        <Field label={t('clientName')}>
           <TextInput value={info.nomClient} onChange={(v) => updateInfo({ nomClient: v })} placeholder="[À compléter]" />
         </Field>
 
-        <Field label="Localisation">
+        <Field label={t('location')}>
           <TextInput value={info.localisation} onChange={(v) => updateInfo({ localisation: v })} placeholder="Ville, pays" />
         </Field>
 
-        <Field label="Type d'installation">
+        <Field label={t('installationType')}>
           <SelectInput value={info.typeInstallation} onChange={(v) => updateInfo({ typeInstallation: v })} options={typesInstallation} />
         </Field>
 
         <Field
-          label="Architecture du système"
+          label={t('systemArchitecture')}
           hint={
             info.architectureSysteme === 'Simple'
               ? 'Champ PV → contrôleur de charge → batterie → onduleur → charges (deux équipements distincts).'
@@ -61,7 +63,7 @@ export default function StepProject() {
           </div>
         </Field>
 
-        <Field label="Tension du système">
+        <Field label={t('systemVoltage')}>
           <div className="flex flex-wrap gap-2">
             {tensions.map((t) => (
               <button
@@ -84,7 +86,7 @@ export default function StepProject() {
                 tensionPersonnalisee ? 'bg-forest-900 text-white border-forest-900' : 'border-forest-200 hover:border-forest-500'
               }`}
             >
-              Personnalisée
+              {t('custom')}
             </button>
           </div>
           {tensionPersonnalisee && (
@@ -95,7 +97,7 @@ export default function StepProject() {
           {!(Number(info.tensionSysteme) > 0) && <ErrorText>La tension du système doit être supérieure à 0.</ErrorText>}
         </Field>
 
-        <Field label="Objectif">
+        <Field label={t('objective')}>
           <SelectInput value={info.objectif} onChange={(v) => updateInfo({ objectif: v })} options={objectifs} />
         </Field>
       </div>
