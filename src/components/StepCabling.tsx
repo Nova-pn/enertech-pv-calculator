@@ -13,9 +13,11 @@ import {
 } from '../data/catalog';
 import { calculerSectionTheorique, RESISTIVITE_CUIVRE_OHM_MM2_PAR_M } from '../engine/calculations';
 import { useResults } from '../engine/useResults';
+import { useI18n } from '../i18n';
 
 export default function StepCabling() {
   const { state, updateCablage, setCableChoisi, setProtectionChoisie } = useProject();
+  const { t } = useI18n();
   // Mêmes données de champ PV que les étapes MPPT/PWM et la page Résultats — aucun second calcul du champ ici.
   const results = useResults(state);
   const { configPV, dimensionnementPanneaux, courantIscChampA, calibreProtectionRecommandeeA, chuteDeTension: chute } = results;
@@ -45,38 +47,37 @@ export default function StepCabling() {
     <div className="max-w-2xl">
       <StepHeader
         num="7"
-        titre="Câblage et protection DC"
-        description="Section de câble entre le champ PV et le contrôleur, et calibre de la protection DC côté champ."
+        titre={t('cablingProtection')}
+        description={t('cablingDescription')}
       />
 
       {!champDimensionne && (
         <div className="mb-6 rounded-md px-4 py-3 text-sm border border-sun-dark/50 bg-sun/10">
-          Le champ photovoltaïque n'est pas encore dimensionné. Renseignez le bilan de consommation et les
-          paramètres solaires (étape 3) avant de calculer le câblage.
+          {t('fieldNotSized')}
         </div>
       )}
 
       <div className="grid grid-cols-2 gap-4 mb-8">
-        <Stat label="Courant du champ (Isc)" value={champDimensionne ? `${courantIscChampA.toFixed(1)} A` : 'Données insuffisantes'} />
-        <Stat label="Calibre protection recommandé" value={champDimensionne ? `${calibreProtectionRecommandeeA.toFixed(1)} A` : 'Données insuffisantes'} />
+        <Stat label={t('fieldCurrent')} value={champDimensionne ? `${courantIscChampA.toFixed(1)} A` : t('insufficientData')} />
+        <Stat label={t('recommendedProtection')} value={champDimensionne ? `${calibreProtectionRecommandeeA.toFixed(1)} A` : t('insufficientData')} />
       </div>
       <p className="text-xs text-ink/55 -mt-4 mb-8">
         Isc du champ = Isc du panneau × nombre de branches parallèles ({configPV.enParallele || '—'}). Calibre recommandé = 1,25 × Isc du champ.
       </p>
 
-      <h3 className="font-display font-medium text-forest-950 mb-3">Câble PV</h3>
+      <h3 className="font-display font-medium text-forest-950 mb-3">{t('cable')}</h3>
       <div className="grid sm:grid-cols-2 gap-6 mb-4">
-        <Field label="Longueur aller (m)" hint="Distance à sens unique entre le champ et le contrôleur (le calcul prend en compte l'aller-retour).">
+        <Field label={t('cableLength')} hint={t('cableLength')}>
           <NumberInput value={state.cablage.longueurAllerM} min={0} onChange={(v) => updateCablage({ longueurAllerM: v })} />
         </Field>
-        <Field label="Chute de tension maximale visée (%)">
+        <Field label={t('maxVoltageDrop')}>
           <NumberInput value={state.cablage.chuteTensionMaxPourcent} min={0.1} step={0.1} onChange={(v) => updateCablage({ chuteTensionMaxPourcent: v })} />
         </Field>
       </div>
 
       <div className="rounded-md px-4 py-3 text-sm border border-forest-200 bg-forest-100/40 mb-4">
         {sectionTheorique === null ? (
-          <p>Données insuffisantes pour calculer la section (longueur, courant du champ ou tension de référence manquants).</p>
+          <p>{t('insufficientData')}</p>
         ) : (
           <>
             <p>
@@ -99,7 +100,7 @@ export default function StepCabling() {
         getLabel={(c: CableCatalogItem) => `${c.model} (${c.manufacturer})`}
         getSearchText={(c) => `${c.manufacturer} ${c.model} ${c.crossSectionMm2}mm2`}
         onSelect={(c) => setCableChoisi(c)}
-        placeholder="Rechercher une section de câble…"
+        placeholder={t('chooseCable')}
         renderDetails={(c) => (
           <dl className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-1.5 text-xs font-mono-num">
             <Spec label="Section" value={`${c.crossSectionMm2} mm²`} />
@@ -123,10 +124,10 @@ export default function StepCabling() {
         </div>
       )}
 
-      <h3 className="font-display font-medium text-forest-950 mb-3 mt-10">Protection DC</h3>
+      <h3 className="font-display font-medium text-forest-950 mb-3 mt-10">{t('protection')}</h3>
       <div className="rounded-md px-4 py-3 text-sm border border-forest-200 bg-forest-100/40 mb-4">
         {!champDimensionne ? (
-          <p>Données insuffisantes pour recommander un calibre de protection.</p>
+          <p>{t('insufficientData')}</p>
         ) : (
           <p>
             Protection recommandée dans le catalogue :{' '}
@@ -143,7 +144,7 @@ export default function StepCabling() {
         getLabel={(p: ProtectionCatalogItem) => `${p.model} (${p.manufacturer})`}
         getSearchText={(p) => `${p.manufacturer} ${p.model}`}
         onSelect={(p) => setProtectionChoisie(p)}
-        placeholder="Rechercher un disjoncteur / fusible DC…"
+        placeholder={t('chooseProtection')}
         renderDetails={(p) => (
           <dl className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-1.5 text-xs font-mono-num">
             <Spec label="Plage de calibre" value={p.ratedCurrentARaw ? `${p.ratedCurrentARaw} A` : '—'} />
@@ -172,7 +173,7 @@ export default function StepCabling() {
 
       <div className="mt-8 flex justify-end">
         <Link to="/resultats" className="bg-forest-900 hover:bg-forest-700 hover:shadow-md text-white font-medium px-5 py-2.5 rounded-md transition-all">
-          Voir les résultats
+          {t('seeResults')}
         </Link>
       </div>
     </div>

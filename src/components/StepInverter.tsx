@@ -3,12 +3,14 @@ import { useProject } from '../context/ProjectContext';
 import { Field, NumberInput, Spec } from './Fields';
 import StepHeader from './StepHeader';
 import EquipmentPicker from './EquipmentPicker';
+import { useI18n } from '../i18n';
 import { inverterCatalog, type InverterCatalogItem } from '../data/catalog';
 import { calculerOnduleur } from '../engine/calculations';
 
 export default function StepInverter() {
   const { state, updateOnduleurParams, setOnduleurChoisi } = useProject();
   const navigate = useNavigate();
+  const { t } = useI18n();
   const res = calculerOnduleur(state.appareils, state.onduleurParams.margePourcent);
 
   const hybride = state.info.architectureSysteme === 'Hybride';
@@ -26,33 +28,32 @@ export default function StepInverter() {
     <div className="max-w-2xl">
       <StepHeader
         num="5"
-        titre={hybride ? 'Dimensionnement du convertisseur hybride' : "Dimensionnement de l'onduleur"}
-        description="Calculé à partir des puissances nominale et de démarrage de tous les appareils saisis à l'étape 2."
+        titre={hybride ? t('hybridSizing') : t('inverterSizing')}
+        description={t('inverterDescription')}
       />
 
       {hybride && (
         <div className="mb-6 rounded-md px-4 py-3 text-sm border border-forest-200 bg-forest-100/60">
-          Système hybride : le champ PV et la batterie sont gérés par un seul convertisseur hybride intégré, pas par
-          un contrôleur de charge et un onduleur séparés. Le catalogue ci-dessous ne montre que les modèles hybrides.
+          {t('hybridNote')}
         </div>
       )}
 
-      <Field label="Marge de dimensionnement (%)">
+      <Field label={t('sizingMargin')}>
         <div className="max-w-[160px]">
           <NumberInput value={state.onduleurParams.margePourcent} min={0} max={200} onChange={(v) => updateOnduleurParams({ margePourcent: v })} />
         </div>
       </Field>
 
       <div className="grid grid-cols-2 gap-4 my-8">
-        <Stat label="Puissance nominale totale" value={`${(res.puissanceContinueW / 1000).toFixed(2)} kW`} />
+        <Stat label={t('totalNominalPower')} value={`${(res.puissanceContinueW / 1000).toFixed(2)} kW`} />
         <Stat
-          label="Puissance de démarrage totale"
-          value={res.puissanceDemarrageConnue ? `${(res.puissanceDemarrageTotaleW / 1000).toFixed(2)} kW` : 'Non renseignée'}
+          label={t('totalStartupPower')}
+          value={res.puissanceDemarrageConnue ? `${(res.puissanceDemarrageTotaleW / 1000).toFixed(2)} kW` : t('startupUnknown')}
         />
       </div>
 
       <div className="rounded-md px-4 py-3 text-sm border border-forest-500 bg-forest-100 mb-6">
-        Puissance minimale recommandée : <span className="font-mono-num font-semibold">{(res.puissanceMinRecommandeeW / 1000).toFixed(2)} kW</span>
+        {t('recommendedMinimum')} : <span className="font-mono-num font-semibold">{(res.puissanceMinRecommandeeW / 1000).toFixed(2)} kW</span>
         <p className="text-xs text-ink/60 mt-1">
           {res.puissanceDemarrageConnue
             ? 'Maximum entre la puissance nominale (avec marge) et la puissance de démarrage totale : la puissance de démarrage renseignée ne remplace jamais la puissance nominale, elle est comparée à elle.'
@@ -72,14 +73,14 @@ export default function StepInverter() {
         </div>
       )}
 
-      <h3 className="font-display font-medium text-forest-950 mb-3">Choisir un {titreEquipement} dans le catalogue</h3>
+      <h3 className="font-display font-medium text-forest-950 mb-3">{t('chooseInverter', { equipment: titreEquipement })}</h3>
       <EquipmentPicker
         items={catalogueFiltre}
         getId={(o) => o.id}
         getLabel={(o) => `${o.manufacturer} ${o.model} — ${(o.nominalPowerW / 1000).toFixed(1)} kW`}
         getSearchText={(o) => `${o.manufacturer} ${o.model} ${o.type}`}
         onSelect={choisirOnduleur}
-        placeholder={`Rechercher un ${titreEquipement}…`}
+        placeholder={`${t('search')} ${titreEquipement}…`}
         renderDetails={(o) => (
           <dl className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-1.5 text-xs font-mono-num">
             <Spec label="Type" value={o.type} mono={false} />
@@ -93,7 +94,7 @@ export default function StepInverter() {
         )}
       />
       {hybride && catalogueFiltre.length === 0 && (
-        <p className="text-xs text-ink/50 mt-2">Aucun convertisseur hybride dans le catalogue actuel.</p>
+        <p className="text-xs text-ink/50 mt-2">{t('noHybrid')}</p>
       )}
 
       {choisi && (
@@ -113,7 +114,7 @@ export default function StepInverter() {
           onClick={() => navigate('/dimensionnement/regulateur')}
           className="bg-forest-900 hover:bg-forest-700 hover:shadow-md text-white font-medium px-5 py-2.5 rounded-md transition-all"
         >
-          Continuer vers le contrôleur
+          {t('continueController')}
         </button>
       </div>
     </div>

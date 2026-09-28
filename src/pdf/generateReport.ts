@@ -31,7 +31,7 @@ export function generateReport(state: ProjectState, results: Results, language: 
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(9);
   doc.setTextColor('#666666');
-  doc.text(`Généré le ${new Date().toLocaleDateString('fr-FR')} — Architecture : ${state.info.architectureSysteme}`, marginX, y);
+  doc.text(`${t('generatedOn')} ${new Date().toLocaleDateString(language)} — ${t('systemArchitecture')} : ${state.info.architectureSysteme}`, marginX, y);
   y += 20;
 
   doc.setDrawColor(FOREST);
@@ -48,12 +48,12 @@ export function generateReport(state: ProjectState, results: Results, language: 
 
     styles: { fontSize: 9, cellPadding: 2 },
     body: [
-      ['Nom du projet', state.info.nomProjet || '[À compléter]'],
-      ['Nom du client', state.info.nomClient || '[À compléter]'],
-      ['Localisation', state.info.localisation || '[À compléter]'],
-      ["Type d'installation", state.info.typeInstallation],
-      ['Tension du système', `${state.info.tensionSysteme} V`],
-      ['Objectif', state.info.objectif],
+      [t('projectName'), state.info.nomProjet || '[—]'],
+      [t('clientName'), state.info.nomClient || '[—]'],
+      [t('location'), state.info.localisation || '[—]'],
+      [t('installationType'), state.info.typeInstallation],
+      [t('systemVoltage'), `${state.info.tensionSysteme} V`],
+      [t('objective'), state.info.objectif],
     ],
   });
   y = (doc as any).lastAutoTable.finalY + 20;
@@ -64,11 +64,11 @@ export function generateReport(state: ProjectState, results: Results, language: 
   autoTable(doc, {
     startY: y,
     margin: { left: marginX },
-    head: [['Appareil', 'P nominale (W)', 'P démarrage (W)', 'Qté', 'h/j', 'Coeff.', 'Énergie/j (Wh)']],
+    head: [[t('device'), t('nominalPower'), t('startupPower'), t('quantity'), t('hoursDay'), t('coefficient'), t('dailyEnergy')]],
     body: state.appareils.map((a) => [
       a.nom,
       a.puissanceW.toString(),
-      a.puissanceDemarrageW !== null && Number.isFinite(a.puissanceDemarrageW) ? a.puissanceDemarrageW.toString() : 'Non renseignée',
+      a.puissanceDemarrageW !== null && Number.isFinite(a.puissanceDemarrageW) ? a.puissanceDemarrageW.toString() : t('startupUnknown'),
       a.quantite.toString(),
       a.heuresParJour.toString(),
       a.coefficient.toString(),
@@ -95,24 +95,24 @@ export function generateReport(state: ProjectState, results: Results, language: 
     theme: 'plain',
     styles: { fontSize: 9, cellPadding: 2 },
     body: [
-      ['Heures solaires de pointe (HSP)', `${state.solaire.hsp} h/jour`],
-      ['Rendement global', state.solaire.rendementGlobal.toString()],
-      ['Puissance PV théorique nécessaire', `${results.puissancePvW.toFixed(0)} W`],
+      [t('solarPeakHours'), `${state.solaire.hsp} h/jour`],
+      [t('globalEfficiency'), state.solaire.rendementGlobal.toString()],
+      [t('theoreticalPv'), `${results.puissancePvW.toFixed(0)} W`],
       [
-        'Panneau',
+        t('solar'),
         state.panneauChoisi
           ? `${state.panneauChoisi.manufacturer} ${state.panneauChoisi.model} — ${state.panneau.puissanceW} W`
           : `${state.panneau.puissanceW} W — Voc ${state.panneau.voc} V, Vmp ${state.panneau.vmp} V, Isc ${state.panneau.isc} A, Imp ${state.panneau.imp} A`,
       ],
-      ['Nombre de panneaux', results.dimensionnementPanneaux.nombrePanneaux.toString()],
-      ['Puissance installée', `${(results.dimensionnementPanneaux.puissanceInstalleeW / 1000).toFixed(2)} kWc`],
+      [t('panelCount'), results.dimensionnementPanneaux.nombrePanneaux.toString()],
+      [t('installedPower'), `${(results.dimensionnementPanneaux.puissanceInstalleeW / 1000).toFixed(2)} kWc`],
       [
-        'Configuration série/parallèle',
+        t('compatibleConfig'),
         results.configPV.totalPanneaux > 0
           ? `${results.configPV.enSerie}S × ${results.configPV.enParallele}P — Vmp ${results.configPV.vmpChamp.toFixed(1)} V, Voc ${results.configPV.vocChamp.toFixed(1)} V, ${results.configPV.courantChamp.toFixed(1)} A`
           : '—',
       ],
-      ['Statut de la configuration', results.configPV.compatible ? 'Compatible' : results.configPV.raisons.join(' ')],
+      [t('validationIndicators'), results.configPV.compatible ? t('compatible') : results.configPV.raisons.join(' ')],
     ],
   });
   y = (doc as any).lastAutoTable.finalY + 20;
@@ -126,19 +126,19 @@ export function generateReport(state: ProjectState, results: Results, language: 
     theme: 'plain',
     styles: { fontSize: 9, cellPadding: 2 },
     body: [
-      ["Autonomie souhaitée", `${state.batterieParams.autonomieJours} jour(s)`],
-      ['Profondeur de décharge (DoD)', state.batterieParams.dod.toString()],
-      ['Rendement batterie', state.batterieParams.rendementBatterie.toString()],
-      ['Énergie batterie nécessaire', `${results.besoinBatterie.energieBatterieKWh.toFixed(2)} kWh`],
-      ['Capacité nécessaire', `${results.besoinBatterie.capaciteAh.toFixed(0)} Ah`],
-      ['Batterie', `${state.batterie.technologie} — ${state.batterie.tensionNominale} V / ${state.batterie.capaciteAh} Ah${state.batterieChoisie ? ` (${state.batterieChoisie.manufacturer} ${state.batterieChoisie.model})` : ''}`],
+      [t('autonomy'), `${state.batterieParams.autonomieJours} jour(s)`],
+      [t('depthDischarge'), state.batterieParams.dod.toString()],
+      [t('batteryEfficiency'), state.batterieParams.rendementBatterie.toString()],
+      [t('requiredEnergy'), `${results.besoinBatterie.energieBatterieKWh.toFixed(2)} kWh`],
+      [t('requiredCapacity'), `${results.besoinBatterie.capaciteAh.toFixed(0)} Ah`],
+      [t('battery'), `${state.batterie.technologie} — ${state.batterie.tensionNominale} V / ${state.batterie.capaciteAh} Ah${state.batterieChoisie ? ` (${state.batterieChoisie.manufacturer} ${state.batterieChoisie.model})` : ''}`],
       [
         'Configuration',
         results.configBatterie.totalBatteries > 0
           ? `${results.configBatterie.enSerie}S × ${results.configBatterie.enParallele}P = ${results.configBatterie.totalBatteries} batterie(s), ${results.configBatterie.tensionTotale} V, ${results.configBatterie.capaciteTotaleAh.toFixed(0)} Ah`
           : '—',
       ],
-      ['Statut de la configuration', results.configBatterie.compatible ? 'Compatible' : results.configBatterie.raisons.join(' ')],
+      [t('validationIndicators'), results.configBatterie.compatible ? t('compatible') : results.configBatterie.raisons.join(' ')],
     ],
   });
   y = (doc as any).lastAutoTable.finalY + 20;
@@ -152,15 +152,15 @@ export function generateReport(state: ProjectState, results: Results, language: 
     theme: 'plain',
     styles: { fontSize: 9, cellPadding: 2 },
     body: [
-      ['Puissance nominale totale', `${(results.onduleur.puissanceContinueW / 1000).toFixed(2)} kW`],
-      ['Puissance de démarrage totale', results.onduleur.puissanceDemarrageConnue ? `${(results.onduleur.puissanceDemarrageTotaleW / 1000).toFixed(2)} kW` : 'Non renseignée'],
-      ['Marge onduleur', `${state.onduleurParams.margePourcent} %`],
-      ['Puissance minimale recommandée', `${(results.onduleur.puissanceMinRecommandeeW / 1000).toFixed(2)} kW`],
+      [t('totalNominalPower'), `${(results.onduleur.puissanceContinueW / 1000).toFixed(2)} kW`],
+      [t('totalStartupPower'), results.onduleur.puissanceDemarrageConnue ? `${(results.onduleur.puissanceDemarrageTotaleW / 1000).toFixed(2)} kW` : t('startupUnknown')],
+      [t('sizingMargin'), `${state.onduleurParams.margePourcent} %`],
+      [t('recommendedMinimum'), `${(results.onduleur.puissanceMinRecommandeeW / 1000).toFixed(2)} kW`],
       [state.info.architectureSysteme === 'Hybride' ? 'Convertisseur choisi' : 'Onduleur choisi', state.onduleurChoisi ? `${state.onduleurChoisi.manufacturer} ${state.onduleurChoisi.model}` : '[À compléter]'],
       ['Charges à démarrage important signalées', results.onduleur.aChargesDemarrage ? 'Oui' : 'Non signalées'],
-      ['Type de contrôleur', state.regulateurParams.type],
-      ['Marge contrôleur', `${state.regulateurParams.margePourcent} %`],
-      ['Courant recommandé (contrôleur)', `${results.regulateur.courantAvecMargeA.toFixed(1)} A`],
+      [t('controllerType'), state.regulateurParams.type],
+      [t('sizingMargin'), `${state.regulateurParams.margePourcent} %`],
+      [t('currentRecommended'), `${results.regulateur.courantAvecMargeA.toFixed(1)} A`],
       ['Contrôleur choisi', state.regulateurChoisi ? `${state.regulateurChoisi.manufacturer} ${state.regulateurChoisi.model}` : '[À compléter]'],
       ['Calibre choisi', `${state.regulateurParams.calibreChoisi} A`],
       ['Calibre suffisant', results.regulateur.calibreSuffisant ? 'Oui' : 'Non — augmenter le calibre'],
@@ -177,18 +177,18 @@ export function generateReport(state: ProjectState, results: Results, language: 
     theme: 'plain',
     styles: { fontSize: 9, cellPadding: 2 },
     body: [
-      ['Longueur aller de câble', `${state.cablage.longueurAllerM} m`],
-      ['Câble choisi', state.cableChoisi ? `${state.cableChoisi.manufacturer} ${state.cableChoisi.model} (${state.cableChoisi.crossSectionMm2} mm²)` : '[À compléter]'],
-      ['Chute de tension estimée', results.chuteDeTension ? `${results.chuteDeTension.chutePourcent.toFixed(2)} % (${results.chuteDeTension.chuteVoltsV.toFixed(2)} V)` : '—'],
-      ['Calibre protection recommandé', `${results.calibreProtectionRecommandeeA.toFixed(1)} A (1,25 × Isc du champ)`],
-      ['Protection choisie', state.protectionChoisie ? `${state.protectionChoisie.manufacturer} ${state.protectionChoisie.model}` : '[À compléter]'],
+      [t('cableLength'), `${state.cablage.longueurAllerM} m`],
+      [t('cable'), state.cableChoisi ? `${state.cableChoisi.manufacturer} ${state.cableChoisi.model} (${state.cableChoisi.crossSectionMm2} mm²)` : '[—]'],
+      [t('voltageDrop'), results.chuteDeTension ? `${results.chuteDeTension.chutePourcent.toFixed(2)} % (${results.chuteDeTension.chuteVoltsV.toFixed(2)} V)` : '—'],
+      [t('recommendedProtection'), `${results.calibreProtectionRecommandeeA.toFixed(1)} A (1,25 × Isc)`],
+      [t('protection'), state.protectionChoisie ? `${state.protectionChoisie.manufacturer} ${state.protectionChoisie.model}` : '[—]'],
     ],
   });
   y = (doc as any).lastAutoTable.finalY + 24;
 
   // --- Avertissements ---
   y = ensureSpace(doc, y, 100);
-  section(doc, 'Avertissements et recommandations', marginX, y);
+  section(doc, t('warning'), marginX, y);
   y += 16;
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(9);
@@ -215,7 +215,7 @@ export function generateReport(state: ProjectState, results: Results, language: 
   doc.setFontSize(8.5);
   doc.setTextColor('#666666');
   const mention = doc.splitTextToSize(
-    'Ce rapport constitue une estimation de dimensionnement. Une validation par un professionnel qualifié est recommandée avant toute installation.',
+    t('disclaimer'),
     500
   );
   doc.text(mention, marginX, y);

@@ -4,6 +4,7 @@ import { Field, NumberInput } from './Fields';
 import { Spec } from './Fields';
 import StepHeader from './StepHeader';
 import EquipmentPicker from './EquipmentPicker';
+import { useI18n } from '../i18n';
 import { panelCatalog, type PanelCatalogItem } from '../data/catalog';
 import {
   calculerBilan,
@@ -15,6 +16,7 @@ import {
 export default function StepSolar() {
   const { state, updateSolaire, updatePanneau, updateLimites, setPanneauChoisi } = useProject();
   const navigate = useNavigate();
+  const { t } = useI18n();
 
   const bilan = calculerBilan(state.appareils);
   const puissancePvW = calculerPuissancePV(bilan.energieJourWh, state.solaire.hsp, state.solaire.rendementGlobal);
@@ -30,30 +32,30 @@ export default function StepSolar() {
 
   return (
     <div className="max-w-3xl">
-      <StepHeader num="3" titre="Paramètres solaires et champ photovoltaïque" description="La puissance PV nécessaire est calculée à partir de votre consommation quotidienne." />
+      <StepHeader num="3" titre={t('solarParams')} description={t('solarDescription')} />
 
       <div className="grid sm:grid-cols-2 gap-6 mb-8">
-        <Field label="Heures solaires de pointe (HSP)" hint="Estimation de l'énergie solaire quotidienne disponible, en heures équivalentes de plein soleil.">
+        <Field label={t('solarPeakHours')} hint={t('peakSunHint')}>
           <NumberInput value={state.solaire.hsp} min={0.1} onChange={(v) => updateSolaire({ hsp: v })} />
         </Field>
-        <Field label="Rendement global du système" hint="Pertes combinées (câblage, onduleur, température…), entre 0 et 1.">
+        <Field label={t('globalEfficiency')} hint={t('efficiencyHint')}>
           <NumberInput value={state.solaire.rendementGlobal} min={0.01} max={1} step={0.01} onChange={(v) => updateSolaire({ rendementGlobal: v })} />
         </Field>
       </div>
 
       <div className="bg-forest-100 rounded-md px-4 py-3 mb-8 text-sm">
-        Puissance PV théorique nécessaire : <span className="font-mono-num font-semibold">{isFinite(puissancePvW) ? puissancePvW.toFixed(0) : '—'} W</span>
+        {t('theoreticalPv')} : <span className="font-mono-num font-semibold">{isFinite(puissancePvW) ? puissancePvW.toFixed(0) : '—'} W</span>
         {' '}({(puissancePvW / 1000).toFixed(2)} kWc)
       </div>
 
-      <h3 className="font-display font-medium text-forest-950 mb-3">Choisir un panneau dans le catalogue</h3>
+      <h3 className="font-display font-medium text-forest-950 mb-3">{t('choosePanel')}</h3>
       <EquipmentPicker
         items={panelCatalog}
         getId={(p) => p.id}
         getLabel={(p) => `${p.manufacturer} ${p.model} — ${p.powerWp} Wc`}
         getSearchText={(p) => `${p.manufacturer} ${p.model} ${p.technology}`}
         onSelect={choisirPanneau}
-        placeholder="Rechercher une marque ou un modèle de panneau…"
+        placeholder={t('searchPanel')}
         renderDetails={(p) => (
           <dl className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-1.5 text-xs font-mono-num">
             <Spec label="Voc" value={`${p.voc} V`} />
@@ -66,10 +68,10 @@ export default function StepSolar() {
         )}
       />
       <p className="text-xs text-ink/50 mt-2 mb-8">
-        Les champs ci-dessous restent modifiables manuellement, y compris après une sélection dans le catalogue.
+        {t('editableFields')}
       </p>
 
-      <h3 className="font-display font-medium text-forest-950 mb-3">Caractéristiques du panneau</h3>
+      <h3 className="font-display font-medium text-forest-950 mb-3">{t('panelFeatures')}</h3>
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-4 mb-8">
         <Field label="Puissance (W)">
           <NumberInput value={state.panneau.puissanceW} min={1} onChange={(v) => updatePanneau({ puissanceW: v })} />
@@ -89,12 +91,12 @@ export default function StepSolar() {
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8">
-        <Stat label="Nombre de panneaux" value={dimensionnement.nombrePanneaux.toString()} />
-        <Stat label="Puissance installée" value={`${(dimensionnement.puissanceInstalleeW / 1000).toFixed(2)} kWc`} />
-        <Stat label="Écart / besoin" value={`${dimensionnement.ecartPourcent >= 0 ? '+' : ''}${dimensionnement.ecartPourcent.toFixed(1)} %`} />
+        <Stat label={t('panelCount')} value={dimensionnement.nombrePanneaux.toString()} />
+        <Stat label={t('installedPower')} value={`${(dimensionnement.puissanceInstalleeW / 1000).toFixed(2)} kWc`} />
+        <Stat label={t('gapNeed')} value={`${dimensionnement.ecartPourcent >= 0 ? '+' : ''}${dimensionnement.ecartPourcent.toFixed(1)} %`} />
       </div>
 
-      <h3 className="font-display font-medium text-forest-950 mb-3">Limites de l'onduleur / contrôleur</h3>
+      <h3 className="font-display font-medium text-forest-950 mb-3">{t('inverterLimits')}</h3>
       <p className="text-xs text-ink/55 mb-4 max-w-lg">Ces valeurs proviennent de la fiche technique de votre onduleur ou contrôleur MPPT — elles servent à valider la configuration série/parallèle.</p>
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
         <Field label="Tension PV max (V)">
@@ -112,7 +114,7 @@ export default function StepSolar() {
       </div>
 
       <div className={`rounded-md px-4 py-3 text-sm border ${config.compatible ? 'border-forest-500 bg-forest-100' : 'border-alert/50 bg-alert/10'}`}>
-        <p className="font-medium mb-1">{config.compatible ? 'Configuration compatible' : 'Aucune configuration compatible avec les paramètres saisis.'}</p>
+        <p className="font-medium mb-1">{config.compatible ? t('compatibleConfig') : t('incompatibleConfig')}</p>
         {config.totalPanneaux > 0 && (
           <p className="font-mono-num text-xs">
             {config.enSerie}S × {config.enParallele}P — Vmp {config.vmpChamp.toFixed(1)} V, Voc {config.vocChamp.toFixed(1)} V, {config.courantChamp.toFixed(1)} A, {(config.puissanceChamp / 1000).toFixed(2)} kWc
@@ -127,7 +129,7 @@ export default function StepSolar() {
           onClick={() => navigate('/dimensionnement/batterie')}
           className="bg-forest-900 disabled:bg-forest-200 disabled:text-ink/40 hover:bg-forest-700 hover:shadow-md text-white font-medium px-5 py-2.5 rounded-md transition-all"
         >
-          Continuer vers la batterie
+          {t('continueBattery')}
         </button>
       </div>
     </div>

@@ -87,7 +87,7 @@ export default function Layout() {
       )}
 
       <footer className="border-t border-forest-200 py-6 text-center text-xs text-ink/50 font-body">
-        EnerTech PV Calculator — outil d'aide au dimensionnement. Toute installation doit être validée par un professionnel qualifié.
+        {t('footer')}
       </footer>
     </div>
   );

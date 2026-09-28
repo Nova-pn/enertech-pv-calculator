@@ -3,6 +3,7 @@ import { useProject } from '../context/ProjectContext';
 import { Field, NumberInput, SelectInput, Spec } from './Fields';
 import StepHeader from './StepHeader';
 import EquipmentPicker from './EquipmentPicker';
+import { useI18n } from '../i18n';
 import { batteryCatalog, mapBatteryTechnology, type BatteryCatalogItem } from '../data/catalog';
 import { calculerBilan, calculerBesoinBatterie, trouverConfigurationBatterie } from '../engine/calculations';
 
@@ -11,6 +12,7 @@ const technologies = ['Lithium', 'AGM', 'GEL', 'Plomb', 'Autre'] as const;
 export default function StepBattery() {
   const { state, updateBatterieParams, updateBatterie, setBatterieChoisie } = useProject();
   const navigate = useNavigate();
+  const { t } = useI18n();
 
   const bilan = calculerBilan(state.appareils);
   const besoin = calculerBesoinBatterie(bilan.energieJourWh, state.batterieParams, Number(state.info.tensionSysteme));
@@ -33,27 +35,27 @@ export default function StepBattery() {
 
   return (
     <div className="max-w-3xl">
-      <StepHeader num="4" titre="Dimensionnement de la batterie" description={`Tension système : ${state.info.tensionSysteme} V.`} />
+      <StepHeader num="4" titre={t('batterySizing')} description={t('batteryDescription', { voltage: state.info.tensionSysteme })} />
 
       <div className="grid sm:grid-cols-3 gap-6 mb-8">
-        <Field label="Autonomie souhaitée (jours)">
+        <Field label={t('autonomy')}>
           <NumberInput value={state.batterieParams.autonomieJours} min={0.1} onChange={(v) => updateBatterieParams({ autonomieJours: v })} />
         </Field>
-        <Field label="Profondeur de décharge (DoD)" hint="Entre 0 et 1, ex. 0,5 pour un plomb-acide, 0,9 pour du lithium.">
+        <Field label={t('depthDischarge')} hint="Entre 0 et 1.">
           <NumberInput value={state.batterieParams.dod} min={0.01} max={1} step={0.05} onChange={(v) => updateBatterieParams({ dod: v })} />
         </Field>
-        <Field label="Rendement batterie">
+        <Field label={t('batteryEfficiency')}>
           <NumberInput value={state.batterieParams.rendementBatterie} min={0.01} max={1} step={0.01} onChange={(v) => updateBatterieParams({ rendementBatterie: v })} />
         </Field>
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-10">
-        <Stat label="Énergie nécessaire" value={`${besoin.energieBatterieKWh.toFixed(2)} kWh`} />
-        <Stat label="Capacité nécessaire" value={`${besoin.capaciteAh.toFixed(0)} Ah`} />
+        <Stat label={t('requiredEnergy')} value={`${besoin.energieBatterieKWh.toFixed(2)} kWh`} />
+        <Stat label={t('requiredCapacity')} value={`${besoin.capaciteAh.toFixed(0)} Ah`} />
         <Stat label="Sous" value={`${state.info.tensionSysteme} V`} />
       </div>
 
-      <Field label="Technologie de batterie" hint="Filtre le catalogue ci-dessous sur cette technologie uniquement.">
+      <Field label={t('batteryTechnology')} hint={t('batteryTechnology')}>
         <div className="flex flex-wrap gap-2">
           {technologies.map((t) => (
             <button
@@ -70,7 +72,7 @@ export default function StepBattery() {
         </div>
       </Field>
 
-      <h3 className="font-display font-medium text-forest-950 mb-3 mt-6">Choisir une batterie {state.batterie.technologie} dans le catalogue</h3>
+      <h3 className="font-display font-medium text-forest-950 mb-3 mt-6">{t('chooseBattery', { technology: state.batterie.technologie })}</h3>
       <EquipmentPicker
         key={state.batterie.technologie}
         items={catalogueFiltre}
@@ -78,7 +80,7 @@ export default function StepBattery() {
         getLabel={(b) => `${b.manufacturer} ${b.model} — ${b.nominalVoltage} V / ${b.nominalCapacityAh} Ah`}
         getSearchText={(b) => `${b.manufacturer} ${b.model} ${b.technology}`}
         onSelect={choisirBatterie}
-        placeholder={`Rechercher une batterie ${state.batterie.technologie}…`}
+        placeholder={`${t('search')} ${state.batterie.technologie}…`}
         renderDetails={(b) => (
           <dl className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-1.5 text-xs font-mono-num">
             <Spec label="Technologie" value={b.technology} mono={false} />
@@ -90,13 +92,13 @@ export default function StepBattery() {
         )}
       />
       {catalogueFiltre.length === 0 && (
-        <p className="text-xs text-ink/50 mt-2">Aucune batterie {state.batterie.technologie} dans le catalogue actuel.</p>
+        <p className="text-xs text-ink/50 mt-2">{t('noResults')}</p>
       )}
       <p className="text-xs text-ink/50 mt-2 mb-8">
         Le rendement n'est pas systématiquement publié par les fabricants : vérifiez-le et ajustez-le manuellement si besoin.
       </p>
 
-      <h3 className="font-display font-medium text-forest-950 mb-3">Batterie choisie</h3>
+      <h3 className="font-display font-medium text-forest-950 mb-3">{t('chosenBattery')}</h3>
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-4 mb-6">
         <Field label="Tension nominale (V)">
           <NumberInput value={state.batterie.tensionNominale} min={1} onChange={(v) => updateBatterie({ tensionNominale: v })} />
@@ -117,7 +119,7 @@ export default function StepBattery() {
 
       <div className={`rounded-md px-4 py-3 text-sm border ${config.compatible ? 'border-forest-500 bg-forest-100' : 'border-alert/50 bg-alert/10'}`}>
         <p className="font-medium mb-1">
-          {config.compatible ? 'Configuration batterie cohérente' : 'Configuration batterie à corriger'}
+          {config.compatible ? t('coherentBattery') : t('fixBattery')}
         </p>
         {config.totalBatteries > 0 && (
           <p className="font-mono-num text-xs">
@@ -133,7 +135,7 @@ export default function StepBattery() {
           onClick={() => navigate('/dimensionnement/onduleur')}
           className="bg-forest-900 disabled:bg-forest-200 disabled:text-ink/40 hover:bg-forest-700 hover:shadow-md text-white font-medium px-5 py-2.5 rounded-md transition-all"
         >
-          Continuer vers l’onduleur
+          {t('continueInverter')}
         </button>
       </div>
     </div>

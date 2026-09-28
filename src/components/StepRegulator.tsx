@@ -3,6 +3,7 @@ import { useProject } from '../context/ProjectContext';
 import { Field, NumberInput, Spec } from './Fields';
 import StepHeader from './StepHeader';
 import EquipmentPicker from './EquipmentPicker';
+import { useI18n } from '../i18n';
 import { regulatorCatalog, type RegulatorCatalogItem } from '../data/catalog';
 import { useResults } from '../engine/useResults';
 
@@ -12,6 +13,7 @@ export default function StepRegulator() {
   const { state, updateRegulateurParams, setRegulateurChoisi } = useProject();
   // Résultats calculés une seule fois, à partir des mêmes données de champ PV que la page Résultats et le PDF.
   const results = useResults(state);
+  const { t } = useI18n();
   const { configPV, dimensionnementPanneaux, regulateur: res, courantIscChampA } = results;
 
   const type = state.regulateurParams.type;
@@ -30,24 +32,21 @@ export default function StepRegulator() {
 
   return (
     <div className="max-w-2xl">
-      <StepHeader num="6" titre="Dimensionnement du contrôleur" description="Choisissez d'abord le type de contrôleur, puis un modèle dans le catalogue — la fiche du modèle s'affiche ensuite." />
+      <StepHeader num="6" titre={t('controllerSizing')} description={t('controllerDescription')} />
 
       {state.info.architectureSysteme === 'Hybride' && (
         <div className="mb-6 rounded-md px-4 py-3 text-sm border border-forest-200 bg-forest-100/60">
-          Système hybride : selon le modèle choisi à l'étape « Onduleur », la gestion du champ PV peut déjà être
-          intégrée au convertisseur hybride plutôt que confiée à un contrôleur séparé. Vérifiez la fiche technique
-          du convertisseur choisi avant de dupliquer un contrôleur externe.
+          {t('hybridNote')}
         </div>
       )}
 
       {!champDimensionne && (
         <div className="mb-6 rounded-md px-4 py-3 text-sm border border-sun-dark/50 bg-sun/10">
-          Le champ photovoltaïque n'est pas encore dimensionné (aucun panneau requis à l'étape 3). Renseignez le
-          bilan de consommation et les paramètres solaires avant de dimensionner le contrôleur.
+          {t('fieldNotSized')}
         </div>
       )}
 
-      <Field label="Type de contrôleur">
+      <Field label={t('controllerType')}>
         <div className="flex gap-2">
           {(['MPPT', 'PWM'] as const).map((t) => (
             <button
@@ -73,7 +72,7 @@ export default function StepRegulator() {
           : "Le PWM connecte le champ quasiment en direct sur la batterie : le courant recommandé se calcule à partir du courant de court-circuit (Isc) total du champ (Isc du panneau × nombre de branches parallèles), pas de la puissance."}
       </p>
 
-      <Field label="Marge de dimensionnement (%)">
+      <Field label={t('sizingMargin')}>
         <div className="max-w-[160px]">
           <NumberInput value={state.regulateurParams.margePourcent} min={0} max={200} onChange={(v) => updateRegulateurParams({ margePourcent: v })} />
         </div>
@@ -82,23 +81,23 @@ export default function StepRegulator() {
       <div className="grid grid-cols-2 gap-4 my-8">
         {!champDimensionne ? (
           <>
-            <Stat label="Courant théorique" value="Données insuffisantes" />
-            <Stat label="Courant recommandé" value="Données insuffisantes" />
+            <Stat label={t('currentTheoretical')} value={t('insufficientData')} />
+            <Stat label={t('currentRecommended')} value={t('insufficientData')} />
           </>
         ) : type === 'MPPT' ? (
           <>
-            <Stat label="Courant théorique" value={`${'courantTheoriqueA' in res ? res.courantTheoriqueA.toFixed(1) : '—'} A`} />
-            <Stat label="Courant recommandé (marge incluse)" value={`${res.courantAvecMargeA.toFixed(1)} A`} />
+            <Stat label={t('currentTheoretical')} value={`${'courantTheoriqueA' in res ? res.courantTheoriqueA.toFixed(1) : '—'} A`} />
+            <Stat label={t('currentMargin')} value={`${res.courantAvecMargeA.toFixed(1)} A`} />
           </>
         ) : (
           <>
-            <Stat label="Isc total du champ" value={`${courantIscChampA.toFixed(1)} A`} />
-            <Stat label="Courant recommandé (marge incluse)" value={`${res.courantAvecMargeA.toFixed(1)} A`} />
+            <Stat label="Isc" value={`${courantIscChampA.toFixed(1)} A`} />
+            <Stat label={t('currentMargin')} value={`${res.courantAvecMargeA.toFixed(1)} A`} />
           </>
         )}
       </div>
 
-      <h3 className="font-display font-medium text-forest-950 mb-3">Choisir un contrôleur {type} dans le catalogue</h3>
+      <h3 className="font-display font-medium text-forest-950 mb-3">{t('chooseController', { type })}</h3>
       <EquipmentPicker
         key={type}
         items={catalogueFiltre}
@@ -106,7 +105,7 @@ export default function StepRegulator() {
         getLabel={(r) => `${r.manufacturer} ${r.model} — ${r.maxChargeCurrentA} A`}
         getSearchText={(r) => `${r.manufacturer} ${r.model}`}
         onSelect={choisirRegulateur}
-        placeholder={`Rechercher un contrôleur ${type}…`}
+        placeholder={`${t('search')} ${type}…`}
         renderDetails={(r) => (
           <dl className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-1.5 text-xs font-mono-num">
             <Spec label="Courant max" value={`${r.maxChargeCurrentA} A`} />
@@ -119,7 +118,7 @@ export default function StepRegulator() {
         )}
       />
 
-      <Field label="Calibre du contrôleur (A)" hint="Préremplu par le modèle choisi dans le catalogue, modifiable.">
+      <Field label={t('controllerRating')} hint={t('controllerRating')}>
         <div className="flex flex-wrap gap-2 mt-1">
           {calibresCourants.map((c) => (
             <button
@@ -164,7 +163,7 @@ export default function StepRegulator() {
 
       <div className="mt-8 flex justify-end">
         <Link to="/dimensionnement/cablage" className="bg-forest-900 hover:bg-forest-700 hover:shadow-md text-white font-medium px-5 py-2.5 rounded-md transition-all">
-          Continuer vers le câblage
+          {t('continueCabling')}
         </Link>
       </div>
     </div>

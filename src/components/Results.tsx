@@ -52,26 +52,26 @@ export default function Results() {
 
       <div className="grid sm:grid-cols-2 gap-5 mb-8">
         <Card titre={t('energyBalance')}>
-          <BigStat value={`${(results.bilan.energieJourWh / 1000).toFixed(2)}`} unit="kWh/jour" />
-          <p className="text-xs text-ink/55 mt-2">{(results.bilan.energieMoisWh / 1000).toFixed(1)} kWh/mois · {(results.bilan.energieAnneeWh / 1000).toFixed(0)} kWh/an</p>
+          <BigStat value={`${(results.bilan.energieJourWh / 1000).toFixed(2)}`} unit={t('energyDay')} />
+          <p className="text-xs text-ink/55 mt-2">{(results.bilan.energieMoisWh / 1000).toFixed(1)} {t('energyMonth')} · {(results.bilan.energieAnneeWh / 1000).toFixed(0)} {t('energyYear')}</p>
         </Card>
 
         <Card titre={t('solar')}>
-          <BigStat value={(results.dimensionnementPanneaux.puissanceInstalleeW / 1000).toFixed(2)} unit="kWc installés" />
+          <BigStat value={(results.dimensionnementPanneaux.puissanceInstalleeW / 1000).toFixed(2)} unit={t('installedPv')} />
           <p className="text-xs text-ink/55 mt-2">
             {results.dimensionnementPanneaux.nombrePanneaux} × {state.panneau.puissanceW} W (besoin : {results.puissancePvW.toFixed(0)} W)
           </p>
         </Card>
 
         <Card titre={t('battery')}>
-          <BigStat value={results.besoinBatterie.capaciteAh.toFixed(0)} unit="Ah nécessaires" />
+          <BigStat value={results.besoinBatterie.capaciteAh.toFixed(0)} unit={t('neededAh')} />
           <p className="text-xs text-ink/55 mt-2">
             {state.batterie.technologie} — {results.configBatterie.enSerie}S × {results.configBatterie.enParallele}P
           </p>
         </Card>
 
         <Card titre={state.info.architectureSysteme === 'Hybride' ? t('hybridSizing') : t('inverter')}>
-          <BigStat value={(results.onduleur.puissanceMinRecommandeeW / 1000).toFixed(2)} unit="kW minimum" />
+          <BigStat value={(results.onduleur.puissanceMinRecommandeeW / 1000).toFixed(2)} unit={t('minimumKw')} />
           <p className="text-xs text-ink/55 mt-2">
             Nominale {(results.onduleur.puissanceContinueW / 1000).toFixed(2)} kW
             {results.onduleur.puissanceDemarrageConnue && ` — démarrage ${(results.onduleur.puissanceDemarrageTotaleW / 1000).toFixed(2)} kW`}
@@ -80,20 +80,20 @@ export default function Results() {
             {state.onduleurChoisi
               ? `${state.onduleurChoisi.manufacturer} ${state.onduleurChoisi.model}`
               : results.onduleur.aChargesDemarrage
-              ? 'Charges à démarrage important à vérifier'
-              : 'Aucune charge à démarrage signalée'}
+              ? t('importantStartup')
+              : t('noResults')}
           </p>
         </Card>
 
         <Card titre={`${t('controller')} ${state.regulateurParams.type}`}>
-          <BigStat value={results.regulateur.courantAvecMargeA.toFixed(1)} unit="A recommandés" />
+          <BigStat value={results.regulateur.courantAvecMargeA.toFixed(1)} unit={t('recommendedA')} />
           <p className="text-xs text-ink/55 mt-2">
             {state.regulateurParams.type} — Calibre choisi : {state.regulateurParams.calibreChoisi} A
             {state.regulateurChoisi && ` — ${state.regulateurChoisi.manufacturer} ${state.regulateurChoisi.model}`}
           </p>
         </Card>
 
-        <Card titre="Configuration PV">
+        <Card titre={t('compatibleConfig')}>
           <BigStat value={results.configPV.enSerie.toString()} unit="panneaux en série" />
           <p className="text-xs text-ink/55 mt-2">{results.configPV.enParallele} branche(s) en parallèle — {results.configPV.totalPanneaux} panneaux au total</p>
         </Card>
@@ -104,20 +104,20 @@ export default function Results() {
               <BigStat value={results.chuteDeTension.chutePourcent.toFixed(2)} unit="% de chute en ligne" />
             )}
             <p className="text-xs text-ink/55 mt-2">
-              {state.cableChoisi ? `Câble : ${state.cableChoisi.model}` : 'Câble non choisi'}
+              {state.cableChoisi ? `${t('cable')} : ${state.cableChoisi.model}` : `${t('cable')} — ${t('noResults')}`}
               {' — '}
-              {state.protectionChoisie ? `Protection : ${state.protectionChoisie.model}` : 'Protection non choisie'}
+              {state.protectionChoisie ? `${t('protection')} : ${state.protectionChoisie.model}` : `${t('protection')} — ${t('noResults')}`}
             </p>
-            <p className="text-xs text-ink/55 mt-1">Calibre protection recommandé : {results.calibreProtectionRecommandeeA.toFixed(1)} A</p>
+            <p className="text-xs text-ink/55 mt-1">{t('recommendedProtection')} : {results.calibreProtectionRecommandeeA.toFixed(1)} A</p>
           </Card>
         )}
       </div>
 
       {(state.panneauChoisi || state.batterieChoisie || state.onduleurChoisi) && (
         <div className="mb-8 text-xs text-ink/55 space-y-0.5">
-          {state.panneauChoisi && <p>Panneau retenu : {state.panneauChoisi.manufacturer} {state.panneauChoisi.model}</p>}
-          {state.batterieChoisie && <p>Batterie retenue : {state.batterieChoisie.manufacturer} {state.batterieChoisie.model}</p>}
-          {state.onduleurChoisi && <p>Onduleur retenu : {state.onduleurChoisi.manufacturer} {state.onduleurChoisi.model}</p>}
+          {state.panneauChoisi && <p>{t('retainedPanel')} : {state.panneauChoisi.manufacturer} {state.panneauChoisi.model}</p>}
+          {state.batterieChoisie && <p>{t('retainedBattery')} : {state.batterieChoisie.manufacturer} {state.batterieChoisie.model}</p>}
+          {state.onduleurChoisi && <p>{t('retainedInverter')} : {state.onduleurChoisi.manufacturer} {state.onduleurChoisi.model}</p>}
         </div>
       )}
 

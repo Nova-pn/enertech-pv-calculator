@@ -28,11 +28,7 @@ export default function Home() {
             <p className="text-lg sm:text-xl text-forest-100/85 mb-3">
               {t('completeTool')}
             </p>
-            <p className="text-forest-200/70 mb-10 max-w-xl leading-relaxed">
-              Dimensionnez votre installation à partir de votre consommation électrique : champ PV, batterie,
-              onduleur et contrôleur, calculés automatiquement à chaque modification, à partir de catalogues
-              d'équipements réels.
-            </p>
+            <p className="text-forest-200/70 mb-10 max-w-xl leading-relaxed">{t('heroDescription')}</p>
 
             <div className="flex flex-wrap gap-3">
               <Link
@@ -71,10 +67,7 @@ export default function Home() {
           ))}
         </div>
 
-        <div className="mt-12 border border-sun-dark/40 bg-sun/10 rounded-lg px-5 py-4 text-sm text-ink/80">
-          Les résultats fournis sont des estimations de dimensionnement et doivent être vérifiés par un professionnel
-          qualifié avant toute installation.
-        </div>
+        <div className="mt-12 border border-sun-dark/40 bg-sun/10 rounded-lg px-5 py-4 text-sm text-ink/80">{t('disclaimer')}</div>
       </section>
     </div>
   );
