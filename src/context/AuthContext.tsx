@@ -2,6 +2,8 @@ import { createContext, useContext, useEffect, useMemo, useState, type ReactNode
 import type { AuthError, Session, User } from '@supabase/supabase-js';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
 
+const AUTH_REDIRECT_URL = 'https://enertech-pv-calculator.vercel.app/';
+
 interface AuthValue {
   configured: boolean;
   loading: boolean;
@@ -52,7 +54,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
-        options: { data: { full_name: fullName || undefined }, emailRedirectTo: window.location.origin },
+        options: { data: { full_name: fullName || undefined }, emailRedirectTo: AUTH_REDIRECT_URL },
       });
       return { error, needsConfirmation: Boolean(data.user && !data.session) };
     },
