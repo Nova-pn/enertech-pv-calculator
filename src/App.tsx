@@ -11,6 +11,7 @@ import StepRegulator from './components/StepRegulator';
 import StepCabling from './components/StepCabling';
 import Results from './components/Results';
 import About from './components/About';
+import Auth from './components/Auth';
 
 export default function App() {
   return (
@@ -28,6 +29,7 @@ export default function App() {
             <Route path="dimensionnement/cablage" element={<StepCabling />} />
             <Route path="resultats" element={<Results />} />
             <Route path="a-propos" element={<About />} />
+            <Route path="auth" element={<Auth />} />
           </Route>
         </Routes>
       </HashRouter>

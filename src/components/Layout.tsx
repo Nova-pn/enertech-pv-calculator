@@ -1,10 +1,12 @@
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import LogoMark from './LogoMark';
 import { languages, useI18n } from '../i18n';
+import { useAuth } from '../context/AuthContext';
 
 export default function Layout() {
   const location = useLocation();
   const { language, setLanguage, t } = useI18n();
+  const { user, signOut } = useAuth();
   const dansLeWizard = location.pathname.startsWith('/dimensionnement') || location.pathname === '/resultats';
 
   const translatedSteps = [
@@ -42,6 +44,13 @@ export default function Layout() {
             <NavLink to="/a-propos" className={({ isActive }) => (isActive ? 'text-sun font-medium' : 'text-forest-200 hover:text-white transition-colors')}>
               {t('about')}
             </NavLink>
+            {user ? (
+              <button type="button" onClick={() => void signOut()} className="text-forest-200 hover:text-white transition-colors" title={user.email ?? ''}>{t('signOut')}</button>
+            ) : (
+              <NavLink to="/auth" className={({ isActive }) => (isActive ? 'text-sun font-medium' : 'text-forest-200 hover:text-white transition-colors')}>
+                {t('account')}
+              </NavLink>
+            )}
             <label className="inline-flex items-center gap-1.5 text-forest-100/80" title={t('language')}>
               <span aria-hidden="true">{languages.find((item) => item.value === language)?.flag}</span>
               <select aria-label={t('language')} value={language} onChange={(event) => setLanguage(event.target.value as typeof language)} className="bg-forest-900 border border-forest-700 rounded px-1.5 py-1 text-xs text-white">
