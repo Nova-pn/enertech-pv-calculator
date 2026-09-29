@@ -4,6 +4,7 @@ import { Field, NumberInput, SelectInput, Spec } from './Fields';
 import StepHeader from './StepHeader';
 import EquipmentPicker from './EquipmentPicker';
 import { useI18n } from '../i18n';
+import { localizeCalculationText } from '../i18n/localize';
 import { batteryCatalog, mapBatteryTechnology, type BatteryCatalogItem } from '../data/catalog';
 import { calculerBilan, calculerBesoinBatterie, trouverConfigurationBatterie } from '../engine/calculations';
 
@@ -12,7 +13,7 @@ const technologies = ['Lithium', 'AGM', 'GEL', 'Plomb', 'Autre'] as const;
 export default function StepBattery() {
   const { state, updateBatterieParams, updateBatterie, setBatterieChoisie } = useProject();
   const navigate = useNavigate();
-  const { t } = useI18n();
+  const { language, t } = useI18n();
 
   const bilan = calculerBilan(state.appareils);
   const besoin = calculerBesoinBatterie(bilan.energieJourWh, state.batterieParams, Number(state.info.tensionSysteme));
@@ -52,7 +53,7 @@ export default function StepBattery() {
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-10">
         <Stat label={t('requiredEnergy')} value={`${besoin.energieBatterieKWh.toFixed(2)} kWh`} />
         <Stat label={t('requiredCapacity')} value={`${besoin.capaciteAh.toFixed(0)} Ah`} />
-        <Stat label="Sous" value={`${state.info.tensionSysteme} V`} />
+        <Stat label={t('under')} value={`${state.info.tensionSysteme} V`} />
       </div>
 
       <Field label={t('batteryTechnology')} hint={t('batteryTechnology')}>
@@ -83,9 +84,9 @@ export default function StepBattery() {
         placeholder={`${t('search')} ${state.batterie.technologie}…`}
         renderDetails={(b) => (
           <dl className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-1.5 text-xs font-mono-num">
-            <Spec label="Technologie" value={b.technology} mono={false} />
+            <Spec label={t('technology')} value={b.technology} mono={false} />
             <Spec label="DoD max" value={`${b.maxDoD} %`} />
-            <Spec label="Énergie nominale" value={b.nominalEnergyKWh ? `${b.nominalEnergyKWh} kWh` : '—'} />
+            <Spec label={t('nominalEnergy')} value={b.nominalEnergyKWh ? `${b.nominalEnergyKWh} kWh` : '—'} />
             <Spec label="Cycles" value={b.cycleLife ? `${b.cycleLife}` : '—'} />
             <Spec label="Poids" value={b.weightKg ? `${b.weightKg} kg` : '—'} />
           </dl>
@@ -95,24 +96,24 @@ export default function StepBattery() {
         <p className="text-xs text-ink/50 mt-2">{t('noResults')}</p>
       )}
       <p className="text-xs text-ink/50 mt-2 mb-8">
-        Le rendement n'est pas systématiquement publié par les fabricants : vérifiez-le et ajustez-le manuellement si besoin.
+        {t('batteryEfficiencyNote')}
       </p>
 
       <h3 className="font-display font-medium text-forest-950 mb-3">{t('chosenBattery')}</h3>
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-4 mb-6">
-        <Field label="Tension nominale (V)">
+        <Field label={t('batteryVoltage')}>
           <NumberInput value={state.batterie.tensionNominale} min={1} onChange={(v) => updateBatterie({ tensionNominale: v })} />
         </Field>
-        <Field label="Capacité (Ah)">
+        <Field label={t('batteryCapacity')}>
           <NumberInput value={state.batterie.capaciteAh} min={1} onChange={(v) => updateBatterie({ capaciteAh: v })} />
         </Field>
-        <Field label="Technologie">
+        <Field label={t('technology')}>
           <SelectInput value={state.batterie.technologie} onChange={(v) => updateBatterie({ technologie: v })} options={technologies} />
         </Field>
-        <Field label="DoD recommandé">
+        <Field label={t('recommendedDod')}>
           <NumberInput value={state.batterie.dodRecommande} min={0.01} max={1} step={0.05} onChange={(v) => updateBatterie({ dodRecommande: v })} />
         </Field>
-        <Field label="Rendement">
+        <Field label={t('efficiency')}>
           <NumberInput value={state.batterie.rendement} min={0.01} max={1} step={0.01} onChange={(v) => updateBatterie({ rendement: v })} />
         </Field>
       </div>
@@ -123,10 +124,10 @@ export default function StepBattery() {
         </p>
         {config.totalBatteries > 0 && (
           <p className="font-mono-num text-xs">
-            {config.enSerie}S × {config.enParallele}P = {config.totalBatteries} batterie(s) — {config.tensionTotale} V, {config.capaciteTotaleAh.toFixed(0)} Ah, {(config.energieUtilisableWh / 1000).toFixed(2)} kWh utilisables
+            {config.enSerie}S × {config.enParallele}P = {config.totalBatteries} {t('batteries')} — {config.tensionTotale} V, {config.capaciteTotaleAh.toFixed(0)} Ah, {(config.energieUtilisableWh / 1000).toFixed(2)} kWh {t('usable')}
           </p>
         )}
-        {!config.compatible && config.raisons.map((r, i) => <p key={i} className="text-xs mt-1">{r}</p>)}
+        {!config.compatible && config.raisons.map((r, i) => <p key={i} className="text-xs mt-1">{localizeCalculationText(language, r)}</p>)}
       </div>
 
       <div className="mt-8 flex justify-end">

@@ -68,8 +68,8 @@ export default function StepRegulator() {
 
       <p className="text-xs text-ink/55 mt-2 mb-6 max-w-lg leading-relaxed">
         {type === 'MPPT'
-          ? 'Le MPPT convertit la puissance du champ : le courant recommandé se calcule à partir de la puissance PV installée et de la tension système.'
-          : "Le PWM connecte le champ quasiment en direct sur la batterie : le courant recommandé se calcule à partir du courant de court-circuit (Isc) total du champ (Isc du panneau × nombre de branches parallèles), pas de la puissance."}
+          ? t('mpptExplanation')
+          : t('pwmExplanation')}
       </p>
 
       <Field label={t('sizingMargin')}>
@@ -108,12 +108,12 @@ export default function StepRegulator() {
         placeholder={`${t('search')} ${type}…`}
         renderDetails={(r) => (
           <dl className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-1.5 text-xs font-mono-num">
-            <Spec label="Courant max" value={`${r.maxChargeCurrentA} A`} />
-            <Spec label="Tension PV max" value={r.maxPvVoltageV != null ? `${r.maxPvVoltageV} V` : r.maxPvVoltageVRaw || '—'} />
-            <Spec label="Tension batterie" value={r.batteryVoltage || '—'} mono={false} />
-            <Spec label="Rendement max" value={r.maxEfficiencyPct ? `${r.maxEfficiencyPct} %` : '—'} />
-            <Spec label="Poids" value={r.weightKg ? `${r.weightKg} kg` : '—'} />
-            <Spec label="Vérification" value={r.verificationLevel || '—'} mono={false} />
+            <Spec label={t('maxCurrent')} value={`${r.maxChargeCurrentA} A`} />
+            <Spec label={t('pvMaxVoltage')} value={r.maxPvVoltageV != null ? `${r.maxPvVoltageV} V` : r.maxPvVoltageVRaw || '—'} />
+            <Spec label={t('batteryVoltage')} value={r.batteryVoltage || '—'} mono={false} />
+            <Spec label={t('maxEfficiency')} value={r.maxEfficiencyPct ? `${r.maxEfficiencyPct} %` : '—'} />
+            <Spec label={t('weight')} value={r.weightKg ? `${r.weightKg} kg` : '—'} />
+            <Spec label={t('verification')} value={r.verificationLevel || '—'} mono={false} />
           </dl>
         )}
       />
@@ -136,28 +136,27 @@ export default function StepRegulator() {
 
       <div className={`mt-6 rounded-md px-4 py-3 text-sm border ${!champDimensionne ? 'border-sun-dark/50 bg-sun/10' : res.calibreSuffisant ? 'border-forest-500 bg-forest-100' : 'border-alert/50 bg-alert/10'}`}>
         {!champDimensionne
-          ? 'Données insuffisantes pour vérifier la compatibilité du calibre : dimensionnez d\'abord le champ PV.'
+          ? t('insufficientRating')
           : res.calibreSuffisant
-          ? `Le calibre de ${state.regulateurParams.calibreChoisi} A couvre le courant recommandé.`
-          : `Le calibre de ${state.regulateurParams.calibreChoisi} A est insuffisant face au courant recommandé de ${res.courantAvecMargeA.toFixed(1)} A. Choisissez un calibre supérieur.`}
+          ? t('ratingSufficient', { rating: state.regulateurParams.calibreChoisi })
+          : t('ratingInsufficient', { rating: state.regulateurParams.calibreChoisi, current: res.courantAvecMargeA.toFixed(1) })}
       </div>
 
       {choisi && (
         <div className={`mt-3 rounded-md px-4 py-3 text-sm border ${tensionChoisieDisponible ? (tensionCompatible ? 'border-forest-500 bg-forest-100' : 'border-alert/50 bg-alert/10') : 'border-forest-200 bg-forest-100/40'}`}>
           {!champDimensionne
-            ? 'Données insuffisantes pour vérifier la compatibilité de tension.'
+            ? t('voltageInsufficient')
             : !tensionChoisieDisponible
-            ? 'Données insuffisantes pour vérifier la compatibilité de tension : la fiche de ce modèle ne fournit pas de tension PV maximale exploitable.'
+            ? t('voltageUnavailable')
             : tensionCompatible
-            ? `Tension d'entrée du contrôleur (${choisi.maxPvVoltageV} V) compatible avec la Voc du champ (${configPV.vocChamp.toFixed(1)} V).`
-            : `Tension d'entrée du contrôleur (${choisi.maxPvVoltageV} V) insuffisante face à la Voc du champ (${configPV.vocChamp.toFixed(1)} V).`}
+            ? t('voltageCompatible', { controller: choisi.maxPvVoltageV ?? 0, voc: configPV.vocChamp.toFixed(1) })
+            : t('voltageIncompatible', { controller: choisi.maxPvVoltageV ?? 0, voc: configPV.vocChamp.toFixed(1) })}
         </div>
       )}
 
       {type === 'MPPT' && (
         <p className="text-xs text-ink/55 mt-4 max-w-lg leading-relaxed">
-          Vérifiez également, sur la fiche technique du contrôleur, sa plage de tension MPPT face à la Vmp du champ
-          ({configPV.vmpChamp.toFixed(1)} V) — cette plage n'est pas toujours publiée par les fabricants.
+          {t('controllerMpptHint', { vmp: configPV.vmpChamp.toFixed(1) })}
         </p>
       )}
 

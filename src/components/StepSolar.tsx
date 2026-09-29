@@ -5,6 +5,7 @@ import { Spec } from './Fields';
 import StepHeader from './StepHeader';
 import EquipmentPicker from './EquipmentPicker';
 import { useI18n } from '../i18n';
+import { localizeCalculationText } from '../i18n/localize';
 import { panelCatalog, type PanelCatalogItem } from '../data/catalog';
 import {
   calculerBilan,
@@ -16,7 +17,7 @@ import {
 export default function StepSolar() {
   const { state, updateSolaire, updatePanneau, updateLimites, setPanneauChoisi } = useProject();
   const navigate = useNavigate();
-  const { t } = useI18n();
+  const { language, t } = useI18n();
 
   const bilan = calculerBilan(state.appareils);
   const puissancePvW = calculerPuissancePV(bilan.energieJourWh, state.solaire.hsp, state.solaire.rendementGlobal);
@@ -62,7 +63,7 @@ export default function StepSolar() {
             <Spec label="Vmp" value={`${p.vmp} V`} />
             <Spec label="Isc" value={`${p.isc} A`} />
             <Spec label="Imp" value={`${p.imp} A`} />
-            <Spec label="Technologie" value={p.technology} mono={false} />
+            <Spec label={t('technology')} value={p.technology} mono={false} />
             <Spec label="Poids" value={p.weightKg ? `${p.weightKg} kg` : '—'} />
           </dl>
         )}
@@ -73,7 +74,7 @@ export default function StepSolar() {
 
       <h3 className="font-display font-medium text-forest-950 mb-3">{t('panelFeatures')}</h3>
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-4 mb-8">
-        <Field label="Puissance (W)">
+        <Field label={t('editablePanelPower')}>
           <NumberInput value={state.panneau.puissanceW} min={1} onChange={(v) => updatePanneau({ puissanceW: v })} />
         </Field>
         <Field label="Voc (V)">
@@ -97,9 +98,9 @@ export default function StepSolar() {
       </div>
 
       <h3 className="font-display font-medium text-forest-950 mb-3">{t('inverterLimits')}</h3>
-      <p className="text-xs text-ink/55 mb-4 max-w-lg">Ces valeurs proviennent de la fiche technique de votre onduleur ou contrôleur MPPT — elles servent à valider la configuration série/parallèle.</p>
+      <p className="text-xs text-ink/55 mb-4 max-w-lg">{t('inverterLimitsNote')}</p>
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-        <Field label="Tension PV max (V)">
+        <Field label={t('pvMaxVoltage')}>
           <NumberInput value={state.limites.tensionPvMax} min={0} onChange={(v) => updateLimites({ tensionPvMax: v })} />
         </Field>
         <Field label="MPPT min (V)">
@@ -108,7 +109,7 @@ export default function StepSolar() {
         <Field label="MPPT max (V)">
           <NumberInput value={state.limites.tensionMpptMax} min={0} onChange={(v) => updateLimites({ tensionMpptMax: v })} />
         </Field>
-        <Field label="Courant PV max (A)">
+        <Field label={t('pvMaxCurrent')}>
           <NumberInput value={state.limites.courantPvMax} min={0} onChange={(v) => updateLimites({ courantPvMax: v })} />
         </Field>
       </div>
@@ -120,7 +121,7 @@ export default function StepSolar() {
             {config.enSerie}S × {config.enParallele}P — Vmp {config.vmpChamp.toFixed(1)} V, Voc {config.vocChamp.toFixed(1)} V, {config.courantChamp.toFixed(1)} A, {(config.puissanceChamp / 1000).toFixed(2)} kWc
           </p>
         )}
-        {!config.compatible && config.raisons.map((r, i) => <p key={i} className="text-xs mt-1">{r}</p>)}
+        {!config.compatible && config.raisons.map((r, i) => <p key={i} className="text-xs mt-1">{localizeCalculationText(language, r)}</p>)}
       </div>
 
       <div className="mt-8 flex justify-end">

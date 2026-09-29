@@ -1,4 +1,5 @@
 import { useMemo, useState, type ReactNode } from 'react';
+import { useI18n } from '../i18n';
 
 interface EquipmentPickerProps<T> {
   items: T[];
@@ -23,6 +24,7 @@ export default function EquipmentPicker<T>({
   renderDetails,
   placeholder = 'Rechercher un modèle…',
 }: EquipmentPickerProps<T>) {
+  const { t } = useI18n();
   const [query, setQuery] = useState('');
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
@@ -51,7 +53,7 @@ export default function EquipmentPicker<T>({
         />
         {open && (
           <div className="absolute z-20 mt-1 w-full max-h-64 overflow-auto rounded-md border border-forest-200 bg-white shadow-lg">
-            {filtered.length === 0 && <p className="px-3 py-2 text-sm text-ink/50">Aucun résultat.</p>}
+            {filtered.length === 0 && <p className="px-3 py-2 text-sm text-ink/50">{t('noResults')}</p>}
             {filtered.map((item) => (
               <button
                 key={getId(item)}
@@ -72,7 +74,7 @@ export default function EquipmentPicker<T>({
       </div>
       {open && (
         <button type="button" className="text-xs text-ink/50 mt-1 hover:underline" onClick={() => setOpen(false)}>
-          Fermer la liste
+          {t('closeList')}
         </button>
       )}
 
@@ -85,7 +87,7 @@ export default function EquipmentPicker<T>({
               className="text-xs text-alert hover:underline"
               onClick={() => setSelectedId(null)}
             >
-              Retirer
+              {t('remove')}
             </button>
           </div>
           {renderDetails(selected)}

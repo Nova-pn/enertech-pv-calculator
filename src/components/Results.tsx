@@ -4,6 +4,7 @@ import { useResults } from '../engine/useResults';
 import { generateReport } from '../pdf/generateReport';
 import type { NiveauValidation } from '../types';
 import { useI18n } from '../i18n';
+import { localizeWarning } from '../i18n/localize';
 
 const badgeStyles: Record<NiveauValidation, string> = {
   vert: 'bg-forest-100 text-forest-900 border-forest-500',
@@ -59,7 +60,7 @@ export default function Results() {
         <Card titre={t('solar')}>
           <BigStat value={(results.dimensionnementPanneaux.puissanceInstalleeW / 1000).toFixed(2)} unit={t('installedPv')} />
           <p className="text-xs text-ink/55 mt-2">
-            {results.dimensionnementPanneaux.nombrePanneaux} × {state.panneau.puissanceW} W (besoin : {results.puissancePvW.toFixed(0)} W)
+            {results.dimensionnementPanneaux.nombrePanneaux} × {state.panneau.puissanceW} W ({t('need')}: {results.puissancePvW.toFixed(0)} W)
           </p>
         </Card>
 
@@ -73,8 +74,8 @@ export default function Results() {
         <Card titre={state.info.architectureSysteme === 'Hybride' ? t('hybridSizing') : t('inverter')}>
           <BigStat value={(results.onduleur.puissanceMinRecommandeeW / 1000).toFixed(2)} unit={t('minimumKw')} />
           <p className="text-xs text-ink/55 mt-2">
-            Nominale {(results.onduleur.puissanceContinueW / 1000).toFixed(2)} kW
-            {results.onduleur.puissanceDemarrageConnue && ` — démarrage ${(results.onduleur.puissanceDemarrageTotaleW / 1000).toFixed(2)} kW`}
+            {t('nominal')} {(results.onduleur.puissanceContinueW / 1000).toFixed(2)} kW
+            {results.onduleur.puissanceDemarrageConnue && ` — ${t('startup')} ${(results.onduleur.puissanceDemarrageTotaleW / 1000).toFixed(2)} kW`}
           </p>
           <p className="text-xs text-ink/55 mt-1">
             {state.onduleurChoisi
@@ -88,14 +89,14 @@ export default function Results() {
         <Card titre={`${t('controller')} ${state.regulateurParams.type}`}>
           <BigStat value={results.regulateur.courantAvecMargeA.toFixed(1)} unit={t('recommendedA')} />
           <p className="text-xs text-ink/55 mt-2">
-            {state.regulateurParams.type} — Calibre choisi : {state.regulateurParams.calibreChoisi} A
+            {state.regulateurParams.type} — {t('selectedRating')}: {state.regulateurParams.calibreChoisi} A
             {state.regulateurChoisi && ` — ${state.regulateurChoisi.manufacturer} ${state.regulateurChoisi.model}`}
           </p>
         </Card>
 
         <Card titre={t('compatibleConfig')}>
-          <BigStat value={results.configPV.enSerie.toString()} unit="panneaux en série" />
-          <p className="text-xs text-ink/55 mt-2">{results.configPV.enParallele} branche(s) en parallèle — {results.configPV.totalPanneaux} panneaux au total</p>
+          <BigStat value={results.configPV.enSerie.toString()} unit={t('panelsInSeries')} />
+          <p className="text-xs text-ink/55 mt-2">{results.configPV.enParallele} {t('branchesInParallel')} — {results.configPV.totalPanneaux} {t('panelsTotal')}</p>
         </Card>
 
         {(state.cableChoisi || state.protectionChoisie) && (
@@ -125,20 +126,21 @@ export default function Results() {
       <div className="space-y-2">
         {results.avertissements.map((av, i) => (
           <div key={i} className={`border-l-4 rounded-md px-4 py-3 text-sm ${badgeStyles[av.niveau]}`}>
+            {(() => { const localized = localizeWarning(language, av.titre, av.explication); return (<>
             <div className="flex items-center gap-2 mb-1">
               <span className="text-[10px] font-mono-num uppercase tracking-wide px-1.5 py-0.5 rounded border border-current">
                 {av.niveau === 'vert' ? 'OK' : av.niveau === 'orange' ? t('insufficient') : t('incompatibleConfig')}
               </span>
-              <span className="font-medium">{av.titre}</span>
+              <span className="font-medium">{localized.title}</span>
             </div>
-            <p className="text-xs leading-relaxed opacity-90">{av.explication}</p>
+            <p className="text-xs leading-relaxed opacity-90">{localized.explanation}</p>
+            </>); })()}
           </div>
         ))}
       </div>
 
       <div className="mt-10 border border-sun-dark/40 bg-sun/10 rounded-md px-4 py-3 text-sm text-ink/80">
-        Les résultats fournis sont des estimations de dimensionnement et doivent être vérifiés par un professionnel
-        qualifié avant toute installation.
+        {t('resultsDisclaimer')}
       </div>
     </div>
   );

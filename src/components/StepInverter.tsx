@@ -14,7 +14,7 @@ export default function StepInverter() {
   const res = calculerOnduleur(state.appareils, state.onduleurParams.margePourcent);
 
   const hybride = state.info.architectureSysteme === 'Hybride';
-  const titreEquipement = hybride ? 'convertisseur hybride' : 'onduleur';
+  const titreEquipement = hybride ? t('hybridConverter') : t('inverter');
   const catalogueFiltre = hybride
     ? inverterCatalog.filter((o) => o.type.toLowerCase().includes('hybrid'))
     : inverterCatalog;
@@ -56,19 +56,16 @@ export default function StepInverter() {
         {t('recommendedMinimum')} : <span className="font-mono-num font-semibold">{(res.puissanceMinRecommandeeW / 1000).toFixed(2)} kW</span>
         <p className="text-xs text-ink/60 mt-1">
           {res.puissanceDemarrageConnue
-            ? 'Maximum entre la puissance nominale (avec marge) et la puissance de démarrage totale : la puissance de démarrage renseignée ne remplace jamais la puissance nominale, elle est comparée à elle.'
-            : "Basée uniquement sur la puissance nominale (avec marge) — aucune puissance de démarrage n'a été renseignée pour l'instant."}
+            ? t('startupCompared')
+            : t('startupOnlyNominal')}
         </p>
       </div>
 
       {res.aChargesDemarrage && (
         <div className="rounded-md px-4 py-3 text-sm border border-sun-dark/50 bg-sun/10 mb-6">
-          <p className="font-medium mb-1">Charges à démarrage important signalées</p>
+          <p className="font-medium mb-1">{t('importantLoads')}</p>
           <p className="text-xs leading-relaxed">
-            Un ou plusieurs appareils (réfrigérateur, congélateur, pompe, moteur, climatiseur…) sont marqués comme
-            ayant un démarrage important. {res.puissanceDemarrageConnue
-              ? 'Leur puissance de démarrage chiffrée est prise en compte ci-dessus.'
-              : "Aucune valeur chiffrée n'a été renseignée pour ces appareils : la vérification ci-dessus ne porte que sur la puissance nominale. Renseignez leur puissance de démarrage si vous la connaissez."}
+            {t('importantLoadsText')}
           </p>
         </div>
       )}
@@ -84,12 +81,12 @@ export default function StepInverter() {
         renderDetails={(o) => (
           <dl className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-1.5 text-xs font-mono-num">
             <Spec label="Type" value={o.type} mono={false} />
-            <Spec label="P. nominale" value={`${(o.nominalPowerW / 1000).toFixed(2)} kW`} />
-            <Spec label="P. AC max" value={o.maxAcPowerW ? `${(o.maxAcPowerW / 1000).toFixed(2)} kW` : '—'} />
-            <Spec label="P. PV max" value={o.maxPvPowerW ? `${(o.maxPvPowerW / 1000).toFixed(2)} kWc` : '—'} />
-            <Spec label="Entrées MPPT" value={o.mpptCount ? `${o.mpptCount}` : '—'} />
-            <Spec label="Tension DC max" value={o.maxDcVoltage ? `${o.maxDcVoltage} V` : '—'} />
-            {hybride && <Spec label="Plage tension batterie" value={o.batteryVoltageRange || '—'} mono={false} />}
+            <Spec label={t('nominalPowerShort')} value={`${(o.nominalPowerW / 1000).toFixed(2)} kW`} />
+            <Spec label={t('maxAcPower')} value={o.maxAcPowerW ? `${(o.maxAcPowerW / 1000).toFixed(2)} kW` : '—'} />
+            <Spec label={t('maxPvPower')} value={o.maxPvPowerW ? `${(o.maxPvPowerW / 1000).toFixed(2)} kWc` : '—'} />
+            <Spec label={t('mpptInputs')} value={o.mpptCount ? `${o.mpptCount}` : '—'} />
+            <Spec label={t('maxDcVoltage')} value={o.maxDcVoltage ? `${o.maxDcVoltage} V` : '—'} />
+            {hybride && <Spec label={t('batteryVoltageRange')} value={o.batteryVoltageRange || '—'} mono={false} />}
           </dl>
         )}
       />
@@ -104,8 +101,8 @@ export default function StepInverter() {
           }`}
         >
           {puissanceSuffisante
-            ? `La puissance nominale de ${choisi.model} (${(choisi.nominalPowerW / 1000).toFixed(2)} kW) couvre le besoin recommandé.`
-            : `La puissance nominale de ${choisi.model} (${(choisi.nominalPowerW / 1000).toFixed(2)} kW) est inférieure à la puissance minimale recommandée (${(res.puissanceMinRecommandeeW / 1000).toFixed(2)} kW).`}
+            ? t('inverterSufficient', { model: choisi.model, power: (choisi.nominalPowerW / 1000).toFixed(2) })
+            : t('inverterInsufficient', { model: choisi.model, power: (choisi.nominalPowerW / 1000).toFixed(2), minimum: (res.puissanceMinRecommandeeW / 1000).toFixed(2) })}
         </div>
       )}
 

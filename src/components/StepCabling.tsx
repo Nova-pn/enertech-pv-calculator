@@ -62,7 +62,7 @@ export default function StepCabling() {
         <Stat label={t('recommendedProtection')} value={champDimensionne ? `${calibreProtectionRecommandeeA.toFixed(1)} A` : t('insufficientData')} />
       </div>
       <p className="text-xs text-ink/55 -mt-4 mb-8">
-        Isc du champ = Isc du panneau × nombre de branches parallèles ({configPV.enParallele || '—'}). Calibre recommandé = 1,25 × Isc du champ.
+        {t('voltageArrayNote', { parallel: configPV.enParallele || '—' })}
       </p>
 
       <h3 className="font-display font-medium text-forest-950 mb-3">{t('cable')}</h3>
@@ -81,13 +81,13 @@ export default function StepCabling() {
         ) : (
           <>
             <p>
-              Section théorique (S = 2×L×I×ρ/ΔV, ρ cuivre = {RESISTIVITE_CUIVRE_OHM_MM2_PAR_M} Ω·mm²/m) :{' '}
+              {t('theoreticalSectionText', { resistivity: RESISTIVITE_CUIVRE_OHM_MM2_PAR_M })}{' '}
               <span className="font-mono-num font-medium">{sectionTheorique.toFixed(2)} mm²</span>
             </p>
             <p className="mt-1">
-              Section normalisée recommandée dans le catalogue :{' '}
+              {t('catalogRecommended')}{' '}
               <span className="font-mono-num font-medium">
-                {cableRecommande ? `${cableRecommande.crossSectionMm2} mm² (${cableRecommande.manufacturer} ${cableRecommande.model})` : 'aucune section du catalogue ne couvre ce besoin'}
+                {cableRecommande ? `${cableRecommande.crossSectionMm2} mm² (${cableRecommande.manufacturer} ${cableRecommande.model})` : t('noCableCovers')}
               </span>
             </p>
           </>
@@ -103,22 +103,22 @@ export default function StepCabling() {
         placeholder={t('chooseCable')}
         renderDetails={(c) => (
           <dl className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-1.5 text-xs font-mono-num">
-            <Spec label="Section" value={`${c.crossSectionMm2} mm²`} />
-            <Spec label="Résistance" value={`${c.resistanceOhmPerKm} Ω/km`} />
-            <Spec label="Courant admissible" value={`${c.currentCarryingCapacityA} A`} />
-            <Spec label="Tension DC max" value={`${c.maxVoltageDcV} V`} />
-            <Spec label="Norme" value={c.standard || '—'} mono={false} />
+            <Spec label={t('section')} value={`${c.crossSectionMm2} mm²`} />
+            <Spec label={t('resistance')} value={`${c.resistanceOhmPerKm} Ω/km`} />
+            <Spec label={t('allowableCurrent')} value={`${c.currentCarryingCapacityA} A`} />
+            <Spec label={t('maxDcVoltage')} value={`${c.maxVoltageDcV} V`} />
+            <Spec label={t('standard')} value={c.standard || '—'} mono={false} />
           </dl>
         )}
       />
 
       {chute && (
         <div className={`mt-4 rounded-md px-4 py-3 text-sm border ${chute.acceptable ? 'border-forest-500 bg-forest-100' : 'border-sun-dark/50 bg-sun/10'}`}>
-          Chute de tension estimée pour le câble choisi : <span className="font-mono-num font-medium">{chute.chutePourcent.toFixed(2)} %</span> ({chute.chuteVoltsV.toFixed(2)} V)
-          {!chute.acceptable && ' — au-dessus du seuil visé, augmentez la section ou réduisez la longueur.'}
+          {t('cableDropText')} <span className="font-mono-num font-medium">{chute.chutePourcent.toFixed(2)} %</span> ({chute.chuteVoltsV.toFixed(2)} V)
+          {!chute.acceptable && ` — ${t('aboveTarget')}`}
           {state.cableChoisi && courantIscChampA > state.cableChoisi.currentCarryingCapacityA && (
             <p className="mt-1 text-alert">
-              Le courant du champ ({courantIscChampA.toFixed(1)} A) dépasse le courant admissible de ce câble ({state.cableChoisi.currentCarryingCapacityA} A).
+              {t('cableOverload', { current: courantIscChampA.toFixed(1), max: state.cableChoisi.currentCarryingCapacityA })}
             </p>
           )}
         </div>
@@ -130,9 +130,9 @@ export default function StepCabling() {
           <p>{t('insufficientData')}</p>
         ) : (
           <p>
-            Protection recommandée dans le catalogue :{' '}
+            {t('protectionCatalog')}{' '}
             <span className="font-mono-num font-medium">
-              {protectionRecommandee ? `${protectionRecommandee.manufacturer} ${protectionRecommandee.model} (${protectionRecommandee.ratedCurrentARaw} A)` : 'aucune protection du catalogue ne couvre ce calibre'}
+              {protectionRecommandee ? `${protectionRecommandee.manufacturer} ${protectionRecommandee.model} (${protectionRecommandee.ratedCurrentARaw} A)` : t('noProtectionCovers')}
             </span>
           </p>
         )}
@@ -147,11 +147,11 @@ export default function StepCabling() {
         placeholder={t('chooseProtection')}
         renderDetails={(p) => (
           <dl className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-1.5 text-xs font-mono-num">
-            <Spec label="Plage de calibre" value={p.ratedCurrentARaw ? `${p.ratedCurrentARaw} A` : '—'} />
-            <Spec label="Tension DC max" value={`${p.ratedVoltageDcV} V`} />
-            <Spec label="Pouvoir de coupure" value={p.breakingCapacitykA ? `${p.breakingCapacitykA} kA` : '—'} />
-            <Spec label="Pôles" value={p.poles ? `${p.poles}` : '—'} />
-            <Spec label="Norme" value={p.standard || '—'} mono={false} />
+            <Spec label={t('ratingRange')} value={p.ratedCurrentARaw ? `${p.ratedCurrentARaw} A` : '—'} />
+            <Spec label={t('maxDcVoltage')} value={`${p.ratedVoltageDcV} V`} />
+            <Spec label={t('breakingCapacity')} value={p.breakingCapacitykA ? `${p.breakingCapacitykA} kA` : '—'} />
+            <Spec label={t('poles')} value={p.poles ? `${p.poles}` : '—'} />
+            <Spec label={t('standard')} value={p.standard || '—'} mono={false} />
           </dl>
         )}
       />
@@ -159,11 +159,11 @@ export default function StepCabling() {
       {protectionChoisie && (
         <div className={`mt-4 rounded-md px-4 py-3 text-sm border ${courantOk && tensionOk ? 'border-forest-500 bg-forest-100' : 'border-alert/50 bg-alert/10'}`}>
           {courantOk && tensionOk
-            ? 'Cette protection couvre le calibre recommandé et la tension du champ.'
-            : 'Vérifiez cette protection : ' +
+            ? t('protectionOk')
+            : t('protectionCheck') + ' ' +
               [
-                !courantOk && 'le calibre recommandé sort de sa plage réglable',
-                !tensionOk && `sa tension admissible (${protectionChoisie.ratedVoltageDcV} V) est inférieure à la Voc du champ (${configPV.vocChamp.toFixed(1)} V)`,
+                !courantOk && t('protectionCurrentIssue'),
+                !tensionOk && t('protectionVoltageIssue', { voltage: protectionChoisie.ratedVoltageDcV, voc: configPV.vocChamp.toFixed(1) }),
               ]
                 .filter(Boolean)
                 .join(' et ') +
