@@ -60,7 +60,18 @@ export default function Auth() {
         <label className="block text-sm"><span className="block mb-1 font-medium">{t('email')}</span><input required type="email" value={email} onChange={(event) => setEmail(event.target.value)} className="w-full border border-forest-200 rounded-md px-3 py-2.5" autoComplete="email" /></label>
         <label className="block text-sm"><span className="block mb-1 font-medium">{t('password')}</span><input required minLength={6} type="password" value={password} onChange={(event) => setPassword(event.target.value)} className="w-full border border-forest-200 rounded-md px-3 py-2.5" autoComplete={mode === 'signIn' ? 'current-password' : 'new-password'} /></label>
         {error && <p className="text-sm text-alert" role="alert">{error}</p>}
-        {message && <p className="text-sm text-forest-800" role="status">{message}</p>}
+        {message && (
+          <div className="space-y-2" role="status">
+            <p className="text-sm text-forest-800">{message}</p>
+            <button
+              type="button"
+              onClick={() => { setMode('signIn'); setMessage(''); }}
+              className="text-sm text-forest-800 underline hover:no-underline"
+            >
+              {t('authConfirmedSignIn')}
+            </button>
+          </div>
+        )}
         <button disabled={submitting} className="w-full bg-forest-900 hover:bg-forest-700 disabled:opacity-60 text-white font-medium px-4 py-2.5 rounded-md transition-colors">{submitting ? t('loading') : mode === 'signIn' ? t('signIn') : t('createAccount')}</button>
       </form>
     </AuthShell>

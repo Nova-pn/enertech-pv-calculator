@@ -63,3 +63,8 @@ Object.assign(extraTranslations.ar, extraTranslations.en);
 Object.assign(extraTranslations.sw, extraTranslations.en);
 Object.assign(extraTranslations.fr, { closeList:'Fermer la liste', remove:'Retirer', nominalEnergy:'Énergie nominale', batteries:'batterie(s)', usable:'utilisables', need:'besoin' });
 Object.assign(extraTranslations.en, { closeList:'Close list', remove:'Remove', nominalEnergy:'Nominal energy', batteries:'battery/batteries', usable:'usable', need:'requirement' });
+Object.assign(extraTranslations.fr, { authConfirmedSignIn:'J’ai confirmé mon e-mail : me connecter' });
+Object.assign(extraTranslations.en, { authConfirmedSignIn:'I confirmed my email: sign in' });
+Object.assign(extraTranslations.es, { authConfirmedSignIn:'He confirmado mi correo: iniciar sesión' });
+Object.assign(extraTranslations.ar, { authConfirmedSignIn:'أكدت بريدي الإلكتروني: تسجيل الدخول' });
+Object.assign(extraTranslations.sw, { authConfirmedSignIn:'Nimethibitisha barua pepe: ingia' });

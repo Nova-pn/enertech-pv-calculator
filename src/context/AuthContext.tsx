@@ -4,6 +4,15 @@ import { isSupabaseConfigured, supabase } from '../lib/supabase';
 
 const AUTH_REDIRECT_URL = 'https://enertech-pv-calculator.vercel.app/';
 
+function cleanAuthCallbackUrl() {
+  const url = new URL(window.location.href);
+  const hasAuthHash = /(?:^|&)access_token=|(?:^|&)error_description=/.test(url.hash.slice(1));
+  const hasAuthCode = url.searchParams.has('code');
+  if (!hasAuthHash && !hasAuthCode) return;
+  window.history.replaceState({}, document.title, `${url.origin}${url.pathname}`);
+  window.location.hash = '#/';
+}
+
 interface AuthValue {
   configured: boolean;
   loading: boolean;
@@ -29,11 +38,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     void supabase.auth.getSession().then(({ data }) => {
       setSession(data.session);
       setLoading(false);
+      if (data.session) cleanAuthCallbackUrl();
     });
 
     const { data: listener } = supabase.auth.onAuthStateChange((_event, nextSession) => {
       setSession(nextSession);
       setLoading(false);
+      if (nextSession) cleanAuthCallbackUrl();
     });
 
     return () => listener.subscription.unsubscribe();
