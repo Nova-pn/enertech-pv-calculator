@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useI18n } from '../i18n';
 
 export default function Auth() {
-  const { configured, loading, user, signIn, signUp, signOut } = useAuth();
+  const { configured, loading, user, signIn, signUp, resendConfirmation, signOut } = useAuth();
   const { t } = useI18n();
   const navigate = useNavigate();
   const [mode, setMode] = useState<'signIn' | 'signUp'>('signIn');
@@ -14,6 +14,7 @@ export default function Auth() {
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const emailNotConfirmed = /email not confirmed|email_not_confirmed/i.test(error);
 
   const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -60,6 +61,22 @@ export default function Auth() {
         <label className="block text-sm"><span className="block mb-1 font-medium">{t('email')}</span><input required type="email" value={email} onChange={(event) => setEmail(event.target.value)} className="w-full border border-forest-200 rounded-md px-3 py-2.5" autoComplete="email" /></label>
         <label className="block text-sm"><span className="block mb-1 font-medium">{t('password')}</span><input required minLength={6} type="password" value={password} onChange={(event) => setPassword(event.target.value)} className="w-full border border-forest-200 rounded-md px-3 py-2.5" autoComplete={mode === 'signIn' ? 'current-password' : 'new-password'} /></label>
         {error && <p className="text-sm text-alert" role="alert">{error}</p>}
+        {emailNotConfirmed && (
+          <button
+            type="button"
+            disabled={submitting || !email}
+            onClick={async () => {
+              setSubmitting(true);
+              const result = await resendConfirmation(email);
+              setSubmitting(false);
+              if (result.error) setError(result.error.message);
+              else { setError(''); setMessage(t('authResendSuccess')); }
+            }}
+            className="text-sm text-forest-800 underline hover:no-underline disabled:opacity-50"
+          >
+            {t('authResendConfirmation')}
+          </button>
+        )}
         {message && (
           <div className="space-y-2" role="status">
             <p className="text-sm text-forest-800">{message}</p>

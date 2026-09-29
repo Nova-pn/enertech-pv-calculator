@@ -20,6 +20,7 @@ interface AuthValue {
   session: Session | null;
   signIn: (email: string, password: string) => Promise<{ error: AuthError | null }>;
   signUp: (email: string, password: string, fullName: string) => Promise<{ error: AuthError | null; needsConfirmation: boolean }>;
+  resendConfirmation: (email: string) => Promise<{ error: AuthError | null }>;
   signOut: () => Promise<{ error: AuthError | null }>;
 }
 
@@ -68,6 +69,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         options: { data: { full_name: fullName || undefined }, emailRedirectTo: AUTH_REDIRECT_URL },
       });
       return { error, needsConfirmation: Boolean(data.user && !data.session) };
+    },
+    resendConfirmation: async (email) => {
+      if (!supabase) return { error: new Error('Supabase is not configured') as AuthError };
+      const { error } = await supabase.auth.resend({ type: 'signup', email, options: { emailRedirectTo: AUTH_REDIRECT_URL } });
+      return { error };
     },
     signOut: async () => {
       if (!supabase) return { error: null };

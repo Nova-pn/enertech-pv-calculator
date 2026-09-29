@@ -68,3 +68,8 @@ Object.assign(extraTranslations.en, { authConfirmedSignIn:'I confirmed my email:
 Object.assign(extraTranslations.es, { authConfirmedSignIn:'He confirmado mi correo: iniciar sesión' });
 Object.assign(extraTranslations.ar, { authConfirmedSignIn:'أكدت بريدي الإلكتروني: تسجيل الدخول' });
 Object.assign(extraTranslations.sw, { authConfirmedSignIn:'Nimethibitisha barua pepe: ingia' });
+Object.assign(extraTranslations.fr, { authResendConfirmation:'Renvoyer l’e-mail de confirmation', authResendSuccess:'Un nouvel e-mail de confirmation a été envoyé. Ouvre le lien sur cet appareil.' });
+Object.assign(extraTranslations.en, { authResendConfirmation:'Resend confirmation email', authResendSuccess:'A new confirmation email was sent. Open its link on this device.' });
+Object.assign(extraTranslations.es, { authResendConfirmation:'Reenviar el correo de confirmación', authResendSuccess:'Se envió un nuevo correo de confirmación. Abra el enlace en este dispositivo.' });
+Object.assign(extraTranslations.ar, { authResendConfirmation:'إعادة إرسال رسالة التأكيد', authResendSuccess:'تم إرسال رسالة تأكيد جديدة. افتح الرابط على هذا الجهاز.' });
+Object.assign(extraTranslations.sw, { authResendConfirmation:'Tuma tena barua pepe ya uthibitisho', authResendSuccess:'Barua pepe mpya ya uthibitisho imetumwa. Fungua kiungo kwenye kifaa hiki.' });
