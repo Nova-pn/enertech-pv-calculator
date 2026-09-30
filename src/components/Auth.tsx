@@ -19,15 +19,31 @@ export default function Auth() {
   const emailNotConfirmed = /email not confirmed|email_not_confirmed/i.test(error);
 
   useEffect(() => {
-    if (!awaitingConfirmation || !session) return;
-    const check = () => void refreshUser();
-    const timer = window.setInterval(check, 30000);
+    if (!awaitingConfirmation) return;
+    const check = async () => {
+      if (session) {
+        const result = await refreshUser();
+        if (result.user?.email_confirmed_at) {
+          setAwaitingConfirmation(false);
+          navigate('/');
+        }
+        return;
+      }
+      // Avant confirmation, Supabase ne crée pas de session. Une tentative de
+      // connexion serveur est donc le seul moyen sûr de vérifier l’état réel.
+      const result = await signIn(email, password);
+      if (!result.error) {
+        setAwaitingConfirmation(false);
+        navigate('/');
+      }
+    };
+    const timer = window.setInterval(() => void check(), 60000);
     window.addEventListener('visibilitychange', check);
     return () => {
       window.clearInterval(timer);
       window.removeEventListener('visibilitychange', check);
     };
-  }, [awaitingConfirmation, session, refreshUser]);
+  }, [awaitingConfirmation, email, password, session, refreshUser, signIn, navigate]);
 
   const checkConfirmation = async () => {
     setError('');
