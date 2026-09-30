@@ -1,10 +1,10 @@
-import { useState, type FormEvent, type ReactNode } from 'react';
+import { useEffect, useState, type FormEvent, type ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useI18n } from '../i18n';
 
 export default function Auth() {
-  const { configured, loading, user, signIn, signUp, resendConfirmation, signOut } = useAuth();
+  const { configured, loading, user, session, signIn, signUp, resendConfirmation, refreshUser, signOut } = useAuth();
   const { t } = useI18n();
   const navigate = useNavigate();
   const [mode, setMode] = useState<'signIn' | 'signUp'>('signIn');
@@ -14,7 +14,29 @@ export default function Auth() {
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [awaitingConfirmation, setAwaitingConfirmation] = useState(false);
+  const [checkingConfirmation, setCheckingConfirmation] = useState(false);
   const emailNotConfirmed = /email not confirmed|email_not_confirmed/i.test(error);
+
+  useEffect(() => {
+    if (!awaitingConfirmation || !session) return;
+    const check = () => void refreshUser();
+    const timer = window.setInterval(check, 30000);
+    window.addEventListener('visibilitychange', check);
+    return () => {
+      window.clearInterval(timer);
+      window.removeEventListener('visibilitychange', check);
+    };
+  }, [awaitingConfirmation, session, refreshUser]);
+
+  const checkConfirmation = async () => {
+    setError('');
+    setCheckingConfirmation(true);
+    const result = await signIn(email, password);
+    setCheckingConfirmation(false);
+    if (result.error) setError(result.error.message);
+    else { setAwaitingConfirmation(false); navigate('/'); }
+  };
 
   const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -28,7 +50,10 @@ export default function Auth() {
     } else {
       const result = await signUp(email, password, fullName);
       if (result.error) setError(result.error.message);
-      else if (result.needsConfirmation) setMessage(t('authConfirmEmail'));
+      else if (result.needsConfirmation) {
+        setAwaitingConfirmation(true);
+        setMessage(t('authConfirmEmail'));
+      }
       else navigate('/');
     }
     setSubmitting(false);
@@ -46,6 +71,38 @@ export default function Auth() {
         <p className="text-sm text-ink/70 mb-5">{t('signedInAs')} <strong>{user.email}</strong></p>
         <button onClick={() => void signOut()} className="w-full bg-forest-900 hover:bg-forest-700 text-white font-medium px-4 py-2.5 rounded-md transition-colors">{t('signOut')}</button>
         <Link to="/" className="block text-center mt-4 text-sm text-forest-800 hover:underline">{t('backHome')}</Link>
+      </AuthShell>
+    );
+  }
+
+  if (awaitingConfirmation) {
+    return (
+      <AuthShell>
+        <p className="text-sm text-forest-800 mb-4">{t('authConfirmEmail')}</p>
+        <p className="text-sm text-ink/70 mb-5">{t('authConfirmationExplanation')}</p>
+        <button
+          type="button"
+          onClick={() => void checkConfirmation()}
+          disabled={checkingConfirmation}
+          className="w-full bg-forest-900 hover:bg-forest-700 disabled:opacity-60 text-white font-medium px-4 py-2.5 rounded-md transition-colors"
+        >
+          {checkingConfirmation ? t('authCheckingConfirmation') : t('authCheckConfirmation')}
+        </button>
+        <button
+          type="button"
+          disabled={submitting}
+          onClick={async () => {
+            setSubmitting(true);
+            const result = await resendConfirmation(email);
+            setSubmitting(false);
+            if (result.error) setError(result.error.message);
+            else setMessage(t('authResendSuccess'));
+          }}
+          className="w-full mt-3 text-sm text-forest-800 underline hover:no-underline disabled:opacity-50"
+        >
+          {t('authResendConfirmation')}
+        </button>
+        {error && <p className="text-sm text-alert mt-4" role="alert">{error}</p>}
       </AuthShell>
     );
   }

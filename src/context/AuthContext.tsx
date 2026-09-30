@@ -21,6 +21,7 @@ interface AuthValue {
   signIn: (email: string, password: string) => Promise<{ error: AuthError | null }>;
   signUp: (email: string, password: string, fullName: string) => Promise<{ error: AuthError | null; needsConfirmation: boolean }>;
   resendConfirmation: (email: string) => Promise<{ error: AuthError | null }>;
+  refreshUser: () => Promise<{ user: User | null; error: AuthError | null }>;
   signOut: () => Promise<{ error: AuthError | null }>;
 }
 
@@ -74,6 +75,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (!supabase) return { error: new Error('Supabase is not configured') as AuthError };
       const { error } = await supabase.auth.resend({ type: 'signup', email, options: { emailRedirectTo: AUTH_REDIRECT_URL } });
       return { error };
+    },
+    refreshUser: async () => {
+      if (!supabase) return { user: null, error: new Error('Supabase is not configured') as AuthError };
+      const { data, error } = await supabase.auth.getUser();
+      if (!error && data.user && session) setSession({ ...session, user: data.user });
+      return { user: data.user, error };
     },
     signOut: async () => {
       if (!supabase) return { error: null };
