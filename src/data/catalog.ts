@@ -174,3 +174,10 @@ export function selectionnerProtectionRecommandee(items: ProtectionCatalogItem[]
     .sort((a, b) => (a.ratedCurrentMaxA as number) - (b.ratedCurrentMaxA as number));
   return candidats[0] ?? null;
 }
+
+/** Extrait une plage numérique simple telle que « 65-530 V » sans compléter les données absentes. */
+export function parseVoltageRange(value?: string): { min: number; max: number } | null {
+  if (!value) return null;
+  const numbers = value.match(/\d+(?:\.\d+)?/g)?.map(Number) ?? [];
+  return numbers.length >= 2 ? { min: numbers[0], max: numbers[1] } : null;
+}

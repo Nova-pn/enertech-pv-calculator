@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { useProject } from '../context/ProjectContext';
 import { Field, NumberInput, Spec } from './Fields';
 import StepHeader from './StepHeader';
@@ -14,6 +14,7 @@ export default function StepRegulator() {
   // Résultats calculés une seule fois, à partir des mêmes données de champ PV que la page Résultats et le PDF.
   const results = useResults(state);
   const { t } = useI18n();
+  if (state.info.architectureSysteme === 'Hybride') return <Navigate to="/dimensionnement/cablage" replace />;
   const { configPV, dimensionnementPanneaux, regulateur: res, courantIscChampA } = results;
 
   const type = state.regulateurParams.type;
@@ -33,12 +34,6 @@ export default function StepRegulator() {
   return (
     <div className="max-w-2xl">
       <StepHeader num="6" titre={t('controllerSizing')} description={t('controllerDescription')} />
-
-      {state.info.architectureSysteme === 'Hybride' && (
-        <div className="mb-6 rounded-md px-4 py-3 text-sm border border-forest-200 bg-forest-100/60">
-          {t('hybridNote')}
-        </div>
-      )}
 
       {!champDimensionne && (
         <div className="mb-6 rounded-md px-4 py-3 text-sm border border-sun-dark/50 bg-sun/10">

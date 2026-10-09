@@ -14,6 +14,7 @@ import {
   calculerCalibreProtection,
   construireAvertissements,
 } from './calculations';
+import { parseVoltageRange } from '../data/catalog';
 
 export function useResults(state: ProjectState) {
   return useMemo(() => {
@@ -22,11 +23,17 @@ export function useResults(state: ProjectState) {
     const bilan = calculerBilan(state.appareils);
     const puissancePvW = calculerPuissancePV(bilan.energieJourWh, state.solaire.hsp, state.solaire.rendementGlobal);
     const dimensionnementPanneaux = calculerNombrePanneaux(puissancePvW, state.panneau);
-    const configPV = trouverConfigurationSeriParallele(
-      state.panneau,
-      dimensionnementPanneaux.nombrePanneaux,
-      state.limites
-    );
+    const mpptRange = parseVoltageRange(state.onduleurChoisi?.mpptVoltageRange);
+    const limites = state.info.architectureSysteme === 'Hybride' && state.onduleurChoisi
+      ? {
+          ...state.limites,
+          tensionPvMax: state.onduleurChoisi.maxDcVoltage ?? state.limites.tensionPvMax,
+          tensionMpptMin: mpptRange?.min ?? state.limites.tensionMpptMin,
+          tensionMpptMax: mpptRange?.max ?? state.limites.tensionMpptMax,
+          courantPvMax: state.onduleurChoisi.maxShortCircuitCurrent ?? state.limites.courantPvMax,
+        }
+      : state.limites;
+    const configPV = trouverConfigurationSeriParallele(state.panneau, dimensionnementPanneaux.nombrePanneaux, limites);
     const besoinBatterie = calculerBesoinBatterie(bilan.energieJourWh, state.batterieParams, tensionSysteme);
     const configBatterie = trouverConfigurationBatterie(state.batterie, besoinBatterie.capaciteAh, tensionSysteme);
     const onduleur = calculerOnduleur(state.appareils, state.onduleurParams.margePourcent);

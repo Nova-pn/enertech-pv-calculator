@@ -16,7 +16,7 @@ export default function StepInverter() {
   const hybride = state.info.architectureSysteme === 'Hybride';
   const titreEquipement = hybride ? t('hybridConverter') : t('inverter');
   const catalogueFiltre = hybride
-    ? inverterCatalog.filter((o) => o.type.toLowerCase().includes('hybrid'))
+    ? inverterCatalog.filter((o) => o.type === 'Hybrid' && o.maxPvPowerW > 0)
     : inverterCatalog;
 
   const choisi = state.onduleurChoisi;
@@ -106,12 +106,21 @@ export default function StepInverter() {
         </div>
       )}
 
+      {hybride && choisi && (
+        <div className="mt-3 rounded-md px-4 py-3 text-sm border border-forest-200 bg-forest-100/40">
+          {t('batteryCompatibility')}: {choisi.batteryVoltageRange || t('unknownData')}
+          {choisi.batteryVoltageRange && !batteryRangeIncludes(choisi.batteryVoltageRange, Number(state.info.tensionSysteme)) && (
+            <p className="text-alert text-xs mt-1">{t('batteryVoltageCheck', { voltage: state.info.tensionSysteme })}</p>
+          )}
+        </div>
+      )}
+
       <div className="mt-8 flex justify-end">
         <button
-          onClick={() => navigate('/dimensionnement/regulateur')}
+          onClick={() => navigate(hybride ? '/dimensionnement/cablage' : '/dimensionnement/regulateur')}
           className="bg-forest-900 hover:bg-forest-700 hover:shadow-md text-white font-medium px-5 py-2.5 rounded-md transition-all"
         >
-          {t('continueController')}
+          {hybride ? t('continueCabling') : t('continueController')}
         </button>
       </div>
     </div>
@@ -125,4 +134,10 @@ function Stat({ label, value }: { label: string; value: string }) {
       <p className="font-mono-num text-lg font-semibold text-forest-950">{value}</p>
     </div>
   );
+}
+
+function batteryRangeIncludes(range: string, voltage: number): boolean {
+  const values = range.match(/\d+(?:\.\d+)?/g)?.map(Number) ?? [];
+  if (values.length < 2 || !Number.isFinite(voltage)) return false;
+  return voltage >= values[0] && voltage <= values[1];
 }

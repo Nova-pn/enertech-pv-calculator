@@ -10,29 +10,23 @@ import StepInverter from './components/StepInverter';
 import StepRegulator from './components/StepRegulator';
 import StepCabling from './components/StepCabling';
 import Results from './components/Results';
+import Suppliers from './components/Suppliers';
 import About from './components/About';
 import Auth from './components/Auth';
 
 export default function App() {
-  return (
-    <ProjectProvider>
-      <HashRouter>
-        <Routes>
-          <Route element={<Layout />}>
-            <Route index element={<Home />} />
-            <Route path="dimensionnement/projet" element={<StepProject />} />
-            <Route path="dimensionnement/consommation" element={<StepConsumption />} />
-            <Route path="dimensionnement/solaire" element={<StepSolar />} />
-            <Route path="dimensionnement/batterie" element={<StepBattery />} />
-            <Route path="dimensionnement/onduleur" element={<StepInverter />} />
-            <Route path="dimensionnement/regulateur" element={<StepRegulator />} />
-            <Route path="dimensionnement/cablage" element={<StepCabling />} />
-            <Route path="resultats" element={<Results />} />
-            <Route path="a-propos" element={<About />} />
-            <Route path="auth" element={<Auth />} />
-          </Route>
-        </Routes>
-      </HashRouter>
-    </ProjectProvider>
-  );
+  return <ProjectProvider><HashRouter><Routes><Route element={<Layout />}>
+    <Route index element={<Home />} />
+    <Route path="dimensionnement/projet" element={<StepProject />} />
+    <Route path="dimensionnement/consommation" element={<StepConsumption />} />
+    <Route path="dimensionnement/solaire" element={<StepSolar />} />
+    <Route path="dimensionnement/batterie" element={<StepBattery />} />
+    <Route path="dimensionnement/onduleur" element={<StepInverter />} />
+    <Route path="dimensionnement/regulateur" element={<StepRegulator />} />
+    <Route path="dimensionnement/cablage" element={<StepCabling />} />
+    <Route path="resultats" element={<Results />} />
+    <Route path="fournisseurs" element={<Suppliers />} />
+    <Route path="a-propos" element={<About />} />
+    <Route path="auth" element={<Auth />} />
+  </Route></Routes></HashRouter></ProjectProvider>;
 }

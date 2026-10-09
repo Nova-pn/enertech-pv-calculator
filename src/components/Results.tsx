@@ -43,6 +43,12 @@ export default function Results() {
             {t('generatePdf')}
           </button>
           <button
+            onClick={() => navigate('/fournisseurs')}
+            className="border border-forest-200 hover:border-forest-500 text-sm font-medium px-4 py-2.5 rounded-md transition-colors"
+          >
+            {t('findSuppliers')}
+          </button>
+          <button
             onClick={handleReset}
             className="border border-forest-200 hover:border-forest-500 text-sm font-medium px-4 py-2.5 rounded-md transition-colors"
           >
@@ -86,13 +92,18 @@ export default function Results() {
           </p>
         </Card>
 
-        <Card titre={`${t('controller')} ${state.regulateurParams.type}`}>
+        {state.info.architectureSysteme === 'Simple' && <Card titre={`${t('controller')} ${state.regulateurParams.type}`}>
           <BigStat value={results.regulateur.courantAvecMargeA.toFixed(1)} unit={t('recommendedA')} />
           <p className="text-xs text-ink/55 mt-2">
             {state.regulateurParams.type} — {t('selectedRating')}: {state.regulateurParams.calibreChoisi} A
             {state.regulateurChoisi && ` — ${state.regulateurChoisi.manufacturer} ${state.regulateurChoisi.model}`}
           </p>
-        </Card>
+        </Card>}
+
+        {state.info.architectureSysteme === 'Hybride' && state.onduleurChoisi && <Card titre={t('integratedControl')}>
+          <p className="text-sm text-ink/70">{t('integratedControlText')}</p>
+          <p className="text-xs text-ink/55 mt-2">{t('maxPvPower')}: {state.onduleurChoisi.maxPvPowerW ? `${(state.onduleurChoisi.maxPvPowerW / 1000).toFixed(2)} kWc` : t('unknownData')} · {t('mpptInputs')}: {state.onduleurChoisi.mpptCount ?? t('unknownData')}</p>
+        </Card>}
 
         <Card titre={t('compatibleConfig')}>
           <BigStat value={results.configPV.enSerie.toString()} unit={t('panelsInSeries')} />

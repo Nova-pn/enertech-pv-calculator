@@ -158,12 +158,20 @@ export function generateReport(state: ProjectState, results: Results, language: 
       [t('recommendedMinimum'), `${(results.onduleur.puissanceMinRecommandeeW / 1000).toFixed(2)} kW`],
       [state.info.architectureSysteme === 'Hybride' ? 'Convertisseur choisi' : 'Onduleur choisi', state.onduleurChoisi ? `${state.onduleurChoisi.manufacturer} ${state.onduleurChoisi.model}` : '[À compléter]'],
       ['Charges à démarrage important signalées', results.onduleur.aChargesDemarrage ? 'Oui' : 'Non signalées'],
-      [t('controllerType'), state.regulateurParams.type],
-      [t('sizingMargin'), `${state.regulateurParams.margePourcent} %`],
-      [t('currentRecommended'), `${results.regulateur.courantAvecMargeA.toFixed(1)} A`],
-      ['Contrôleur choisi', state.regulateurChoisi ? `${state.regulateurChoisi.manufacturer} ${state.regulateurChoisi.model}` : '[À compléter]'],
-      ['Calibre choisi', `${state.regulateurParams.calibreChoisi} A`],
-      ['Calibre suffisant', results.regulateur.calibreSuffisant ? 'Oui' : 'Non — augmenter le calibre'],
+      ...(state.info.architectureSysteme === 'Simple'
+        ? [
+            [t('controllerType'), state.regulateurParams.type],
+            [t('sizingMargin'), `${state.regulateurParams.margePourcent} %`],
+            [t('currentRecommended'), `${results.regulateur.courantAvecMargeA.toFixed(1)} A`],
+            ['Contrôleur choisi', state.regulateurChoisi ? `${state.regulateurChoisi.manufacturer} ${state.regulateurChoisi.model}` : '[À compléter]'],
+            ['Calibre choisi', `${state.regulateurParams.calibreChoisi} A`],
+            ['Calibre suffisant', results.regulateur.calibreSuffisant ? 'Oui' : 'Non — augmenter le calibre'],
+          ]
+        : [
+            ['Régulation', 'Intégrée au convertisseur hybride'],
+            ['Entrées MPPT', state.onduleurChoisi?.mpptCount?.toString() || 'Non documenté'],
+            ['Puissance PV maximale', state.onduleurChoisi?.maxPvPowerW ? `${(state.onduleurChoisi.maxPvPowerW / 1000).toFixed(2)} kWc` : 'Non documentée'],
+          ]),
     ],
   });
   y = (doc as any).lastAutoTable.finalY + 24;

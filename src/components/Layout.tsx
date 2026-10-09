@@ -2,23 +2,25 @@ import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import LogoMark from './LogoMark';
 import { languages, useI18n } from '../i18n';
 import { useAuth } from '../context/AuthContext';
+import { useProject } from '../context/ProjectContext';
 
 export default function Layout() {
   const location = useLocation();
   const { language, setLanguage, t } = useI18n();
   const { user, signOut } = useAuth();
+  const { state } = useProject();
   const dansLeWizard = location.pathname.startsWith('/dimensionnement') || location.pathname === '/resultats';
 
   const translatedSteps = [
-    { to: '/dimensionnement/projet', label: t('project'), num: '1' },
-    { to: '/dimensionnement/consommation', label: t('consumption'), num: '2' },
-    { to: '/dimensionnement/solaire', label: t('solar'), num: '3' },
-    { to: '/dimensionnement/batterie', label: t('battery'), num: '4' },
-    { to: '/dimensionnement/onduleur', label: t('inverter'), num: '5' },
-    { to: '/dimensionnement/regulateur', label: t('controller'), num: '6' },
-    { to: '/dimensionnement/cablage', label: t('cabling'), num: '7' },
-    { to: '/resultats', label: t('results'), num: '8' },
-  ];
+    { to: '/dimensionnement/projet', label: t('project') },
+    { to: '/dimensionnement/consommation', label: t('consumption') },
+    { to: '/dimensionnement/solaire', label: t('solar') },
+    { to: '/dimensionnement/batterie', label: t('battery') },
+    { to: '/dimensionnement/onduleur', label: state.info.architectureSysteme === 'Hybride' ? t('hybridSizing') : t('inverter') },
+    ...(state.info.architectureSysteme === 'Simple' ? [{ to: '/dimensionnement/regulateur', label: t('controller') }] : []),
+    { to: '/dimensionnement/cablage', label: t('cabling') },
+    { to: '/resultats', label: t('results') },
+  ].map((step, index) => ({ ...step, num: String(index + 1) }));
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -43,6 +45,9 @@ export default function Layout() {
             </NavLink>
             <NavLink to="/a-propos" className={({ isActive }) => (isActive ? 'text-sun font-medium' : 'text-forest-200 hover:text-white transition-colors')}>
               {t('about')}
+            </NavLink>
+            <NavLink to="/fournisseurs" className={({ isActive }) => (isActive ? 'text-sun font-medium' : 'text-forest-200 hover:text-white transition-colors')}>
+              {t('supplierDirectory')}
             </NavLink>
             {user ? (
               <button type="button" onClick={() => void signOut()} className="text-forest-200 hover:text-white transition-colors" title={user.email ?? ''}>{t('signOut')}</button>
