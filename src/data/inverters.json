@@ -928,6 +928,180 @@
       ],
       "sourceUrl": "https://www.enfsolar.com/pv/inverter-datasheet/15531",
       "verificationLevel": "VÉRIFIÉ"
+    },
+    {
+      "id": "deye-sun-5k-sg04lp1-eu-sm2",
+      "manufacturer": "Deye",
+      "model": "SUN-5K-SG04LP1-EU-SM2",
+      "type": "Hybrid",
+      "topology": "Single-phase low-voltage hybrid",
+      "nominalPowerW": 5000,
+      "maxPvPowerW": 8000,
+      "maxAcPowerW": 5500,
+      "maxEfficiency": 97.6,
+      "euroEfficiency": 96.5,
+      "mpptCount": 2,
+      "maxDcVoltage": 500,
+      "mpptVoltageRange": "150-425 V",
+      "startVoltage": 125,
+      "maxDcCurrentPerMppt": 18,
+      "maxShortCircuitCurrent": 27,
+      "stringsPerMppt": 1,
+      "batteryVoltageRange": "40-60 V",
+      "maxBatteryChargeCurrent": 120,
+      "backupPower": true,
+      "operatingTemperature": "-40°C ~ +60°C",
+      "dimensions": "376 × 470 × 241.5 mm",
+      "weightKg": 17.6,
+      "protectionClass": "IP65",
+      "cooling": "Natural cooling",
+      "communication": "RS232 / RS485 / CAN; optional WiFi/Bluetooth/4G/LAN",
+      "markets": [
+        "International",
+        "Europe"
+      ],
+      "sourceUrl": "https://www.deyeinverter.com/deyeinverter/2026/01/30/%E3%80%90B%E3%80%91Manual_SUN-3-6K-SG04LP1-EU-SM2_20260130_en.pdf",
+      "sourceDocuments": [
+        "https://deye.com/product/sun-3-3-6-5-6k-sg04lp1-eu/",
+        "https://www.deyeinverter.com/deyeinverter/2026/01/30/%E3%80%90B%E3%80%91Manual_SUN-3-6K-SG04LP1-EU-SM2_20260130_en.pdf"
+      ],
+      "sourcePages": "Manual EU-SM2 pp.49-50",
+      "reviewFlags": [
+        "Do not merge EU-SM2, older EU and AU variants"
+      ],
+      "verificationLevel": "RECHERCHE_OFFICIELLE — VARIANTE EU-SM2"
+    },
+    {
+      "id": "goodwe-gw5k-et",
+      "manufacturer": "GoodWe",
+      "model": "GW5K-ET",
+      "type": "Hybrid",
+      "topology": "Three-phase high-voltage",
+      "nominalPowerW": 5000,
+      "maxPvPowerW": 7500,
+      "maxAcPowerW": 5500,
+      "maxEfficiency": 98.0,
+      "euroEfficiency": 97.2,
+      "mpptCount": 2,
+      "maxDcVoltage": 1000,
+      "mpptVoltageRange": "200-850 V",
+      "startVoltage": null,
+      "maxDcCurrentPerMppt": 12.5,
+      "maxShortCircuitCurrent": 15.2,
+      "stringsPerMppt": 1,
+      "batteryVoltageRange": "180-600 V",
+      "maxBatteryChargeCurrent": 25,
+      "backupPower": true,
+      "operatingTemperature": null,
+      "dimensions": "415 × 516 × 180 mm",
+      "weightKg": 24,
+      "protectionClass": "IP66",
+      "cooling": null,
+      "communication": null,
+      "markets": [
+        "International",
+        "Europe"
+      ],
+      "sourceUrl": "https://emea.goodwe.com/Ftp/Downloads/Datasheet/EMEA/GW_ET%20PLUS+_Datasheet_EMEA-EN.pdf",
+      "sourceDocuments": [
+        "https://emea.goodwe.com/et-plus-series-three-phase-hybrid-solar-inverter",
+        "https://emea.goodwe.com/Ftp/Downloads/Datasheet/EMEA/GW_ET%20PLUS+_Datasheet_EMEA-EN.pdf",
+        "https://en.goodwe.com/Ftp/EN/Downloads/User%20Manual/GW_ET,%20ET%20PLUS+,%20BT_User%20Manual-EN.pdf"
+      ],
+      "sourcePages": "Datasheet p.2; manual pp.74-80",
+      "reviewFlags": [
+        "Exact model is GW5K-ET; do not infer GW5K-ET-PLUS",
+        "Battery capacity and DoD not documented"
+      ],
+      "verificationLevel": "RECHERCHE_OFFICIELLE"
+    },
+    {
+      "id": "growatt-spf-5000-es",
+      "manufacturer": "Growatt",
+      "model": "SPF 5000 ES",
+      "type": "Off-grid / Hybrid",
+      "topology": "Single-phase off-grid inverter/charger",
+      "nominalPowerW": 5000,
+      "maxPvPowerW": 6000,
+      "maxAcPowerW": 5000,
+      "maxEfficiency": 93.0,
+      "euroEfficiency": null,
+      "mpptCount": 1,
+      "maxDcVoltage": 450,
+      "mpptVoltageRange": "120-430 V",
+      "startVoltage": 150,
+      "maxDcCurrentPerMppt": 22,
+      "maxShortCircuitCurrent": null,
+      "stringsPerMppt": null,
+      "batteryVoltageRange": "48 V",
+      "maxBatteryChargeCurrent": 100,
+      "backupPower": true,
+      "operatingTemperature": "0°C ~ +55°C",
+      "dimensions": "330 × 485 × 135 mm",
+      "weightKg": 12,
+      "protectionClass": null,
+      "cooling": null,
+      "communication": null,
+      "markets": [
+        "International",
+        "Afrique"
+      ],
+      "sourceUrl": "https://en.growatt.com/upload/file/SPF_3500-5000%20ES_Datasheet-2509.pdf",
+      "sourceDocuments": [
+        "https://en.growatt.com/products/spf-3000-5000-es-es-lite",
+        "https://en.growatt.com/upload/file/SPF_3500-5000%20ES_Datasheet-2509.pdf",
+        "https://en.growatt.com/upload/file/SPF_3500-5000_ES_%20User_%20Manual.pdf"
+      ],
+      "sourcePages": "Datasheet p.2; manual pp.20-21",
+      "reviewFlags": [
+        "Do not merge ES, ES Lite or US variants",
+        "22 A PV current scope differs slightly between datasheet and manual",
+        "200 Ah is installation guidance, not energy capacity"
+      ],
+      "verificationLevel": "RECHERCHE_OFFICIELLE — VARIANTE ES"
+    },
+    {
+      "id": "sma-sunny-boy-storage-5-sbs5-0-10",
+      "manufacturer": "SMA",
+      "model": "Sunny Boy Storage 5.0 (SBS5.0-10)",
+      "type": "Battery inverter",
+      "topology": "AC-coupled",
+      "nominalPowerW": 5000,
+      "maxPvPowerW": 0,
+      "maxAcPowerW": 5000,
+      "maxEfficiency": 97.5,
+      "euroEfficiency": null,
+      "mpptCount": 0,
+      "maxDcVoltage": 600,
+      "mpptVoltageRange": null,
+      "startVoltage": 100,
+      "maxDcCurrentPerMppt": 10,
+      "maxShortCircuitCurrent": 40,
+      "stringsPerMppt": null,
+      "batteryVoltageRange": "100-550 V",
+      "maxBatteryChargeCurrent": null,
+      "backupPower": true,
+      "operatingTemperature": "-25°C ~ +60°C",
+      "dimensions": "535 × 730 × 198 mm",
+      "weightKg": 26,
+      "protectionClass": "IP65",
+      "cooling": "Convection",
+      "communication": "CAN / Ethernet / WLAN / RS485",
+      "markets": [
+        "International",
+        "Europe"
+      ],
+      "sourceUrl": "https://files.sma.de/downloads/SBSxx-10-DS-de-31.pdf",
+      "sourceDocuments": [
+        "https://www.sma.de/en/products/battery-inverters/sunny-boy-storage-37-50-60",
+        "https://files.sma.de/downloads/SBSxx-10-DS-de-31.pdf"
+      ],
+      "sourcePages": "EU datasheet p.3",
+      "reviewFlags": [
+        "AC-coupled battery inverter; no integrated PV MPPT limits",
+        "US SBS5.0-US-10 is a separate regional variant"
+      ],
+      "verificationLevel": "RECHERCHE_OFFICIELLE — VARIANTE EU"
     }
   ]
 }

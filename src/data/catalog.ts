@@ -26,6 +26,9 @@ export interface PanelCatalogItem {
   bifacial?: boolean;
   markets?: string[];
   sourceUrl?: string;
+  sourceDocuments?: string[];
+  sourcePages?: string;
+  reviewFlags?: string[];
   verificationLevel?: string;
 }
 
@@ -34,22 +37,27 @@ export interface BatteryCatalogItem {
   manufacturer: string;
   model: string;
   technology: string;
-  nominalVoltage: number;
-  nominalCapacityAh: number;
-  nominalEnergyKWh: number;
-  maxDoD: number; // en %
-  recommendedChargeCurrent?: number;
-  maxChargeCurrent?: number;
-  maxDischargeCurrent?: number;
-  peakDischargeCurrent?: number;
-  maxPower?: number;
-  cycleLife?: number;
+  nominalVoltage: number | null;
+  nominalCapacityAh: number | null;
+  nominalEnergyKWh: number | null;
+  usableEnergyKWh?: number | null;
+  maxDoD: number | null; // en %, seulement si explicitement qualifié comme maximum
+  recommendedChargeCurrent?: number | null;
+  maxChargeCurrent?: number | null;
+  maxDischargeCurrent?: number | null;
+  peakDischargeCurrent?: number | null;
+  peakDuration?: string;
+  maxPower?: number | null;
+  cycleLife?: number | null;
   operatingTemperature?: string;
   dimensions?: string;
   weightKg?: number;
   communicationBMS?: string;
   markets?: string[];
   sourceUrl?: string;
+  sourceDocuments?: string[];
+  sourcePages?: string;
+  reviewFlags?: string[];
   verificationLevel?: string;
 }
 
@@ -82,6 +90,9 @@ export interface InverterCatalogItem {
   communication?: string;
   markets?: string[];
   sourceUrl?: string;
+  sourceDocuments?: string[];
+  sourcePages?: string;
+  reviewFlags?: string[];
   verificationLevel?: string;
 }
 
@@ -110,6 +121,9 @@ export interface RegulatorCatalogItem {
   cooling?: string;
   markets?: string | string[];
   sourceUrl?: string | null;
+  sourceDocuments?: string[];
+  sourcePages?: string;
+  reviewFlags?: string[];
   verificationLevel?: string;
 }
 
@@ -144,10 +158,25 @@ export interface ProtectionCatalogItem {
   verificationLevel?: string;
 }
 
-export const panelCatalog = (panelsRaw as { panels: PanelCatalogItem[] }).panels;
-export const batteryCatalog = (batteriesRaw as { batteries: BatteryCatalogItem[] }).batteries;
-export const inverterCatalog = (invertersRaw as { inverters: InverterCatalogItem[] }).inverters;
-export const regulatorCatalog = (regulatorsRaw as { regulateurs: RegulatorCatalogItem[] }).regulateurs;
+/** Normalise fabricant/modèle afin qu'une même fiche ne soit jamais exposée deux fois. */
+export function normalizeCatalogKey(value: string): string {
+  return value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
+export function deduplicateCatalogItems<T extends { id: string; manufacturer: string; model: string }>(items: T[]): T[] {
+  const seen = new Set<string>();
+  return items.filter((item) => {
+    const key = `${normalizeCatalogKey(item.manufacturer)}::${normalizeCatalogKey(item.model)}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+export const panelCatalog = deduplicateCatalogItems((panelsRaw as { panels: PanelCatalogItem[] }).panels);
+export const batteryCatalog = deduplicateCatalogItems((batteriesRaw as { batteries: BatteryCatalogItem[] }).batteries);
+export const inverterCatalog = deduplicateCatalogItems((invertersRaw as { inverters: InverterCatalogItem[] }).inverters);
+export const regulatorCatalog = deduplicateCatalogItems((regulatorsRaw as { regulateurs: RegulatorCatalogItem[] }).regulateurs);
 export const cableCatalog = (cablesRaw as { cables: CableCatalogItem[] }).cables;
 export const protectionCatalog = (protectionsRaw as { protections: ProtectionCatalogItem[] }).protections;
 

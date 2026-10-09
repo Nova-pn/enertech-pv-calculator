@@ -611,6 +611,121 @@
       ],
       "sourceUrl": "https://hoppecke.co.jp/wp-content/uploads/sun/pdf/sun_power_VRM_en.pdf",
       "verificationLevel": "OFFICIEL"
+    },
+    {
+      "id": "dyness-a48100",
+      "manufacturer": "Dyness",
+      "model": "A48100",
+      "technology": "LiFePO4",
+      "nominalVoltage": 48,
+      "nominalCapacityAh": 100,
+      "nominalEnergyKWh": 4.8,
+      "maxDoD": null,
+      "recommendedChargeCurrent": 50,
+      "maxChargeCurrent": 75,
+      "maxDischargeCurrent": 75,
+      "peakDischargeCurrent": 100,
+      "maxPower": null,
+      "cycleLife": 6000,
+      "operatingTemperature": "Charge: 0°C ~ +55°C / Discharge: -20°C ~ +55°C",
+      "dimensions": "504 × 597 × 155 mm",
+      "weightKg": 45,
+      "communicationBMS": "CAN / RS485 / RS232",
+      "markets": [
+        "International",
+        "Afrique",
+        "Australie"
+      ],
+      "sourceUrl": "https://dyness.com/Public/Uploads/uploadfile/files/20241022/DynessA48100datasheetEN.pdf",
+      "sourceDocuments": [
+        "https://dyness.com/Public/Uploads/uploadfile/files/20241022/DynessA48100datasheetEN.pdf",
+        "https://www.dyness.com/faq"
+      ],
+      "sourcePages": "Datasheet EN p.2; FAQ consulted 2026-10-09",
+      "reviewFlags": [
+        "90% DoD documented without recommended/maximum qualifier",
+        "Parallel expansion conflict: 30 in datasheet vs 40 in FAQ",
+        "Usable capacity not explicitly documented"
+      ],
+      "verificationLevel": "RECHERCHE_OFFICIELLE — CONFLITS À REVOIR"
+    },
+    {
+      "id": "byd-battery-box-premium-hvs-5-1",
+      "manufacturer": "BYD",
+      "model": "Battery-Box Premium HVS 5.1",
+      "technology": "LiFePO4 / cobalt-free",
+      "nominalVoltage": 204.8,
+      "nominalCapacityAh": null,
+      "nominalEnergyKWh": null,
+      "usableEnergyKWh": 5.12,
+      "maxDoD": null,
+      "recommendedChargeCurrent": null,
+      "maxChargeCurrent": 25,
+      "maxDischargeCurrent": 25,
+      "peakDischargeCurrent": 50,
+      "peakDuration": "3 s",
+      "maxPower": null,
+      "cycleLife": null,
+      "operatingTemperature": "-10°C ~ +50°C",
+      "dimensions": "762 × 585 × 298 mm",
+      "weightKg": 91,
+      "communicationBMS": "CAN / RS485",
+      "markets": [
+        "International",
+        "Europe",
+        "Afrique"
+      ],
+      "sourceUrl": "https://bydbatterybox.com/uploads/downloads/230530_BYD_Battery-Box_Premium_HVS%26HVM_Datasheet_V1.7_EN-647eedf90f9c3.pdf",
+      "sourceDocuments": [
+        "https://www.bydbatterybox.com/",
+        "https://bydbatterybox.com/uploads/downloads/230530_BYD_Battery-Box_Premium_HVS%26HVM_Datasheet_V1.7_EN-647eedf90f9c3.pdf",
+        "https://bydbatterybox.com/uploads/downloads/BYD%20Battery-Box%20Premium%20HVS%26HVM%20Operating%20Manual-V1.8-628b4dd2db7e2.pdf"
+      ],
+      "sourcePages": "Datasheet V1.7 p.2; Operating Manual V1.8 pp.45-46",
+      "reviewFlags": [
+        "Nominal energy and Ah capacity not explicitly documented",
+        "100% DoD is only the usable-energy test condition",
+        "Older official documents differ on voltage range and peak duration"
+      ],
+      "verificationLevel": "RECHERCHE_OFFICIELLE — VARIANTE À SURVEILLER"
+    },
+    {
+      "id": "huawei-luna2000-10-s0",
+      "manufacturer": "Huawei",
+      "model": "LUNA2000-10-S0",
+      "technology": "LiFePO4",
+      "nominalVoltage": null,
+      "nominalCapacityAh": null,
+      "nominalEnergyKWh": null,
+      "usableEnergyKWh": 10,
+      "maxDoD": null,
+      "recommendedChargeCurrent": null,
+      "maxChargeCurrent": null,
+      "maxDischargeCurrent": null,
+      "peakDischargeCurrent": null,
+      "maxPower": 7000,
+      "cycleLife": 5000,
+      "operatingTemperature": "-20°C ~ +55°C",
+      "dimensions": "670 × 150 × 960 mm",
+      "weightKg": 113.8,
+      "communicationBMS": "RS485 / CAN",
+      "markets": [
+        "International",
+        "Europe",
+        "Afrique"
+      ],
+      "sourceUrl": "https://solar.huawei.com/admin/asset/v1/pro/view/cc3f55c9603845749334087ea716cc23.pdf",
+      "sourceDocuments": [
+        "https://solar.huawei.com/en/products/luna2000-5-10-15-s0/",
+        "https://solar.huawei.com/admin/asset/v1/pro/view/cc3f55c9603845749334087ea716cc23.pdf"
+      ],
+      "sourcePages": "Datasheet p.2",
+      "reviewFlags": [
+        "Single-phase and three-phase voltage architectures are distinct: 450 V vs 600 V",
+        "Battery current and DoD limits not explicitly documented",
+        "Aggregate nominal capacity not separately documented"
+      ],
+      "verificationLevel": "RECHERCHE_OFFICIELLE — NON SÉLECTIONNABLE SANS COMPLÉMENT"
     }
   ]
 }

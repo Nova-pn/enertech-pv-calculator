@@ -1047,6 +1047,45 @@
       ],
       "verificationLevel": "VÉRIFIÉ",
       "sourceUrl": "https://forestriverinc.com/files/component-manuals/Electrical/Rich%20Solar%20-%20Solar%20Charge%20Controller%20Model%20RS-PWM30P,RS-PWM40P,%20RS-PWM50P,%20RS-PWM60P%20User%20Manual.pdf"
+    },
+    {
+      "id": "epever-xtra3210n",
+      "type": "MPPT",
+      "manufacturer": "EPEVER",
+      "model": "XTRA3210N",
+      "batteryVoltage": "12/24 V Auto",
+      "maxChargeCurrentA": 30,
+      "maxPvVoltageV": 100,
+      "maxPvVoltageVRaw": "100 V at minimum temperature; 92 V at 25°C",
+      "maxPvPowerW12v": 390,
+      "maxPvPowerW24v": 780,
+      "maxPvPowerW48v": null,
+      "maxPvPowerWRaw": "390 W at 12 V; 780 W at 24 V",
+      "maxEfficiencyPct": 98.6,
+      "trackingMpptPct": null,
+      "chargeAlgorithm": null,
+      "mainProtections": null,
+      "communication": "RS485",
+      "operatingTemperature": "-25°C ~ +50°C LCD / -30°C ~ +50°C without LCD",
+      "dimensions": null,
+      "weightKg": null,
+      "ip": "IP33 (technical table/manual; overview says IP32)",
+      "cooling": null,
+      "markets": [
+        "International",
+        "Afrique"
+      ],
+      "sourceUrl": "https://www.epever.com/upload/file/1811/EPEVER-Datasheet-XTRA.pdf",
+      "sourceDocuments": [
+        "https://www.epever.com/product/xtra-n-g3-mppt-charge-controller/",
+        "https://www.epever.com/upload/file/1811/EPEVER-Datasheet-XTRA.pdf",
+        "https://www.epever.com/wp-content/uploads/2021/04/XTRA-N-Manual-EN-V4.5ETL.pdf"
+      ],
+      "sourcePages": "Datasheet pp.1-2; manual pp.38-40",
+      "reviewFlags": [
+        "IP32/IP33 conflict; legacy XTRA3210N must not merge with G3/G3 BLE"
+      ],
+      "verificationLevel": "RECHERCHE_OFFICIELLE — CONFLIT IP À REVOIR"
     }
   ]
 }

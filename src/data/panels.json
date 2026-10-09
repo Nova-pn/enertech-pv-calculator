@@ -920,6 +920,130 @@
       ],
       "sourceUrl": "https://nastechsolar.com/solar-panels/longi-615-620-watt-hi-mo-7-bifacial-solar-panel/",
       "verificationLevel": "VÉRIFIÉ"
+    },
+    {
+      "id": "longi-lr5-72htd-550m",
+      "manufacturer": "LONGi",
+      "model": "Hi-MO 6 Explorer LR5-72HTD-550M",
+      "technology": "N-type monocrystalline",
+      "powerWp": 550,
+      "powerNoctWp": 411,
+      "voc": 51.4,
+      "vmp": 42.95,
+      "isc": 13.74,
+      "imp": 12.82,
+      "vocNoct": 48.26,
+      "vmpNoct": 39.19,
+      "iscNoct": 11.1,
+      "impNoct": 10.49,
+      "powerTolerance": "0~+3%",
+      "vocTempCoefficient": "-0.230%/°C",
+      "iscTempCoefficient": "+0.050%/°C",
+      "pmaxTempCoefficient": "-0.290%/°C",
+      "operatingTemperature": "-40°C ~ +85°C",
+      "dimensions": "2278 × 1134 × 35 mm",
+      "weightKg": 32.6,
+      "cellCount": "144 (6×24)",
+      "moduleType": "Bifacial dual glass",
+      "bifacial": true,
+      "markets": [
+        "International",
+        "Europe",
+        "Afrique"
+      ],
+      "sourceUrl": "https://static.longi.com/Hi_MO_6_Explorer_LR_5_72_HTD_550_580_M_V03_UT_aa561c61b7.pdf",
+      "sourceDocuments": [
+        "https://www.longi.com/en/products/modules/hi-mo-6-explorer/",
+        "https://static.longi.com/Hi_MO_6_Explorer_LR_5_72_HTD_550_580_M_V03_UT_aa561c61b7.pdf",
+        "https://static.longi.com/Hi_MO_6_Explorer_LR_5_72_HTD_550_570_M_V03_DG_a2bbc2e237.pdf"
+      ],
+      "sourcePages": "UT/DG datasheets pp.1-2",
+      "reviewFlags": [
+        "Same model number appears in UT and DG documents; warranty/application terms differ"
+      ],
+      "verificationLevel": "RECHERCHE_OFFICIELLE — VARIANT UT/DG"
+    },
+    {
+      "id": "jinko-jkm575n-72hl4-v",
+      "manufacturer": "JinkoSolar",
+      "model": "Tiger Neo JKM575N-72HL4-(V)",
+      "technology": "N-type TOPCon monocrystalline",
+      "powerWp": 575,
+      "powerNoctWp": 432,
+      "voc": 50.88,
+      "vmp": 42.22,
+      "isc": 14.39,
+      "imp": 13.62,
+      "vocNoct": 48.33,
+      "vmpNoct": 39.6,
+      "iscNoct": 11.62,
+      "impNoct": 10.92,
+      "powerTolerance": "0~+3%",
+      "vocTempCoefficient": "-0.25%/°C",
+      "iscTempCoefficient": "+0.046%/°C",
+      "pmaxTempCoefficient": "-0.30%/°C",
+      "operatingTemperature": "-40°C ~ +85°C",
+      "dimensions": "2278 × 1134 × 35 mm",
+      "weightKg": 28,
+      "cellCount": "144 (6×24)",
+      "moduleType": "Monofacial",
+      "bifacial": false,
+      "markets": [
+        "International",
+        "Europe",
+        "Afrique"
+      ],
+      "sourceUrl": "https://www.jinkosolar.com/uploads/619f4244/JKM555-575N-72HL4-(V)-F1-EN.pdf",
+      "sourceDocuments": [
+        "https://www.jinkosolar.com/en/site/tigerneo",
+        "https://www.jinkosolar.com/uploads/619f4244/JKM555-575N-72HL4-(V)-F1-EN.pdf"
+      ],
+      "sourcePages": "Datasheet pp.1-2",
+      "reviewFlags": [
+        "Datasheet groups JKM575N-72HL4 and JKM575N-72HL4-V; exact SKU unresolved"
+      ],
+      "verificationLevel": "RECHERCHE_OFFICIELLE — VARIANTE À REVOIR"
+    },
+    {
+      "id": "ja-jam72s30-550-mr-1500v",
+      "manufacturer": "JA Solar",
+      "model": "JAM72S30-550/MR/1500V",
+      "technology": "P-type PERC monocrystalline",
+      "powerWp": 550,
+      "powerNoctWp": 416,
+      "voc": 49.9,
+      "vmp": 41.96,
+      "isc": 14.0,
+      "imp": 13.11,
+      "vocNoct": 46.68,
+      "vmpNoct": 39.43,
+      "iscNoct": 11.17,
+      "impNoct": 10.55,
+      "powerTolerance": "0~+5 W",
+      "vocTempCoefficient": "-0.272%/°C",
+      "iscTempCoefficient": "+0.044%/°C",
+      "pmaxTempCoefficient": "-0.350%/°C",
+      "operatingTemperature": "-40°C ~ +85°C",
+      "dimensions": "2279 × 1134 × 35 mm",
+      "weightKg": 28.6,
+      "cellCount": "144 (6×24)",
+      "moduleType": "Monofacial",
+      "bifacial": false,
+      "markets": [
+        "International",
+        "Europe",
+        "Afrique"
+      ],
+      "sourceUrl": "https://www.jasolar.com/uploadfile/2021/0706/20210706053524693.pdf",
+      "sourceDocuments": [
+        "https://www.jasolar.com/uploadfile/2021/0706/20210706053524693.pdf",
+        "https://www.jasolar.eu/en/products/deep-blue-40"
+      ],
+      "sourcePages": "JAM72S30 datasheet pp.1-2",
+      "reviewFlags": [
+        "550 W verified as DeepBlue 3.0; DeepBlue 4.0 official range reviewed starts at 555 W"
+      ],
+      "verificationLevel": "RECHERCHE_OFFICIELLE — DÉNOMINATION CORRIGÉE"
     }
   ]
 }

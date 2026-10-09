@@ -1,5 +1,20 @@
 import { describe, it, expect } from 'vitest';
-import { batteryCatalog, mapBatteryTechnology } from './catalog';
+import { batteryCatalog, deduplicateCatalogItems, mapBatteryTechnology, normalizeCatalogKey } from './catalog';
+
+describe('intégrité et déduplication des catalogues', () => {
+  it('normalise les variantes de casse, accents et séparateurs', () => {
+    expect(normalizeCatalogKey('MultiPlus-II 48/5000/70-50')).toBe(normalizeCatalogKey('multiplus ii 48 5000 70 50'));
+  });
+
+  it('conserve une seule fiche pour un même fabricant et modèle', () => {
+    const items = [
+      { id: 'a', manufacturer: 'ACME', model: 'Model 5' },
+      { id: 'b', manufacturer: 'acmé', model: 'MODEL-5' },
+      { id: 'c', manufacturer: 'ACME', model: 'Model 6' },
+    ];
+    expect(deduplicateCatalogItems(items).map((item) => item.id)).toEqual(['a', 'c']);
+  });
+});
 
 describe('filtrage des batteries par technologie', () => {
   it('classe chaque batterie du catalogue réel dans une technologie connue', () => {

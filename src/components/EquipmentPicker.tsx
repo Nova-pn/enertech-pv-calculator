@@ -7,6 +7,7 @@ interface EquipmentPickerProps<T> {
   getLabel: (item: T) => string;
   getSearchText: (item: T) => string;
   onSelect: (item: T) => void;
+  isSelectable?: (item: T) => boolean;
   renderDetails: (item: T) => ReactNode;
   placeholder?: string;
 }
@@ -21,6 +22,7 @@ export default function EquipmentPicker<T>({
   getLabel,
   getSearchText,
   onSelect,
+  isSelectable = () => true,
   renderDetails,
   placeholder = 'Rechercher un modèle…',
 }: EquipmentPickerProps<T>) {
@@ -58,8 +60,10 @@ export default function EquipmentPicker<T>({
               <button
                 key={getId(item)}
                 type="button"
-                className="block w-full text-left px-3 py-2 text-sm hover:bg-forest-100 border-b border-forest-100 last:border-b-0"
+                disabled={!isSelectable(item)}
+                className="block w-full text-left px-3 py-2 text-sm hover:bg-forest-100 disabled:cursor-not-allowed disabled:opacity-50 border-b border-forest-100 last:border-b-0"
                 onClick={() => {
+                  if (!isSelectable(item)) return;
                   setSelectedId(getId(item));
                   onSelect(item);
                   setOpen(false);

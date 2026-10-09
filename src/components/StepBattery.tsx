@@ -22,12 +22,13 @@ export default function StepBattery() {
   const valide = state.batterieParams.dod > 0 && state.batterieParams.dod <= 1 && state.batterieParams.rendementBatterie > 0 && state.batterie.tensionNominale > 0 && state.batterie.capaciteAh > 0;
 
   const choisirBatterie = (b: BatteryCatalogItem) => {
+    if (!hasSizingData(b)) return;
     setBatterieChoisie(b);
     updateBatterie({
-      tensionNominale: b.nominalVoltage,
-      capaciteAh: b.nominalCapacityAh,
+      tensionNominale: b.nominalVoltage!,
+      capaciteAh: b.nominalCapacityAh!,
       technologie: mapBatteryTechnology(b.technology),
-      dodRecommande: b.maxDoD / 100,
+      dodRecommande: b.maxDoD! / 100,
       // Le rendement n'est pas systématiquement fourni par les fiches fabricants : on ne l'écrase pas ici.
     });
   };
@@ -78,14 +79,15 @@ export default function StepBattery() {
         key={state.batterie.technologie}
         items={catalogueFiltre}
         getId={(b) => b.id}
-        getLabel={(b) => `${b.manufacturer} ${b.model} — ${b.nominalVoltage} V / ${b.nominalCapacityAh} Ah`}
+        getLabel={(b) => `${b.manufacturer} ${b.model} — ${b.nominalVoltage ?? '—'} V / ${b.nominalCapacityAh ?? '—'} Ah`}
         getSearchText={(b) => `${b.manufacturer} ${b.model} ${b.technology}`}
         onSelect={choisirBatterie}
+        isSelectable={hasSizingData}
         placeholder={`${t('search')} ${state.batterie.technologie}…`}
         renderDetails={(b) => (
           <dl className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-1.5 text-xs font-mono-num">
             <Spec label={t('technology')} value={b.technology} mono={false} />
-            <Spec label="DoD max" value={`${b.maxDoD} %`} />
+            <Spec label="DoD max" value={b.maxDoD === null ? 'Non documenté' : `${b.maxDoD} %`} />
             <Spec label={t('nominalEnergy')} value={b.nominalEnergyKWh ? `${b.nominalEnergyKWh} kWh` : '—'} />
             <Spec label="Cycles" value={b.cycleLife ? `${b.cycleLife}` : '—'} />
             <Spec label="Poids" value={b.weightKg ? `${b.weightKg} kg` : '—'} />
@@ -150,4 +152,8 @@ function Stat({ label, value }: { label: string; value: string }) {
       <p className="font-mono-num text-lg font-semibold text-forest-950">{value}</p>
     </div>
   );
+}
+
+function hasSizingData(b: BatteryCatalogItem): boolean {
+  return b.nominalVoltage !== null && b.nominalCapacityAh !== null && b.maxDoD !== null;
 }
