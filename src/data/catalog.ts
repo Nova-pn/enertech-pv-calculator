@@ -42,6 +42,9 @@ export interface BatteryCatalogItem {
   nominalEnergyKWh: number | null;
   usableEnergyKWh?: number | null;
   maxDoD: number | null; // en %, seulement si explicitement qualifié comme maximum
+  recommendedDoD?: number | null;
+  chargeCurrentA?: number | null;
+  dischargeCurrentA?: number | null;
   recommendedChargeCurrent?: number | null;
   maxChargeCurrent?: number | null;
   maxDischargeCurrent?: number | null;
@@ -57,6 +60,7 @@ export interface BatteryCatalogItem {
   sourceUrl?: string;
   sourceDocuments?: string[];
   sourcePages?: string;
+  reportPath?: string;
   reviewFlags?: string[];
   verificationLevel?: string;
 }

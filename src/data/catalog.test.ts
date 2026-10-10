@@ -14,6 +14,13 @@ describe('intégrité et déduplication des catalogues', () => {
     ];
     expect(deduplicateCatalogItems(items).map((item) => item.id)).toEqual(['a', 'c']);
   });
+
+  it('expose les 38 nouvelles fiches importées sans doublon fabricant/modèle', () => {
+    expect(batteryCatalog).toHaveLength(63);
+    const keys = batteryCatalog.map((item) => `${normalizeCatalogKey(item.manufacturer)}::${normalizeCatalogKey(item.model)}`);
+    expect(new Set(keys).size).toBe(keys.length);
+    expect(batteryCatalog.filter((item) => item.reportPath).length).toBe(38);
+  });
 });
 
 describe('filtrage des batteries par technologie', () => {
