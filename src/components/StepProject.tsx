@@ -108,7 +108,7 @@ export default function StepProject() {
           onClick={() => navigate('/dimensionnement/consommation')}
           className="bg-forest-900 disabled:bg-forest-200 disabled:text-ink/40 hover:bg-forest-700 hover:shadow-md text-white font-medium px-5 py-2.5 rounded-md transition-all"
         >
-          Continuer vers le bilan de consommation
+          {t('continueConsumption')}
         </button>
       </div>
     </div>

@@ -13,6 +13,7 @@ import Results from './components/Results';
 import Suppliers from './components/Suppliers';
 import About from './components/About';
 import Auth from './components/Auth';
+import Projects from './components/Projects';
 
 export default function App() {
   return <ProjectProvider><HashRouter><Routes><Route element={<Layout />}>
@@ -28,5 +29,6 @@ export default function App() {
     <Route path="fournisseurs" element={<Suppliers />} />
     <Route path="a-propos" element={<About />} />
     <Route path="auth" element={<Auth />} />
+    <Route path="projets" element={<Projects />} />
   </Route></Routes></HashRouter></ProjectProvider>;
 }

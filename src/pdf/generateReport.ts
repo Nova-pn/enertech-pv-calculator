@@ -5,24 +5,32 @@ import type { Results } from '../engine/useResults';
 import { energieQuotidienneAppareil } from '../engine/calculations';
 import { ENERTECH_EMBLEM_BASE64, ENERTECH_EMBLEM_ASPECT } from '../assets/logo/logoBase64';
 import { translate, type Language } from '../i18n';
+import type { ReportBranding } from '../lib/branding';
 
 const FOREST = '#0f3d2e';
 const INK = '#14181b';
 
-export function generateReport(state: ProjectState, results: Results, language: Language = 'fr') {
+export function generateReport(state: ProjectState, results: Results, language: Language = 'fr', branding?: ReportBranding) {
   const t = (key: string, vars?: Record<string, string | number>) => translate(language, key, vars);
   const doc = new jsPDF({ unit: 'pt', format: 'a4' });
   const marginX = 40;
   let y = 50;
 
-  // Logo officiel EnerTech (fourni par l'utilisateur, rogné uniquement — aucune couleur/forme modifiée).
   const logoW = 40;
   const logoH = logoW * ENERTECH_EMBLEM_ASPECT;
-  doc.addImage(ENERTECH_EMBLEM_BASE64, 'JPEG', marginX, y - 30, logoW, logoH);
+  const logo = branding?.logoDataUrl || ENERTECH_EMBLEM_BASE64;
+  const logoFormat = logo.startsWith('data:image/png') ? 'PNG' : 'JPEG';
+  doc.addImage(logo, logoFormat, marginX, y - 30, logoW, logoH);
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(18);
   doc.setTextColor(FOREST);
-  doc.text('EnerTech PV Calculator', marginX + logoW + 12, y);
+  doc.text(branding?.companyName || 'EnerTech PV Calculator', marginX + logoW + 12, y);
+  if (branding?.address || branding?.phone || branding?.email || branding?.website) {
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    doc.setTextColor('#666666');
+    doc.text([branding.address, branding.phone, branding.email, branding.website].filter(Boolean).join(' · '), marginX + logoW + 12, y + 12);
+  }
   y += 22;
   doc.setFontSize(13);
   doc.setTextColor(INK);

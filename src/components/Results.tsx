@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useProject } from '../context/ProjectContext';
 import { useResults } from '../engine/useResults';
@@ -5,6 +6,10 @@ import { generateReport } from '../pdf/generateReport';
 import type { NiveauValidation } from '../types';
 import { useI18n } from '../i18n';
 import { localizeWarning } from '../i18n/localize';
+import { useAuth } from '../context/AuthContext';
+import { saveProject } from '../lib/projectStorage';
+import { loadBranding, type ReportBranding } from '../lib/branding';
+import BrandingEditor from './BrandingEditor';
 
 const badgeStyles: Record<NiveauValidation, string> = {
   vert: 'bg-forest-100 text-forest-900 border-forest-500',
@@ -15,8 +20,11 @@ const badgeStyles: Record<NiveauValidation, string> = {
 export default function Results() {
   const { state, reset } = useProject();
   const { language, t } = useI18n();
+  const { user } = useAuth();
   const results = useResults(state);
   const navigate = useNavigate();
+  const [branding, setBranding] = useState<ReportBranding>(loadBranding);
+  const [saveMessage, setSaveMessage] = useState('');
 
   const handleReset = () => {
     reset();
@@ -37,10 +45,16 @@ export default function Results() {
         </div>
         <div className="flex gap-2">
           <button
-            onClick={() => generateReport(state, results, language)}
+            onClick={() => generateReport(state, results, language, branding)}
             className="bg-forest-900 hover:bg-forest-700 hover:shadow-md text-white text-sm font-medium px-4 py-2.5 rounded-md transition-all"
           >
             {t('generatePdf')}
+          </button>
+          <button
+            onClick={async () => { await saveProject(state.info.nomProjet, state, user?.id); setSaveMessage(t('projectSaved')); }}
+            className="border border-forest-200 hover:border-forest-500 text-sm font-medium px-4 py-2.5 rounded-md transition-colors"
+          >
+            {t('saveProject')}
           </button>
           <button
             onClick={() => navigate('/fournisseurs')}
@@ -56,6 +70,8 @@ export default function Results() {
           </button>
         </div>
       </div>
+      {saveMessage && <p className="text-sm text-forest-800 mb-4" role="status">{saveMessage}</p>}
+      <BrandingEditor onSaved={setBranding} />
 
       <div className="grid sm:grid-cols-2 gap-5 mb-8">
         <Card titre={t('energyBalance')}>

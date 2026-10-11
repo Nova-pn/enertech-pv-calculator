@@ -49,6 +49,9 @@ export default function Layout() {
             <NavLink to="/fournisseurs" className={({ isActive }) => (isActive ? 'text-sun font-medium' : 'text-forest-200 hover:text-white transition-colors')}>
               {t('supplierDirectory')}
             </NavLink>
+            <NavLink to="/projets" className={({ isActive }) => (isActive ? 'text-sun font-medium' : 'text-forest-200 hover:text-white transition-colors')}>
+              {t('savedProjects')}
+            </NavLink>
             {user ? (
               <button type="button" onClick={() => void signOut()} className="text-forest-200 hover:text-white transition-colors" title={user.email ?? ''}>{t('signOut')}</button>
             ) : (
