@@ -28,7 +28,7 @@ export default function StepBattery() {
       tensionNominale: b.nominalVoltage!,
       capaciteAh: b.nominalCapacityAh!,
       technologie: mapBatteryTechnology(b.technology),
-      dodRecommande: b.maxDoD! / 100,
+      ...(b.maxDoD !== null ? { dodRecommande: b.maxDoD / 100 } : {}),
       // Le rendement n'est pas systématiquement fourni par les fiches fabricants : on ne l'écrase pas ici.
     });
   };
@@ -94,6 +94,9 @@ export default function StepBattery() {
           </dl>
         )}
       />
+      {state.batterieChoisie && state.batterieChoisie.maxDoD === null && (
+        <p className="text-xs text-sun-dark mt-2">{t('batteryDodNotDocumented')}</p>
+      )}
       {catalogueFiltre.length === 0 && (
         <p className="text-xs text-ink/50 mt-2">{t('noResults')}</p>
       )}
@@ -155,5 +158,5 @@ function Stat({ label, value }: { label: string; value: string }) {
 }
 
 function hasSizingData(b: BatteryCatalogItem): boolean {
-  return b.nominalVoltage !== null && b.nominalCapacityAh !== null && b.maxDoD !== null;
+  return b.nominalVoltage !== null && b.nominalCapacityAh !== null && b.nominalVoltage > 0 && b.nominalCapacityAh > 0;
 }

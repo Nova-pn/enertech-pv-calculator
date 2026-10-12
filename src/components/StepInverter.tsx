@@ -16,7 +16,7 @@ export default function StepInverter() {
   const hybride = state.info.architectureSysteme === 'Hybride';
   const titreEquipement = hybride ? t('hybridConverter') : t('inverter');
   const catalogueFiltre = hybride
-    ? inverterCatalog.filter((o) => o.type === 'Hybrid' && o.maxPvPowerW > 0)
+    ? inverterCatalog.filter((o) => isHybridWithPvInput(o) && o.maxPvPowerW > 0)
     : inverterCatalog;
 
   const choisi = state.onduleurChoisi;
@@ -140,4 +140,8 @@ function batteryRangeIncludes(range: string, voltage: number): boolean {
   const values = range.match(/\d+(?:\.\d+)?/g)?.map(Number) ?? [];
   if (values.length < 2 || !Number.isFinite(voltage)) return false;
   return voltage >= values[0] && voltage <= values[1];
+}
+
+function isHybridWithPvInput(inverter: InverterCatalogItem): boolean {
+  return inverter.type.toLowerCase().includes('hybrid');
 }

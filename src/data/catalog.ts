@@ -177,8 +177,16 @@ export function deduplicateCatalogItems<T extends { id: string; manufacturer: st
   });
 }
 
+/** Complète uniquement une capacité Ah mathématiquement dérivable de l'énergie et de la tension publiées. */
+export function deriveBatteryCapacity(item: BatteryCatalogItem): BatteryCatalogItem {
+  if (item.nominalCapacityAh === null && item.nominalVoltage && item.nominalEnergyKWh) {
+    return { ...item, nominalCapacityAh: (item.nominalEnergyKWh * 1000) / item.nominalVoltage };
+  }
+  return item;
+}
+
 export const panelCatalog = deduplicateCatalogItems((panelsRaw as { panels: PanelCatalogItem[] }).panels);
-export const batteryCatalog = deduplicateCatalogItems((batteriesRaw as { batteries: BatteryCatalogItem[] }).batteries);
+export const batteryCatalog = deduplicateCatalogItems((batteriesRaw as { batteries: BatteryCatalogItem[] }).batteries).map(deriveBatteryCapacity);
 export const inverterCatalog = deduplicateCatalogItems((invertersRaw as { inverters: InverterCatalogItem[] }).inverters);
 export const regulatorCatalog = deduplicateCatalogItems((regulatorsRaw as { regulateurs: RegulatorCatalogItem[] }).regulateurs);
 export const cableCatalog = (cablesRaw as { cables: CableCatalogItem[] }).cables;

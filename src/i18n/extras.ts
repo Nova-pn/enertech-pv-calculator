@@ -123,3 +123,9 @@ Object.assign(extraTranslations.en, { brands:'Brands', contactEmail:'Email', web
 Object.assign(extraTranslations.es, { brands:'Marcas', contactEmail:'Correo', website:'Sitio web' });
 Object.assign(extraTranslations.ar, { brands:'العلامات التجارية', contactEmail:'البريد الإلكتروني', website:'الموقع الإلكتروني' });
 Object.assign(extraTranslations.sw, { brands:'Chapa', contactEmail:'Barua pepe', website:'Tovuti' });
+
+Object.assign(extraTranslations.fr, { batteryDodNotDocumented: 'DoD maximal non documenté par le fabricant : la valeur de dimensionnement précédente est conservée.' });
+Object.assign(extraTranslations.en, { batteryDodNotDocumented: 'Maximum DoD is not documented by the manufacturer: the previous sizing value is kept.' });
+Object.assign(extraTranslations.es, { batteryDodNotDocumented: 'El DoD máximo no está documentado por el fabricante: se conserva el valor de dimensionamiento anterior.' });
+Object.assign(extraTranslations.ar, { batteryDodNotDocumented: 'الحد الأقصى للتفريغ غير موثق من الشركة المصنعة؛ تم الاحتفاظ بقيمة التصميم السابقة.' });
+Object.assign(extraTranslations.sw, { batteryDodNotDocumented: 'DoD ya juu haijaandikwa na mtengenezaji: thamani ya awali ya makadirio imehifadhiwa.' });

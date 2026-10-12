@@ -54,6 +54,11 @@ describe('filtrage des batteries par technologie', () => {
     }
   });
 
+  it('conserve des fiches sélectionnables lorsque la capacité est dérivable de l’énergie et de la tension', () => {
+    const alphaEss = batteryCatalog.find((item) => item.id === 'alphaess-smile5-bat');
+    expect(alphaEss?.nominalCapacityAh).toBeCloseTo(111.3, 1);
+  });
+
   it("aucune technologie étrangère n'apparaît dans un filtre donné (AGM exclut Lithium/GEL/Plomb)", () => {
     const agm = new Set(batteryCatalog.filter((b) => mapBatteryTechnology(b.technology) === 'AGM').map((b) => b.id));
     const autres = batteryCatalog.filter((b) => mapBatteryTechnology(b.technology) !== 'AGM');
