@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { batteryCatalog, deduplicateCatalogItems, mapBatteryTechnology, normalizeCatalogKey } from './catalog';
+import { batteryCatalog, cableCatalog, deduplicateCatalogItems, mapBatteryTechnology, normalizeCatalogKey, protectionCatalog } from './catalog';
 
 describe('intégrité et déduplication des catalogues', () => {
   it('normalise les variantes de casse, accents et séparateurs', () => {
@@ -13,6 +13,15 @@ describe('intégrité et déduplication des catalogues', () => {
       { id: 'c', manufacturer: 'ACME', model: 'Model 6' },
     ];
     expect(deduplicateCatalogItems(items).map((item) => item.id)).toEqual(['a', 'c']);
+  });
+
+  it('expose au moins 15 câbles et 15 protections avec une source pour chaque fiche', () => {
+    expect(cableCatalog).toHaveLength(15);
+    expect(protectionCatalog).toHaveLength(15);
+    expect(cableCatalog.every((item) => item.sourceUrl)).toBe(true);
+    expect(protectionCatalog.every((item) => item.sourceUrl)).toBe(true);
+    expect(new Set(cableCatalog.map((item) => `${normalizeCatalogKey(item.manufacturer)}::${normalizeCatalogKey(item.model)}`)).size).toBe(15);
+    expect(new Set(protectionCatalog.map((item) => `${normalizeCatalogKey(item.manufacturer)}::${normalizeCatalogKey(item.model)}`)).size).toBe(15);
   });
 
   it('expose les 38 nouvelles fiches importées sans doublon fabricant/modèle', () => {

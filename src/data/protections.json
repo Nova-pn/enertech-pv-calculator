@@ -37,6 +37,191 @@
       ],
       "sourceUrl": "https://www.eaton.com/content/dam/eaton/markets/solar/eaton-solar-circuit-protection-application-guide.pdf",
       "verificationLevel": "OFFICIEL"
+    },
+    {
+      "id": "mersen-helioprotection-hp10m-10x38-1000vdc",
+      "manufacturer": "Mersen",
+      "model": "HelioProtection HP10M 10x38 mm 1000 V DC photovoltaic fuse",
+      "ratedVoltageDcV": 1000,
+      "sourceUrl": "https://pim.mersen.com/EBF1767B3F9A4087A1ED573220B212F4-1en.pdf",
+      "sourceDocuments": [
+        "https://www.mersen.com/en/products/helioprotection-hp10m-fuses-photovoltaic/hp10m20"
+      ],
+      "verificationLevel": "OFFICIEL",
+      "ratedCurrentARaw": "1-32",
+      "ratedCurrentMinA": 1,
+      "ratedCurrentMaxA": 32,
+      "breakingCapacitykA": 50,
+      "standard": "UL 2579; CSA C22.2; IEC 60269-6"
+    },
+    {
+      "id": "schneider-acti9-iprd-dc-a9l40281",
+      "manufacturer": "Schneider Electric",
+      "model": "Acti9 iPRD-DC 40r 1000PV A9L40281, 2P",
+      "ratedVoltageDcV": 1000,
+      "sourceUrl": "https://www.se.com/il/en/product/A9L40281/iprddc-40r-1000pv-modular-surge-arrester-2p-1000vdc-with-remote-transfert/",
+      "sourceDocuments": [
+        "https://www.se.com/sg/en/product/A9L40281/iprddc-40r-1000pv-modular-surge-arrester-2p-1000vdc-with-remote-transfert/"
+      ],
+      "verificationLevel": "OFFICIEL",
+      "poles": 2,
+      "standard": "UTE C 61740-51; EN 50539-11:2013"
+    },
+    {
+      "id": "hager-sb432pv",
+      "manufacturer": "Hager",
+      "model": "SB432PV switch DC 4P 1000 V 32 A",
+      "ratedVoltageDcV": 1000,
+      "sourceUrl": "https://hager.com/ie/catalogue/products/sb432pv-switch-dc-4p-1000v-32a",
+      "sourceDocuments": [
+        "https://assets.hager.com/step-content/P/PDS_160850753001EN/Document/std.lang.all/SB432PV_3001_en-GB.pdf"
+      ],
+      "verificationLevel": "OFFICIEL",
+      "ratedCurrentARaw": "32",
+      "ratedCurrentMinA": 32,
+      "ratedCurrentMaxA": 32,
+      "poles": 4
+    },
+    {
+      "id": "citel-ds50pv-1000",
+      "manufacturer": "CITEL",
+      "model": "DS50PV-1000 (part 480302)",
+      "ratedVoltageDcV": 1000,
+      "sourceUrl": "https://citel.fr/en/photovoltaic/type-2-pv-surge-protector/ds50pv-1000",
+      "sourceDocuments": [
+        "https://citel.fr/serverFile/downloadBinGetSpreadsheet?itemId=1181&langId=1"
+      ],
+      "verificationLevel": "OFFICIEL",
+      "standard": "IEC 61643-31; EN 61643-31; EN 50539-11; UL 1449 ed.5"
+    },
+    {
+      "id": "phoenix-contact-val-mb-t2-1000dc-pv2v-2905645",
+      "manufacturer": "Phoenix Contact",
+      "model": "VAL-MB-T2 1000DC-PV/2+V, article 2905645",
+      "ratedVoltageDcV": 1000,
+      "sourceUrl": "https://www.phoenixcontact.com/en-us/products/pv-arrester-val-mb-t2-1000dc-pv2v-2905645",
+      "sourceDocuments": [],
+      "verificationLevel": "OFFICIEL",
+      "poles": 2,
+      "standard": "EN 50539-11:2013"
+    },
+    {
+      "id": "phoenix-contact-val-ms-1000dc-pv2v-2800628",
+      "manufacturer": "Phoenix Contact",
+      "model": "VAL-MS 1000DC-PV/2+V, article 2800628",
+      "ratedVoltageDcV": 1000,
+      "sourceUrl": "https://www.phoenixcontact.com/en-in/products/pv-arrester-val-ms-1000dc-pv2v-2800628",
+      "sourceDocuments": [
+        "https://resources.ampheo.com/static/datasheets/phoenix-contact/2800628.pdf"
+      ],
+      "verificationLevel": "OFFICIEL",
+      "poles": 2,
+      "standard": "EN 50539-11:2013; PV T2"
+    },
+    {
+      "id": "dehn-dg-m-ypv-sci-1000-fm-952515",
+      "manufacturer": "DEHN",
+      "model": "DG M YPV SCI 1000 FM, part 952 515",
+      "ratedVoltageDcV": 1000,
+      "sourceUrl": "https://www.dehn-international.com/en-INT/store/f/295265/dehnguard-modular-y-pv-sci-7f1140e4",
+      "sourceDocuments": [
+        "https://www.dehn-international.com/sites/default/files/media/files/19425_1_bpl_en_2023_complete_0.pdf"
+      ],
+      "verificationLevel": "OFFICIEL",
+      "standard": "EN 61643-31; IEC 61643-31; Type 2 / Class II"
+    },
+    {
+      "id": "mersen-helioprotection-hp10m20",
+      "manufacturer": "Mersen",
+      "model": "HelioProtection HP10M20 10x38 1000 V DC",
+      "ratedVoltageDcV": 1000,
+      "sourceUrl": "https://us.mersen.com/en/products/helioprotection-hp10m-fuses-photovoltaic/hp10m20",
+      "sourceDocuments": [
+        "https://pim.mersen.com/EBF1767B3F9A4087A1ED573220B212F4-1en.pdf"
+      ],
+      "verificationLevel": "OFFICIEL",
+      "ratedCurrentARaw": "20",
+      "ratedCurrentMinA": 20,
+      "ratedCurrentMaxA": 20,
+      "breakingCapacitykA": 50,
+      "standard": "UL 2579; IEC 60269-6"
+    },
+    {
+      "id": "mersen-helioprotection-hp10m25",
+      "manufacturer": "Mersen",
+      "model": "HelioProtection HP10M25 10x38 1000 V DC",
+      "ratedVoltageDcV": 1000,
+      "sourceUrl": "https://us.mersen.com/en/products/helioprotection-hp10m-fuses-photovoltaic/hp10m25",
+      "sourceDocuments": [
+        "https://pim.mersen.com/EBF1767B3F9A4087A1ED573220B212F4-1en.pdf"
+      ],
+      "verificationLevel": "OFFICIEL",
+      "ratedCurrentARaw": "25",
+      "ratedCurrentMinA": 25,
+      "ratedCurrentMaxA": 25,
+      "breakingCapacitykA": 50,
+      "standard": "UL 2579; CSA; IEC 60269-6"
+    },
+    {
+      "id": "abb-ovr-pv-t2-40-1000-p",
+      "manufacturer": "ABB",
+      "model": "OVR PV T2 40-1000 P, code 2CTB802400R1000",
+      "ratedVoltageDcV": 1000,
+      "sourceUrl": "https://new.abb.com/products/2CTB802400R1000/ovr-pv-t2-40-1000-p",
+      "sourceDocuments": [
+        "https://library.e.abb.com/public/28a8cca9581e4705935631c602dd1351/OVR%20%20PV%20T2%2040%20-1000%20P%209AKK107992A4590_US%20Rev.A%20Jan.2022.pdf"
+      ],
+      "verificationLevel": "OFFICIEL",
+      "poles": 3,
+      "standard": "IEC 61643-31; UL 1449 5th edition"
+    },
+    {
+      "id": "hager-l502pv",
+      "manufacturer": "Hager",
+      "model": "L502PV fuse carrier 2P 1000 V DC L38 2M",
+      "ratedVoltageDcV": 1000,
+      "sourceUrl": "https://hager.com/intl-fr/catalogue/informations/l502pv-cc-2p-1000v-dc-l38-2m",
+      "sourceDocuments": [
+        "https://assets.hager.com/step-content/P/PDS_163543316401EN/Document/std.lang.all/PDS_L502PV_6401_en-GB.pdf"
+      ],
+      "verificationLevel": "OFFICIEL",
+      "ratedCurrentARaw": "32 A",
+      "ratedCurrentMinA": 32,
+      "ratedCurrentMaxA": 32,
+      "poles": 2,
+      "standard": "IEC 60947-2"
+    },
+    {
+      "id": "hager-lf306pv",
+      "manufacturer": "Hager",
+      "model": "LF306PV PV fuse-link 10x38 mm 1000 V DC 6 A",
+      "ratedVoltageDcV": 1000,
+      "sourceUrl": "https://hager.com/my/catalogue/products/lf306pv-pv-fuse-link-10x38-mm-1000v-dc-6a",
+      "sourceDocuments": [
+        "https://assets.hager.com/step-content/P/PDS_223983055601CS/Document/std.lang.all/PDS_LF306PV_5601_cs-CZ.pdf"
+      ],
+      "verificationLevel": "OFFICIEL",
+      "ratedCurrentARaw": "6 A",
+      "ratedCurrentMinA": 6,
+      "ratedCurrentMaxA": 6,
+      "breakingCapacitykA": 30,
+      "standard": "gPV; IEC 60898-1"
+    },
+    {
+      "id": "mersen-helioprotection-hp10m10",
+      "manufacturer": "Mersen",
+      "model": "HelioProtection HP10M10 10x38 1000 V DC gPV fuse",
+      "ratedVoltageDcV": 1000,
+      "sourceUrl": "https://www.mersen.com/en/products/helioprotection-hp10m-fuses-photovoltaic/hp10m10",
+      "sourceDocuments": [
+        "https://pim.mersen.com/EBF1767B3F9A4087A1ED573220B212F4-1en.pdf"
+      ],
+      "verificationLevel": "OFFICIEL",
+      "ratedCurrentARaw": "10 A",
+      "ratedCurrentMinA": 10,
+      "ratedCurrentMaxA": 10,
+      "breakingCapacitykA": 50,
+      "standard": "UL 2579; IEC 60269-6"
     }
   ]
 }

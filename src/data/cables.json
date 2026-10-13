@@ -35,6 +35,195 @@
       ],
       "sourceUrl": "https://www.kukacable.com/products/969.html",
       "verificationLevel": "OFFICIEL"
+    },
+    {
+      "id": "lapp-oelflex-solar-xlwp-1023602-6mm2",
+      "manufacturer": "LAPP",
+      "model": "ÖLFLEX SOLAR XLWP 1x6 WH/BK (article 1023602)",
+      "crossSectionMm2": 6,
+      "maxVoltageDcV": 1800,
+      "resistanceOhmPerKm": 3.39,
+      "currentCarryingCapacityA": 70,
+      "standard": "EN 50618; H1Z2Z2-K; IEC 60228 class 5",
+      "sourceUrl": "https://api-shop.lapp.com/occ/v2/us/products/export/specification-sheet-file/1023602?lang=en_US&curr=USD",
+      "sourceDocuments": [
+        "https://t3.lappcdn.com/fileadmin/DAM/Lapp_Czech/ZPRAVY/AKTUALITY/2017/OELFLEX_SOLAR_XLWP_datasheet.pdf"
+      ],
+      "verificationLevel": "OFFICIEL"
+    },
+    {
+      "id": "prysmian-prysun-h1z2z2-k-4mm2",
+      "manufacturer": "Prysmian",
+      "model": "PRYSUN H1Z2Z2-K 1x4 mm²",
+      "crossSectionMm2": 4,
+      "maxVoltageDcV": 1800,
+      "resistanceOhmPerKm": 5.09,
+      "currentCarryingCapacityA": 55,
+      "standard": "EN 50618; IEC 62930",
+      "sourceUrl": "https://datasheet.prysmian.com/pdf/datasheet/en-GB/428979/GB00_PRYSUN_H1Z2Z2_K_1KV",
+      "sourceDocuments": [
+        "https://datasheet.prysmian.com/pdf/datasheet/sv-SE/402621/SE10_P_20294412"
+      ],
+      "verificationLevel": "OFFICIEL"
+    },
+    {
+      "id": "top-cable-topsolar-h1z2z2-k-10mm2",
+      "manufacturer": "Top Cable",
+      "model": "TOPSOLAR PV H1Z2Z2-K 1 x 10 mm²",
+      "crossSectionMm2": 10,
+      "maxVoltageDcV": 1800,
+      "resistanceOhmPerKm": 1.91,
+      "currentCarryingCapacityA": 98,
+      "standard": "EN 50618; IEC 62930; UTE C 32-502",
+      "sourceUrl": "https://topcable.com/downloads/pdf/es/topcable-datasheet-topsolar-pv-h1z2z2-k-es.pdf",
+      "sourceDocuments": [
+        "https://www.topcable.com/cable/topsolar-pv-h1z2z2-k/"
+      ],
+      "verificationLevel": "OFFICIEL"
+    },
+    {
+      "id": "lapp-oelflex-solar-xlwp-1x10-wh-bk-1023603",
+      "manufacturer": "LAPP",
+      "model": "ÖLFLEX SOLAR XLWP 1x10 WH/BK (article 1023603)",
+      "crossSectionMm2": 10,
+      "maxVoltageDcV": 1800,
+      "resistanceOhmPerKm": 1.95,
+      "currentCarryingCapacityA": 98,
+      "standard": "EN 50618; H1Z2Z2-K",
+      "sourceUrl": "https://e.lapp.com/in/p/cables-for-industry-specific-applications/oelflex-solar-xlwp-1x10-wh-bk-1023603",
+      "sourceDocuments": [
+        "https://t3.lappcdn.com/fileadmin/DAM/Lapp_Czech/ZPRAVY/AKTUALITY/2017/OELFLEX_SOLAR_XLWP_datasheet.pdf"
+      ],
+      "verificationLevel": "OFFICIEL"
+    },
+    {
+      "id": "nexans-energyflex-h1z2z2-k-10mm2",
+      "manufacturer": "Nexans",
+      "model": "ENERGYFLEX PV H1Z2Z2-K 1x10mm² NR (product ref. 10191044)",
+      "crossSectionMm2": 10,
+      "maxVoltageDcV": 1800,
+      "resistanceOhmPerKm": 1.95,
+      "currentCarryingCapacityA": 98,
+      "standard": "EN 50618; IEC 62930",
+      "sourceUrl": "https://www.lynxeogroup.com/en/products/renewables/solar/photovoltaic-cables/Nexans-PV-5700.html",
+      "sourceDocuments": [
+        "https://www.nexans.co/en/products/Sistemas-Solares/Granjas-Solares/Cable-solar-premium-H1Z2Z2-K/H1Z2Z2-K.html"
+      ],
+      "verificationLevel": "OFFICIEL"
+    },
+    {
+      "id": "nexans-energyflex-pv-h1z2z2-k-1x4mm2-10189494",
+      "manufacturer": "Nexans / Lynxeo",
+      "model": "PV H1Z2Z2-K Energyflex 1x4mm² NR, product ref. 10189494",
+      "crossSectionMm2": 4,
+      "maxVoltageDcV": 1800,
+      "resistanceOhmPerKm": 5.09,
+      "currentCarryingCapacityA": 55,
+      "standard": "EN 50618; IEC 62930",
+      "sourceUrl": "https://www.lynxeogroup.com/en/products/renewables/solar/photovoltaic-cables/Nexans-PV-5700/product~10189494~.html",
+      "sourceDocuments": [
+        "https://www.lynxeogroup.com/.rest/catalog/v1/product/pdf/10189494"
+      ],
+      "verificationLevel": "OFFICIEL"
+    },
+    {
+      "id": "nexans-energyflex-pv-h1z2z2-k-1x6mm2-10189495",
+      "manufacturer": "Nexans / Lynxeo",
+      "model": "PV H1Z2Z2-K Energyflex 1x6mm² NR, product ref. 10189495",
+      "crossSectionMm2": 6,
+      "maxVoltageDcV": 1800,
+      "resistanceOhmPerKm": 3.39,
+      "currentCarryingCapacityA": 70,
+      "standard": "EN 50618; IEC 62930",
+      "sourceUrl": "https://www.lynxeogroup.com/en/products/renewables/solar/photovoltaic-cables/Nexans-PV-5700.html",
+      "sourceDocuments": [
+        "https://www.lynxeogroup.com/.rest/catalog/v1/product/pdf/10189495"
+      ],
+      "verificationLevel": "OFFICIEL"
+    },
+    {
+      "id": "top-cable-topsolar-pv-h1z2z2-k-4mm2",
+      "manufacturer": "Top Cable",
+      "model": "TOPSOLAR PV H1Z2Z2-K 1x4 mm²",
+      "crossSectionMm2": 4,
+      "maxVoltageDcV": 1800,
+      "resistanceOhmPerKm": 5.09,
+      "currentCarryingCapacityA": 55,
+      "standard": "EN 50618; IEC 62930; UTE C 32-502",
+      "sourceUrl": "https://www.topcable.com/cable/topsolar-pv-h1z2z2-k/",
+      "sourceDocuments": [
+        "https://www.topcable.com/downloads/pdf/en/topcable-datasheet-topsolar-pv-h1z2z2-k-en.pdf"
+      ],
+      "verificationLevel": "OFFICIEL"
+    },
+    {
+      "id": "top-cable-topsolar-pv-h1z2z2-k-6mm2",
+      "manufacturer": "Top Cable",
+      "model": "TOPSOLAR PV H1Z2Z2-K 1x6 mm²",
+      "crossSectionMm2": 6,
+      "maxVoltageDcV": 1500,
+      "resistanceOhmPerKm": 3.39,
+      "currentCarryingCapacityA": 70,
+      "standard": "EN 50618; IEC 62930; UTE C 32-502",
+      "sourceUrl": "https://www.topcable.com/cable/topsolar-pv-h1z2z2-k/",
+      "sourceDocuments": [
+        "https://www.topcable.com/downloads/pdf/ENG/TopCable_Solar_ENG_901003012201001_General.pdf"
+      ],
+      "verificationLevel": "OFFICIEL"
+    },
+    {
+      "id": "helukabel-solarflex-x-pv1-f-1x4mm2-704226",
+      "manufacturer": "HELUKABEL",
+      "model": "SOLARFLEX-X PV1-F 1x4 mm², article 704226",
+      "crossSectionMm2": 4,
+      "maxVoltageDcV": 1800,
+      "resistanceOhmPerKm": 5.09,
+      "currentCarryingCapacityA": 55,
+      "standard": "PV1-F; DKE/VDE AK 411.2.3; TÜV 2 PfG 1169/08.2007",
+      "sourceUrl": "https://www.helukabel.com/media/publication/de/brochures/pv_20/PV_BROCHURE_Photovoltaik_EN~1.pdf",
+      "sourceDocuments": [],
+      "verificationLevel": "OFFICIEL"
+    },
+    {
+      "id": "helukabel-solarflex-x-pv1-f-1x6mm2-704227",
+      "manufacturer": "HELUKABEL GmbH",
+      "model": "SOLARFLEX-X PV1-F 1x6 mm², articles 704227/705777/705778",
+      "crossSectionMm2": 6,
+      "maxVoltageDcV": 1800,
+      "resistanceOhmPerKm": 3.39,
+      "currentCarryingCapacityA": 70,
+      "standard": "PV1-F; DKE/VDE AK 411.2.3; TÜV 2 PfG 1169/08.2007",
+      "sourceUrl": "https://www.helukabel.com/media/publication/de/brochures/pv_20/PV_BROCHURE_Photovoltaik_EN~1.pdf",
+      "sourceDocuments": [
+        "https://shop.helukabel.com/de-de/solarflex-x-h1z2z2-k-m713529"
+      ],
+      "verificationLevel": "OFFICIEL"
+    },
+    {
+      "id": "eland-h1z2z2-k-1-5mm2-e6s10015bk000",
+      "manufacturer": "Eland Cables",
+      "model": "H1Z2Z2-K 1x1.5 mm² (article E6S10015BK000)",
+      "crossSectionMm2": 1.5,
+      "maxVoltageDcV": 1800,
+      "resistanceOhmPerKm": 13.7,
+      "currentCarryingCapacityA": 30,
+      "standard": "EN 50618; IEC 62930",
+      "sourceUrl": "https://www.elandcables.com/media/uluhjuev/photovoltaic-solar-h1z2z2-k-cable-datasheet.pdf",
+      "sourceDocuments": [],
+      "verificationLevel": "OFFICIEL"
+    },
+    {
+      "id": "eland-h1z2z2-k-2-5mm2-e6s10025bk000",
+      "manufacturer": "Eland Cables",
+      "model": "H1Z2Z2-K 1x2.5 mm² (article E6S10025BK000)",
+      "crossSectionMm2": 2.5,
+      "maxVoltageDcV": 1800,
+      "resistanceOhmPerKm": 8.21,
+      "currentCarryingCapacityA": 41,
+      "standard": "EN 50618; IEC 62930",
+      "sourceUrl": "https://www.elandcables.com/media/uluhjuev/photovoltaic-solar-h1z2z2-k-cable-datasheet.pdf",
+      "sourceDocuments": [],
+      "verificationLevel": "OFFICIEL"
     }
   ]
 }
