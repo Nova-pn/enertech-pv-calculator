@@ -10,6 +10,8 @@ import { useAuth } from '../context/AuthContext';
 import { saveProject } from '../lib/projectStorage';
 import { loadBranding, type ReportBranding } from '../lib/branding';
 import BrandingEditor from './BrandingEditor';
+import ReportEditor from './ReportEditor';
+import { loadReportEdits, type ReportEdits } from '../lib/reportEdits';
 
 const badgeStyles: Record<NiveauValidation, string> = {
   vert: 'bg-forest-100 text-forest-900 border-forest-500',
@@ -24,6 +26,7 @@ export default function Results() {
   const results = useResults(state);
   const navigate = useNavigate();
   const [branding, setBranding] = useState<ReportBranding>(loadBranding);
+  const [reportEdits, setReportEdits] = useState<ReportEdits>(loadReportEdits);
   const [saveMessage, setSaveMessage] = useState('');
 
   const handleReset = () => {
@@ -45,7 +48,7 @@ export default function Results() {
         </div>
         <div className="flex gap-2">
           <button
-            onClick={() => generateReport(state, results, language, branding)}
+            onClick={() => generateReport(state, results, language, branding, reportEdits)}
             className="bg-forest-900 hover:bg-forest-700 hover:shadow-md text-white text-sm font-medium px-4 py-2.5 rounded-md transition-all"
           >
             {t('generatePdf')}
@@ -72,6 +75,7 @@ export default function Results() {
       </div>
       {saveMessage && <p className="text-sm text-forest-800 mb-4" role="status">{saveMessage}</p>}
       <BrandingEditor onSaved={setBranding} />
+      <ReportEditor onSaved={setReportEdits} />
 
       <div className="grid sm:grid-cols-2 gap-5 mb-8">
         <Card titre={t('energyBalance')}>

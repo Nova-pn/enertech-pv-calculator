@@ -22,11 +22,10 @@ export default function StepBattery() {
   const valide = state.batterieParams.dod > 0 && state.batterieParams.dod <= 1 && state.batterieParams.rendementBatterie > 0 && state.batterie.tensionNominale > 0 && state.batterie.capaciteAh > 0;
 
   const choisirBatterie = (b: BatteryCatalogItem) => {
-    if (!hasSizingData(b)) return;
     setBatterieChoisie(b);
     updateBatterie({
-      tensionNominale: b.nominalVoltage!,
-      capaciteAh: b.nominalCapacityAh!,
+      ...(b.nominalVoltage !== null && b.nominalVoltage > 0 ? { tensionNominale: b.nominalVoltage } : {}),
+      ...(b.nominalCapacityAh !== null && b.nominalCapacityAh > 0 ? { capaciteAh: b.nominalCapacityAh } : {}),
       technologie: mapBatteryTechnology(b.technology),
       ...(b.maxDoD !== null ? { dodRecommande: b.maxDoD / 100 } : {}),
       // Le rendement n'est pas systématiquement fourni par les fiches fabricants : on ne l'écrase pas ici.
@@ -82,7 +81,7 @@ export default function StepBattery() {
         getLabel={(b) => `${b.manufacturer} ${b.model} — ${b.nominalVoltage ?? '—'} V / ${b.nominalCapacityAh ?? '—'} Ah`}
         getSearchText={(b) => `${b.manufacturer} ${b.model} ${b.technology}`}
         onSelect={choisirBatterie}
-        isSelectable={hasSizingData}
+        isSelectable={() => true}
         placeholder={`${t('search')} ${state.batterie.technologie}…`}
         renderDetails={(b) => (
           <dl className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-1.5 text-xs font-mono-num">
@@ -96,6 +95,9 @@ export default function StepBattery() {
       />
       {state.batterieChoisie && state.batterieChoisie.maxDoD === null && (
         <p className="text-xs text-sun-dark mt-2">{t('batteryDodNotDocumented')}</p>
+      )}
+      {state.batterieChoisie && !hasSizingData(state.batterieChoisie) && (
+        <p className="text-xs text-sun-dark mt-2">{t('batteryCatalogIncomplete')}</p>
       )}
       {catalogueFiltre.length === 0 && (
         <p className="text-xs text-ink/50 mt-2">{t('noResults')}</p>

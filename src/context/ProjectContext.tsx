@@ -19,6 +19,7 @@ const defaultState: ProjectState = {
   panneau: { puissanceW: 550, voc: 49.5, vmp: 41.5, isc: 14.0, imp: 13.3 },
   panneauChoisi: null,
   limites: { tensionPvMax: 500, tensionMpptMin: 120, tensionMpptMax: 450, courantPvMax: 30 },
+  configurationPVManuelle: null,
   batterieParams: { autonomieJours: 1, dod: 0.5, rendementBatterie: 0.95 },
   batterie: { tensionNominale: 12, capaciteAh: 200, technologie: 'AGM', dodRecommande: 0.5, rendement: 0.9 },
   batterieChoisie: null,
@@ -38,6 +39,7 @@ interface ProjectContextValue {
   updateSolaire: (patch: Partial<ProjectState['solaire']>) => void;
   updatePanneau: (patch: Partial<ProjectState['panneau']>) => void;
   updateLimites: (patch: Partial<ProjectState['limites']>) => void;
+  updateConfigurationPVManuelle: (patch: Partial<NonNullable<ProjectState['configurationPVManuelle']>> | null) => void;
   updateBatterieParams: (patch: Partial<ProjectState['batterieParams']>) => void;
   updateBatterie: (patch: Partial<ProjectState['batterie']>) => void;
   updateOnduleurParams: (patch: Partial<ProjectState['onduleurParams']>) => void;
@@ -68,6 +70,8 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
     setState((s) => ({ ...s, panneau: { ...s.panneau, ...patch } }));
   const updateLimites: ProjectContextValue['updateLimites'] = (patch) =>
     setState((s) => ({ ...s, limites: { ...s.limites, ...patch } }));
+  const updateConfigurationPVManuelle: ProjectContextValue['updateConfigurationPVManuelle'] = (patch) =>
+    setState((s) => ({ ...s, configurationPVManuelle: patch === null ? null : { ...(s.configurationPVManuelle ?? { enSerie: 1, enParallele: 1 }), ...patch } }));
   const updateBatterieParams: ProjectContextValue['updateBatterieParams'] = (patch) =>
     setState((s) => ({ ...s, batterieParams: { ...s.batterieParams, ...patch } }));
   const updateBatterie: ProjectContextValue['updateBatterie'] = (patch) =>
@@ -112,6 +116,7 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
         updateSolaire,
         updatePanneau,
         updateLimites,
+        updateConfigurationPVManuelle,
         updateBatterieParams,
         updateBatterie,
         updateOnduleurParams,

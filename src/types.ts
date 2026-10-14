@@ -51,6 +51,11 @@ export interface LimitesOnduleurRegulateur {
   courantPvMax: number;
 }
 
+export interface ConfigurationPVManuelle {
+  enSerie: number;
+  enParallele: number;
+}
+
 export interface ParametresBatterie {
   autonomieJours: number;
   dod: number;
@@ -90,6 +95,7 @@ export interface ConfigurationPV {
   puissanceChamp: number;
   compatible: boolean;
   raisons: string[];
+  modeManuel?: boolean;
 }
 
 export interface ConfigurationBatterie {
@@ -119,6 +125,7 @@ export interface ProjectState {
   panneau: Panneau;
   panneauChoisi: PanelCatalogItem | null;
   limites: LimitesOnduleurRegulateur;
+  configurationPVManuelle: ConfigurationPVManuelle | null;
   batterieParams: ParametresBatterie;
   batterie: Batterie;
   batterieChoisie: BatteryCatalogItem | null;

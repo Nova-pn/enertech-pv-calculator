@@ -5,6 +5,7 @@ import {
   calculerPuissancePV,
   calculerNombrePanneaux,
   trouverConfigurationSeriParallele,
+  construireConfigurationPVManuelle,
   calculerBesoinBatterie,
   trouverConfigurationBatterie,
   calculerOnduleur,
@@ -33,7 +34,9 @@ export function useResults(state: ProjectState) {
           courantPvMax: state.onduleurChoisi.maxShortCircuitCurrent ?? state.limites.courantPvMax,
         }
       : state.limites;
-    const configPV = trouverConfigurationSeriParallele(state.panneau, dimensionnementPanneaux.nombrePanneaux, limites);
+    const configPV = state.configurationPVManuelle
+      ? construireConfigurationPVManuelle(state.panneau, state.configurationPVManuelle.enSerie, state.configurationPVManuelle.enParallele, limites)
+      : trouverConfigurationSeriParallele(state.panneau, dimensionnementPanneaux.nombrePanneaux, limites);
     const besoinBatterie = calculerBesoinBatterie(bilan.energieJourWh, state.batterieParams, tensionSysteme);
     const configBatterie = trouverConfigurationBatterie(state.batterie, besoinBatterie.capaciteAh, tensionSysteme);
     const onduleur = calculerOnduleur(state.appareils, state.onduleurParams.margePourcent);

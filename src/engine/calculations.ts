@@ -192,6 +192,27 @@ export function trouverConfigurationSeriParallele(
   return { ...meilleure, raisons: ['Aucune configuration compatible avec les paramètres saisis.', ...meilleure.raisons] };
 }
 
+/** Évalue exactement la configuration série/parallèle saisie par l'utilisateur. */
+export function construireConfigurationPVManuelle(
+  panneau: Panneau,
+  enSerie: number,
+  enParallele: number,
+  limites: LimitesOnduleurRegulateur
+): ConfigurationPV {
+  const ns = Math.max(1, Math.floor(enSerie));
+  const np = Math.max(1, Math.floor(enParallele));
+  const vocChamp = ns * panneau.voc;
+  const vmpChamp = ns * panneau.vmp;
+  const courantChamp = np * panneau.imp;
+  const totalPanneaux = ns * np;
+  const raisons: string[] = [];
+  if (limites.tensionPvMax > 0 && vocChamp > limites.tensionPvMax) raisons.push(`Voc du champ PV = ${vocChamp.toFixed(1)} V alors que la tension PV maximale admissible est de ${limites.tensionPvMax} V.`);
+  if (limites.tensionMpptMin > 0 && vmpChamp < limites.tensionMpptMin) raisons.push(`Vmp du champ PV = ${vmpChamp.toFixed(1)} V, inférieur à la tension MPPT minimale de ${limites.tensionMpptMin} V.`);
+  if (limites.tensionMpptMax > 0 && vmpChamp > limites.tensionMpptMax) raisons.push(`Vmp du champ PV = ${vmpChamp.toFixed(1)} V, supérieur à la tension MPPT maximale de ${limites.tensionMpptMax} V.`);
+  if (limites.courantPvMax > 0 && courantChamp > limites.courantPvMax) raisons.push(`Courant du champ PV = ${courantChamp.toFixed(1)} A, supérieur au courant maximal admissible de ${limites.courantPvMax} A.`);
+  return { enSerie: ns, enParallele: np, totalPanneaux, vmpChamp, vocChamp, courantChamp, puissanceChamp: totalPanneaux * panneau.puissanceW, compatible: raisons.length === 0, raisons, modeManuel: true };
+}
+
 // ---------------------------------------------------------------------------
 // 4. Batterie
 // ---------------------------------------------------------------------------
@@ -485,9 +506,9 @@ export function construireAvertissements(args: {
     });
   } else {
     avertissements.push({
-      niveau: 'rouge',
-      titre: 'Configuration du champ PV incompatible',
-      explication: configPV.raisons.join(' '),
+      niveau: configPV.modeManuel ? 'orange' : 'rouge',
+      titre: configPV.modeManuel ? 'Configuration manuelle à vérifier' : 'Configuration du champ PV incompatible',
+      explication: configPV.modeManuel ? `La configuration saisie manuellement doit être vérifiée : ${configPV.raisons.join(' ')}` : configPV.raisons.join(' '),
     });
   }
 

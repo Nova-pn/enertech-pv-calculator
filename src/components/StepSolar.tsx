@@ -12,17 +12,21 @@ import {
   calculerPuissancePV,
   calculerNombrePanneaux,
   trouverConfigurationSeriParallele,
+  construireConfigurationPVManuelle,
 } from '../engine/calculations';
 
 export default function StepSolar() {
-  const { state, updateSolaire, updatePanneau, updateLimites, setPanneauChoisi } = useProject();
+  const { state, updateSolaire, updatePanneau, updateLimites, updateConfigurationPVManuelle, setPanneauChoisi } = useProject();
   const navigate = useNavigate();
   const { language, t } = useI18n();
 
   const bilan = calculerBilan(state.appareils);
   const puissancePvW = calculerPuissancePV(bilan.energieJourWh, state.solaire.hsp, state.solaire.rendementGlobal);
   const dimensionnement = calculerNombrePanneaux(puissancePvW, state.panneau);
-  const config = trouverConfigurationSeriParallele(state.panneau, dimensionnement.nombrePanneaux, state.limites);
+  const autoConfig = trouverConfigurationSeriParallele(state.panneau, dimensionnement.nombrePanneaux, state.limites);
+  const config = state.configurationPVManuelle
+    ? construireConfigurationPVManuelle(state.panneau, state.configurationPVManuelle.enSerie, state.configurationPVManuelle.enParallele, state.limites)
+    : autoConfig;
 
   const valide = state.solaire.hsp > 0 && state.solaire.rendementGlobal > 0 && state.solaire.rendementGlobal <= 1 && state.panneau.puissanceW > 0;
 
@@ -97,6 +101,22 @@ export default function StepSolar() {
         <Stat label={t('gapNeed')} value={`${dimensionnement.ecartPourcent >= 0 ? '+' : ''}${dimensionnement.ecartPourcent.toFixed(1)} %`} />
       </div>
 
+      <div className="border border-forest-200 rounded-lg bg-white p-5 mb-8">
+        <div className="flex flex-wrap items-baseline justify-between gap-2 mb-2">
+          <h3 className="font-display font-medium text-forest-950">{t('manualPvConfiguration')}</h3>
+          {state.configurationPVManuelle && <button type="button" onClick={() => updateConfigurationPVManuelle(null)} className="text-xs text-alert hover:underline">{t('useAutomaticConfiguration')}</button>}
+        </div>
+        <p className="text-xs text-ink/60 mb-4">{t('manualPvConfigurationHint')}</p>
+        <div className="grid grid-cols-2 gap-4">
+          <Field label={t('panelsInSeries')}>
+            <NumberInput value={state.configurationPVManuelle?.enSerie ?? (autoConfig.enSerie || 1)} min={1} step={1} onChange={(v) => updateConfigurationPVManuelle({ enSerie: Math.max(1, Math.round(v)), enParallele: state.configurationPVManuelle?.enParallele ?? (autoConfig.enParallele || 1) })} />
+          </Field>
+          <Field label={t('branchesInParallel')}>
+            <NumberInput value={state.configurationPVManuelle?.enParallele ?? (autoConfig.enParallele || 1)} min={1} step={1} onChange={(v) => updateConfigurationPVManuelle({ enSerie: state.configurationPVManuelle?.enSerie ?? (autoConfig.enSerie || 1), enParallele: Math.max(1, Math.round(v)) })} />
+          </Field>
+        </div>
+      </div>
+
       <h3 className="font-display font-medium text-forest-950 mb-3">{t('inverterLimits')}</h3>
       <p className="text-xs text-ink/55 mb-4 max-w-lg">{t('inverterLimitsNote')}</p>
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
@@ -114,8 +134,8 @@ export default function StepSolar() {
         </Field>
       </div>
 
-      <div className={`rounded-md px-4 py-3 text-sm border ${config.compatible ? 'border-forest-500 bg-forest-100' : 'border-alert/50 bg-alert/10'}`}>
-        <p className="font-medium mb-1">{config.compatible ? t('compatibleConfig') : t('incompatibleConfig')}</p>
+      <div className={`rounded-md px-4 py-3 text-sm border ${config.compatible ? 'border-forest-500 bg-forest-100' : state.configurationPVManuelle ? 'border-sun-dark/50 bg-sun/10' : 'border-alert/50 bg-alert/10'}`}>
+        <p className="font-medium mb-1">{config.compatible ? t('compatibleConfig') : state.configurationPVManuelle ? t('manualPvWarning') : t('incompatibleConfig')}</p>
         {config.totalPanneaux > 0 && (
           <p className="font-mono-num text-xs">
             {config.enSerie}S × {config.enParallele}P — Vmp {config.vmpChamp.toFixed(1)} V, Voc {config.vocChamp.toFixed(1)} V, {config.courantChamp.toFixed(1)} A, {(config.puissanceChamp / 1000).toFixed(2)} kWc

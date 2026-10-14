@@ -6,11 +6,12 @@ import { energieQuotidienneAppareil } from '../engine/calculations';
 import { ENERTECH_EMBLEM_BASE64, ENERTECH_EMBLEM_ASPECT } from '../assets/logo/logoBase64';
 import { translate, type Language } from '../i18n';
 import type { ReportBranding } from '../lib/branding';
+import type { ReportEdits } from '../lib/reportEdits';
 
 const FOREST = '#0f3d2e';
 const INK = '#14181b';
 
-export function generateReport(state: ProjectState, results: Results, language: Language = 'fr', branding?: ReportBranding) {
+export function generateReport(state: ProjectState, results: Results, language: Language = 'fr', branding?: ReportBranding, edits?: ReportEdits) {
   const t = (key: string, vars?: Record<string, string | number>) => translate(language, key, vars);
   const doc = new jsPDF({ unit: 'pt', format: 'a4' });
   const marginX = 40;
@@ -36,11 +37,24 @@ export function generateReport(state: ProjectState, results: Results, language: 
   doc.setTextColor(INK);
   doc.text(t('reportPdf'), marginX, y);
   y += 16;
+  if (edits?.title) {
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(12);
+    doc.setTextColor(FOREST);
+    doc.text(edits.title, marginX, y);
+    y += 15;
+  }
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(9);
   doc.setTextColor('#666666');
   doc.text(`${t('generatedOn')} ${new Date().toLocaleDateString(language)} — ${t('systemArchitecture')} : ${state.info.architectureSysteme}`, marginX, y);
   y += 20;
+  if (edits?.introduction) {
+    doc.setTextColor(INK);
+    const lines = doc.splitTextToSize(edits.introduction, 500);
+    doc.text(lines, marginX, y);
+    y += lines.length * 11 + 10;
+  }
 
   doc.setDrawColor(FOREST);
   doc.line(marginX, y, 555, y);
@@ -202,6 +216,18 @@ export function generateReport(state: ProjectState, results: Results, language: 
   });
   y = (doc as any).lastAutoTable.finalY + 24;
 
+  if (edits?.technicalNotes) {
+    y = ensureSpace(doc, y, 70);
+    section(doc, t('reportTechnicalNotes'), marginX, y);
+    y += 16;
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+    doc.setTextColor(INK);
+    const lines = doc.splitTextToSize(edits.technicalNotes, 500);
+    doc.text(lines, marginX, y);
+    y += lines.length * 11 + 12;
+  }
+
   // --- Avertissements ---
   y = ensureSpace(doc, y, 100);
   section(doc, t('warning'), marginX, y);
@@ -227,6 +253,14 @@ export function generateReport(state: ProjectState, results: Results, language: 
   doc.setDrawColor('#cccccc');
   doc.line(marginX, y, 555, y);
   y += 16;
+  if (edits?.conclusion) {
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+    doc.setTextColor(INK);
+    const lines = doc.splitTextToSize(edits.conclusion, 500);
+    doc.text(lines, marginX, y);
+    y += lines.length * 11 + 10;
+  }
   doc.setFont('helvetica', 'italic');
   doc.setFontSize(8.5);
   doc.setTextColor('#666666');
