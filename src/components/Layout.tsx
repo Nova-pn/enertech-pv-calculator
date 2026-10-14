@@ -37,28 +37,23 @@ export default function Layout() {
             <NavLink to="/" end className={({ isActive }) => (isActive ? 'text-sun font-medium' : 'text-forest-200 hover:text-white transition-colors')}>
               {t('home')}
             </NavLink>
-            <NavLink
-              to="/dimensionnement/projet"
-              className={() => (dansLeWizard ? 'text-sun font-medium' : 'text-forest-200 hover:text-white transition-colors')}
-            >
-              {t('sizing')}
-            </NavLink>
-            <NavLink to="/a-propos" className={({ isActive }) => (isActive ? 'text-sun font-medium' : 'text-forest-200 hover:text-white transition-colors')}>
-              {t('about')}
-            </NavLink>
-            <NavLink to="/fournisseurs" className={({ isActive }) => (isActive ? 'text-sun font-medium' : 'text-forest-200 hover:text-white transition-colors')}>
-              {t('supplierDirectory')}
-            </NavLink>
-            <NavLink to="/projets" className={({ isActive }) => (isActive ? 'text-sun font-medium' : 'text-forest-200 hover:text-white transition-colors')}>
-              {t('savedProjects')}
-            </NavLink>
-            {user ? (
-              <button type="button" onClick={() => void signOut()} className="text-forest-200 hover:text-white transition-colors" title={user.email ?? ''}>{t('signOut')}</button>
-            ) : (
-              <NavLink to="/auth" className={({ isActive }) => (isActive ? 'text-sun font-medium' : 'text-forest-200 hover:text-white transition-colors')}>
-                {t('account')}
-              </NavLink>
-            )}
+            <details className="relative">
+              <summary className={`cursor-pointer list-none transition-colors ${dansLeWizard || ['/fournisseurs', '/projets', '/a-propos', '/auth'].includes(location.pathname) ? 'text-sun font-medium' : 'text-forest-200 hover:text-white'}`}>
+                {t('menu')} <span aria-hidden="true">▾</span>
+              </summary>
+              <div className="absolute right-0 z-30 mt-2 min-w-56 rounded-md border border-forest-700 bg-forest-950 p-2 shadow-xl">
+                <NavLink to="/dimensionnement/projet" className="block rounded px-3 py-2 text-sm text-forest-100 hover:bg-forest-800">{t('sizing')}</NavLink>
+                <NavLink to="/projets" className="block rounded px-3 py-2 text-sm text-forest-100 hover:bg-forest-800">{t('savedProjects')}</NavLink>
+                <NavLink to="/fournisseurs" className="block rounded px-3 py-2 text-sm text-forest-100 hover:bg-forest-800">{t('supplierDirectory')}</NavLink>
+                <NavLink to="/a-propos" className="block rounded px-3 py-2 text-sm text-forest-100 hover:bg-forest-800">{t('about')}</NavLink>
+                <div className="my-1 border-t border-forest-800" />
+                {user ? (
+                  <button type="button" onClick={() => void signOut()} className="block w-full rounded px-3 py-2 text-left text-sm text-forest-100 hover:bg-forest-800" title={user.email ?? ''}>{t('signOut')}</button>
+                ) : (
+                  <NavLink to="/auth" className="block rounded px-3 py-2 text-sm text-forest-100 hover:bg-forest-800">{t('account')}</NavLink>
+                )}
+              </div>
+            </details>
             <label className="inline-flex items-center gap-1.5 text-forest-100/80" title={t('language')}>
               <span aria-hidden="true">{languages.find((item) => item.value === language)?.flag}</span>
               <select aria-label={t('language')} value={language} onChange={(event) => setLanguage(event.target.value as typeof language)} className="bg-forest-900 border border-forest-700 rounded px-1.5 py-1 text-xs text-white">
