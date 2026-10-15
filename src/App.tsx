@@ -14,6 +14,7 @@ import Suppliers from './components/Suppliers';
 import About from './components/About';
 import Auth from './components/Auth';
 import Projects from './components/Projects';
+import AnalyticsDashboard from './components/AnalyticsDashboard';
 
 export default function App() {
   return <ProjectProvider><HashRouter><Routes><Route element={<Layout />}>
@@ -30,5 +31,6 @@ export default function App() {
     <Route path="a-propos" element={<About />} />
     <Route path="auth" element={<Auth />} />
     <Route path="projets" element={<Projects />} />
+    <Route path="statistiques" element={<AnalyticsDashboard />} />
   </Route></Routes></HashRouter></ProjectProvider>;
 }

@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import fullLogo from '../assets/logo/enertech-logo-full.jpg';
 import { useI18n } from '../i18n';
+import { trackEvent } from '../lib/analytics';
 
 export default function Home() {
   const { t } = useI18n();
@@ -33,6 +34,7 @@ export default function Home() {
             <div className="flex flex-wrap gap-3">
               <Link
                 to="/dimensionnement/projet"
+                onClick={() => { void trackEvent('sizing_started'); }}
                 className="inline-flex items-center gap-2 bg-sun hover:bg-sun-dark text-forest-950 font-body font-semibold px-6 py-3 rounded-md shadow-lg shadow-sun/10 transition-all hover:shadow-xl"
               >
                 {t('start')}

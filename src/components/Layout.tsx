@@ -3,6 +3,8 @@ import LogoMark from './LogoMark';
 import { languages, useI18n } from '../i18n';
 import { useAuth } from '../context/AuthContext';
 import { useProject } from '../context/ProjectContext';
+import { useEffect } from 'react';
+import { trackEvent } from '../lib/analytics';
 
 export default function Layout() {
   const location = useLocation();
@@ -10,6 +12,7 @@ export default function Layout() {
   const { user, signOut } = useAuth();
   const { state } = useProject();
   const dansLeWizard = location.pathname.startsWith('/dimensionnement') || location.pathname === '/resultats';
+  useEffect(() => { void trackEvent('page_view', { path: location.pathname }); }, [location.pathname]);
 
   const translatedSteps = [
     { to: '/dimensionnement/projet', label: t('project') },
@@ -46,6 +49,7 @@ export default function Layout() {
                 <NavLink to="/projets" className="block rounded px-3 py-2 text-sm text-forest-100 hover:bg-forest-800">{t('savedProjects')}</NavLink>
                 <NavLink to="/fournisseurs" className="block rounded px-3 py-2 text-sm text-forest-100 hover:bg-forest-800">{t('supplierDirectory')}</NavLink>
                 <NavLink to="/a-propos" className="block rounded px-3 py-2 text-sm text-forest-100 hover:bg-forest-800">{t('about')}</NavLink>
+                <NavLink to="/statistiques" className="block rounded px-3 py-2 text-sm text-forest-100 hover:bg-forest-800">{t('analyticsMenu')}</NavLink>
                 <div className="my-1 border-t border-forest-800" />
                 {user ? (
                   <button type="button" onClick={() => void signOut()} className="block w-full rounded px-3 py-2 text-left text-sm text-forest-100 hover:bg-forest-800" title={user.email ?? ''}>{t('signOut')}</button>

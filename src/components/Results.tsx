@@ -12,6 +12,7 @@ import { loadBranding, type ReportBranding } from '../lib/branding';
 import BrandingEditor from './BrandingEditor';
 import ReportEditor from './ReportEditor';
 import { loadReportEdits, type ReportEdits } from '../lib/reportEdits';
+import { trackEvent } from '../lib/analytics';
 
 const badgeStyles: Record<NiveauValidation, string> = {
   vert: 'bg-forest-100 text-forest-900 border-forest-500',
@@ -48,19 +49,19 @@ export default function Results() {
         </div>
         <div className="flex gap-2">
           <button
-            onClick={() => generateReport(state, results, language, branding, reportEdits)}
+            onClick={() => { void trackEvent('pdf_generated'); generateReport(state, results, language, branding, reportEdits); }}
             className="bg-forest-900 hover:bg-forest-700 hover:shadow-md text-white text-sm font-medium px-4 py-2.5 rounded-md transition-all"
           >
             {t('generatePdf')}
           </button>
           <button
-            onClick={async () => { await saveProject(state.info.nomProjet, state, user?.id); setSaveMessage(t('projectSaved')); }}
+            onClick={async () => { await saveProject(state.info.nomProjet, state, user?.id); void trackEvent('project_saved'); setSaveMessage(t('projectSaved')); }}
             className="border border-forest-200 hover:border-forest-500 text-sm font-medium px-4 py-2.5 rounded-md transition-colors"
           >
             {t('saveProject')}
           </button>
           <button
-            onClick={() => navigate('/fournisseurs')}
+            onClick={() => { void trackEvent('supplier_viewed', { source: 'results' }); navigate('/fournisseurs'); }}
             className="border border-forest-200 hover:border-forest-500 text-sm font-medium px-4 py-2.5 rounded-md transition-colors"
           >
             {t('findSuppliers')}
