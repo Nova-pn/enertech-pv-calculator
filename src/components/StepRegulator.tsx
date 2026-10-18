@@ -27,19 +27,9 @@ export default function StepRegulator() {
     updateRegulateurParams({ calibreChoisi: r.maxChargeCurrentA });
   };
 
-  const choisi = state.regulateurChoisi;
-  const tensionChoisieDisponible = typeof choisi?.maxPvVoltageV === 'number';
-  const tensionCompatible = tensionChoisieDisponible ? (choisi!.maxPvVoltageV as number) >= configPV.vocChamp : null;
-
   return (
     <div className="max-w-2xl">
       <StepHeader num="6" titre={t('controllerSizing')} description={t('controllerDescription')} />
-
-      {!champDimensionne && (
-        <div className="mb-6 rounded-md px-4 py-3 text-sm border border-sun-dark/50 bg-sun/10">
-          {t('fieldNotSized')}
-        </div>
-      )}
 
       <Field label={t('controllerType')}>
         <div className="flex gap-2">
@@ -128,26 +118,6 @@ export default function StepRegulator() {
           ))}
         </div>
       </Field>
-
-      <div className={`mt-6 rounded-md px-4 py-3 text-sm border ${!champDimensionne ? 'border-sun-dark/50 bg-sun/10' : res.calibreSuffisant ? 'border-forest-500 bg-forest-100' : 'border-alert/50 bg-alert/10'}`}>
-        {!champDimensionne
-          ? t('insufficientRating')
-          : res.calibreSuffisant
-          ? t('ratingSufficient', { rating: state.regulateurParams.calibreChoisi })
-          : t('ratingInsufficient', { rating: state.regulateurParams.calibreChoisi, current: res.courantAvecMargeA.toFixed(1) })}
-      </div>
-
-      {choisi && (
-        <div className={`mt-3 rounded-md px-4 py-3 text-sm border ${tensionChoisieDisponible ? (tensionCompatible ? 'border-forest-500 bg-forest-100' : 'border-alert/50 bg-alert/10') : 'border-forest-200 bg-forest-100/40'}`}>
-          {!champDimensionne
-            ? t('voltageInsufficient')
-            : !tensionChoisieDisponible
-            ? t('voltageUnavailable')
-            : tensionCompatible
-            ? t('voltageCompatible', { controller: choisi.maxPvVoltageV ?? 0, voc: configPV.vocChamp.toFixed(1) })
-            : t('voltageIncompatible', { controller: choisi.maxPvVoltageV ?? 0, voc: configPV.vocChamp.toFixed(1) })}
-        </div>
-      )}
 
       {type === 'MPPT' && (
         <p className="text-xs text-ink/55 mt-4 max-w-lg leading-relaxed">

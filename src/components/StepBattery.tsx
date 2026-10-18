@@ -4,7 +4,6 @@ import { Field, NumberInput, SelectInput, Spec } from './Fields';
 import StepHeader from './StepHeader';
 import EquipmentPicker from './EquipmentPicker';
 import { useI18n } from '../i18n';
-import { localizeCalculationText } from '../i18n/localize';
 import { batteryCatalog, mapBatteryTechnology, type BatteryCatalogItem } from '../data/catalog';
 import { calculerBilan, calculerBesoinBatterie, trouverConfigurationBatterie } from '../engine/calculations';
 
@@ -13,7 +12,7 @@ const technologies = ['Lithium', 'AGM', 'GEL', 'Plomb', 'Autre'] as const;
 export default function StepBattery() {
   const { state, updateBatterieParams, updateBatterie, setBatterieChoisie } = useProject();
   const navigate = useNavigate();
-  const { language, t } = useI18n();
+  const { t } = useI18n();
 
   const bilan = calculerBilan(state.appareils);
   const besoin = calculerBesoinBatterie(bilan.energieJourWh, state.batterieParams, Number(state.info.tensionSysteme));
@@ -125,16 +124,12 @@ export default function StepBattery() {
         </Field>
       </div>
 
-      <div className={`rounded-md px-4 py-3 text-sm border ${config.compatible ? 'border-forest-500 bg-forest-100' : 'border-alert/50 bg-alert/10'}`}>
-        <p className="font-medium mb-1">
-          {config.compatible ? t('coherentBattery') : t('fixBattery')}
-        </p>
+      <div className="rounded-md px-4 py-3 text-sm border border-forest-200 bg-forest-100/40">
         {config.totalBatteries > 0 && (
           <p className="font-mono-num text-xs">
             {config.enSerie}S × {config.enParallele}P = {config.totalBatteries} {t('batteries')} — {config.tensionTotale} V, {config.capaciteTotaleAh.toFixed(0)} Ah, {(config.energieUtilisableWh / 1000).toFixed(2)} kWh {t('usable')}
           </p>
         )}
-        {!config.compatible && config.raisons.map((r, i) => <p key={i} className="text-xs mt-1">{localizeCalculationText(language, r)}</p>)}
       </div>
 
       <div className="mt-8 flex justify-end">

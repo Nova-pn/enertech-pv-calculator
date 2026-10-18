@@ -134,7 +134,6 @@ export function generateReport(state: ProjectState, results: Results, language: 
           ? `${results.configPV.enSerie}S × ${results.configPV.enParallele}P — Vmp ${results.configPV.vmpChamp.toFixed(1)} V, Voc ${results.configPV.vocChamp.toFixed(1)} V, ${results.configPV.courantChamp.toFixed(1)} A`
           : '—',
       ],
-      [t('validationIndicators'), results.configPV.compatible ? t('compatible') : results.configPV.raisons.join(' ')],
     ],
   });
   y = (doc as any).lastAutoTable.finalY + 20;
@@ -160,7 +159,6 @@ export function generateReport(state: ProjectState, results: Results, language: 
           ? `${results.configBatterie.enSerie}S × ${results.configBatterie.enParallele}P = ${results.configBatterie.totalBatteries} batterie(s), ${results.configBatterie.tensionTotale} V, ${results.configBatterie.capaciteTotaleAh.toFixed(0)} Ah`
           : '—',
       ],
-      [t('validationIndicators'), results.configBatterie.compatible ? t('compatible') : results.configBatterie.raisons.join(' ')],
     ],
   });
   y = (doc as any).lastAutoTable.finalY + 20;
@@ -187,7 +185,6 @@ export function generateReport(state: ProjectState, results: Results, language: 
             [t('currentRecommended'), `${results.regulateur.courantAvecMargeA.toFixed(1)} A`],
             ['Contrôleur choisi', state.regulateurChoisi ? `${state.regulateurChoisi.manufacturer} ${state.regulateurChoisi.model}` : '[À compléter]'],
             ['Calibre choisi', `${state.regulateurParams.calibreChoisi} A`],
-            ['Calibre suffisant', results.regulateur.calibreSuffisant ? 'Oui' : 'Non — augmenter le calibre'],
           ]
         : [
             ['Régulation', 'Intégrée au convertisseur hybride'],
@@ -227,26 +224,6 @@ export function generateReport(state: ProjectState, results: Results, language: 
     doc.text(lines, marginX, y);
     y += lines.length * 11 + 12;
   }
-
-  // --- Avertissements ---
-  y = ensureSpace(doc, y, 100);
-  section(doc, t('warning'), marginX, y);
-  y += 16;
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(9);
-  results.avertissements.forEach((av) => {
-    y = ensureSpace(doc, y, 40);
-    const color = av.niveau === 'vert' ? [27, 107, 69] : av.niveau === 'orange' ? [198, 130, 31] : [201, 79, 63];
-    doc.setTextColor(color[0], color[1], color[2]);
-    doc.setFont('helvetica', 'bold');
-    doc.text(`• ${av.titre}`, marginX, y);
-    y += 12;
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(INK);
-    const lines = doc.splitTextToSize(av.explication, 500);
-    doc.text(lines, marginX + 10, y);
-    y += lines.length * 11 + 8;
-  });
 
   y = ensureSpace(doc, y, 60);
   y += 10;

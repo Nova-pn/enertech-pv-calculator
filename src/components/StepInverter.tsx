@@ -20,7 +20,6 @@ export default function StepInverter() {
     : inverterCatalog;
 
   const choisi = state.onduleurChoisi;
-  const puissanceSuffisante = choisi ? choisi.nominalPowerW >= res.puissanceMinRecommandeeW : null;
 
   const choisirOnduleur = (o: InverterCatalogItem) => setOnduleurChoisi(o);
 
@@ -94,24 +93,9 @@ export default function StepInverter() {
         <p className="text-xs text-ink/50 mt-2">{t('noHybrid')}</p>
       )}
 
-      {choisi && (
-        <div
-          className={`mt-4 rounded-md px-4 py-3 text-sm border ${
-            puissanceSuffisante ? 'border-forest-500 bg-forest-100' : 'border-alert/50 bg-alert/10'
-          }`}
-        >
-          {puissanceSuffisante
-            ? t('inverterSufficient', { model: choisi.model, power: (choisi.nominalPowerW / 1000).toFixed(2) })
-            : t('inverterInsufficient', { model: choisi.model, power: (choisi.nominalPowerW / 1000).toFixed(2), minimum: (res.puissanceMinRecommandeeW / 1000).toFixed(2) })}
-        </div>
-      )}
-
       {hybride && choisi && (
         <div className="mt-3 rounded-md px-4 py-3 text-sm border border-forest-200 bg-forest-100/40">
           {t('batteryCompatibility')}: {choisi.batteryVoltageRange || t('unknownData')}
-          {choisi.batteryVoltageRange && !batteryRangeIncludes(choisi.batteryVoltageRange, Number(state.info.tensionSysteme)) && (
-            <p className="text-alert text-xs mt-1">{t('batteryVoltageCheck', { voltage: state.info.tensionSysteme })}</p>
-          )}
         </div>
       )}
 
@@ -136,11 +120,6 @@ function Stat({ label, value }: { label: string; value: string }) {
   );
 }
 
-function batteryRangeIncludes(range: string, voltage: number): boolean {
-  const values = range.match(/\d+(?:\.\d+)?/g)?.map(Number) ?? [];
-  if (values.length < 2 || !Number.isFinite(voltage)) return false;
-  return voltage >= values[0] && voltage <= values[1];
-}
 
 function isHybridWithPvInput(inverter: InverterCatalogItem): boolean {
   return inverter.type.toLowerCase().includes('hybrid');

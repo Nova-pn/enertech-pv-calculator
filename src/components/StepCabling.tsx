@@ -36,12 +36,6 @@ export default function StepCabling() {
   const cableRecommande = sectionTheorique !== null ? selectionnerCableRecommande(cableCatalog, sectionTheorique) : null;
   const protectionRecommandee = champDimensionne ? selectionnerProtectionRecommandee(protectionCatalog, calibreProtectionRecommandeeA) : null;
 
-  const protectionChoisie = state.protectionChoisie;
-  const courantOk =
-    protectionChoisie &&
-    (protectionChoisie.ratedCurrentMinA === null || protectionChoisie.ratedCurrentMinA <= calibreProtectionRecommandeeA) &&
-    (protectionChoisie.ratedCurrentMaxA === null || protectionChoisie.ratedCurrentMaxA >= calibreProtectionRecommandeeA);
-  const tensionOk = protectionChoisie ? protectionChoisie.ratedVoltageDcV >= configPV.vocChamp : null;
 
   return (
     <div className="max-w-2xl">
@@ -50,12 +44,6 @@ export default function StepCabling() {
         titre={t('cablingProtection')}
         description={t('cablingDescription')}
       />
-
-      {!champDimensionne && (
-        <div className="mb-6 rounded-md px-4 py-3 text-sm border border-sun-dark/50 bg-sun/10">
-          {t('fieldNotSized')}
-        </div>
-      )}
 
       <div className="grid grid-cols-2 gap-4 mb-8">
         <Stat label={t('fieldCurrent')} value={champDimensionne ? `${courantIscChampA.toFixed(1)} A` : t('insufficientData')} />
@@ -156,20 +144,6 @@ export default function StepCabling() {
         )}
       />
 
-      {protectionChoisie && (
-        <div className={`mt-4 rounded-md px-4 py-3 text-sm border ${courantOk && tensionOk ? 'border-forest-500 bg-forest-100' : 'border-alert/50 bg-alert/10'}`}>
-          {courantOk && tensionOk
-            ? t('protectionOk')
-            : t('protectionCheck') + ' ' +
-              [
-                !courantOk && t('protectionCurrentIssue'),
-                !tensionOk && t('protectionVoltageIssue', { voltage: protectionChoisie.ratedVoltageDcV, voc: configPV.vocChamp.toFixed(1) }),
-              ]
-                .filter(Boolean)
-                .join(' et ') +
-              '.'}
-        </div>
-      )}
 
       <div className="mt-8 flex justify-end">
         <Link to="/resultats" className="bg-forest-900 hover:bg-forest-700 hover:shadow-md text-white font-medium px-5 py-2.5 rounded-md transition-all">

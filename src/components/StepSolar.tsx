@@ -5,7 +5,6 @@ import { Spec } from './Fields';
 import StepHeader from './StepHeader';
 import EquipmentPicker from './EquipmentPicker';
 import { useI18n } from '../i18n';
-import { localizeCalculationText } from '../i18n/localize';
 import { panelCatalog, type PanelCatalogItem } from '../data/catalog';
 import {
   calculerBilan,
@@ -18,7 +17,7 @@ import {
 export default function StepSolar() {
   const { state, updateSolaire, updatePanneau, updateLimites, updateConfigurationPVManuelle, setPanneauChoisi } = useProject();
   const navigate = useNavigate();
-  const { language, t } = useI18n();
+  const { t } = useI18n();
 
   const bilan = calculerBilan(state.appareils);
   const puissancePvW = calculerPuissancePV(bilan.energieJourWh, state.solaire.hsp, state.solaire.rendementGlobal);
@@ -134,14 +133,12 @@ export default function StepSolar() {
         </Field>
       </div>
 
-      <div className={`rounded-md px-4 py-3 text-sm border ${config.compatible ? 'border-forest-500 bg-forest-100' : state.configurationPVManuelle ? 'border-sun-dark/50 bg-sun/10' : 'border-alert/50 bg-alert/10'}`}>
-        <p className="font-medium mb-1">{config.compatible ? t('compatibleConfig') : state.configurationPVManuelle ? t('manualPvWarning') : t('incompatibleConfig')}</p>
+      <div className="rounded-md px-4 py-3 text-sm border border-forest-200 bg-forest-100/40">
         {config.totalPanneaux > 0 && (
           <p className="font-mono-num text-xs">
             {config.enSerie}S × {config.enParallele}P — Vmp {config.vmpChamp.toFixed(1)} V, Voc {config.vocChamp.toFixed(1)} V, {config.courantChamp.toFixed(1)} A, {(config.puissanceChamp / 1000).toFixed(2)} kWc
           </p>
         )}
-        {!config.compatible && config.raisons.map((r, i) => <p key={i} className="text-xs mt-1">{localizeCalculationText(language, r)}</p>)}
       </div>
 
       <div className="mt-8 flex justify-end">

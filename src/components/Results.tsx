@@ -3,9 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useProject } from '../context/ProjectContext';
 import { useResults } from '../engine/useResults';
 import { generateReport } from '../pdf/generateReport';
-import type { NiveauValidation } from '../types';
 import { useI18n } from '../i18n';
-import { localizeWarning } from '../i18n/localize';
 import { useAuth } from '../context/AuthContext';
 import { saveProject } from '../lib/projectStorage';
 import { loadBranding, type ReportBranding } from '../lib/branding';
@@ -13,12 +11,6 @@ import BrandingEditor from './BrandingEditor';
 import ReportEditor from './ReportEditor';
 import { loadReportEdits, type ReportEdits } from '../lib/reportEdits';
 import { trackEvent } from '../lib/analytics';
-
-const badgeStyles: Record<NiveauValidation, string> = {
-  vert: 'bg-forest-100 text-forest-900 border-forest-500',
-  orange: 'bg-sun/15 text-sun-dark border-sun-dark',
-  rouge: 'bg-alert/10 text-alert border-alert',
-};
 
 export default function Results() {
   const { state, reset } = useProject();
@@ -153,23 +145,6 @@ export default function Results() {
           {state.onduleurChoisi && <p>{t('retainedInverter')} : {state.onduleurChoisi.manufacturer} {state.onduleurChoisi.model}</p>}
         </div>
       )}
-
-      <h3 className="font-display font-medium text-forest-950 mb-3">{t('validationIndicators')}</h3>
-      <div className="space-y-2">
-        {results.avertissements.map((av, i) => (
-          <div key={i} className={`border-l-4 rounded-md px-4 py-3 text-sm ${badgeStyles[av.niveau]}`}>
-            {(() => { const localized = localizeWarning(language, av.titre, av.explication); return (<>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-[10px] font-mono-num uppercase tracking-wide px-1.5 py-0.5 rounded border border-current">
-                {av.niveau === 'vert' ? 'OK' : av.niveau === 'orange' ? t('insufficient') : t('incompatibleConfig')}
-              </span>
-              <span className="font-medium">{localized.title}</span>
-            </div>
-            <p className="text-xs leading-relaxed opacity-90">{localized.explanation}</p>
-            </>); })()}
-          </div>
-        ))}
-      </div>
 
       <div className="mt-10 border border-sun-dark/40 bg-sun/10 rounded-md px-4 py-3 text-sm text-ink/80">
         {t('resultsDisclaimer')}

@@ -3,7 +3,7 @@ import LogoMark from './LogoMark';
 import { languages, useI18n } from '../i18n';
 import { useAuth } from '../context/AuthContext';
 import { useProject } from '../context/ProjectContext';
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { trackEvent } from '../lib/analytics';
 
 export default function Layout() {
@@ -11,8 +11,21 @@ export default function Layout() {
   const { language, setLanguage, t } = useI18n();
   const { user, signOut } = useAuth();
   const { state } = useProject();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDetailsElement>(null);
   const dansLeWizard = location.pathname.startsWith('/dimensionnement') || location.pathname === '/resultats';
   useEffect(() => { void trackEvent('page_view', { path: location.pathname }); }, [location.pathname]);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+
+    const handlePointerDown = (event: PointerEvent) => {
+      if (!menuRef.current?.contains(event.target as Node)) setMenuOpen(false);
+    };
+
+    document.addEventListener('pointerdown', handlePointerDown);
+    return () => document.removeEventListener('pointerdown', handlePointerDown);
+  }, [menuOpen]);
 
   const translatedSteps = [
     { to: '/dimensionnement/projet', label: t('project') },
@@ -40,21 +53,21 @@ export default function Layout() {
             <NavLink to="/" end className={({ isActive }) => (isActive ? 'text-sun font-medium' : 'text-forest-200 hover:text-white transition-colors')}>
               {t('home')}
             </NavLink>
-            <details className="relative">
-              <summary className={`cursor-pointer list-none transition-colors ${dansLeWizard || ['/fournisseurs', '/projets', '/a-propos', '/auth'].includes(location.pathname) ? 'text-sun font-medium' : 'text-forest-200 hover:text-white'}`}>
+            <details ref={menuRef} open={menuOpen} className="relative">
+              <summary onClick={(event) => { event.preventDefault(); setMenuOpen((open) => !open); }} className={`cursor-pointer list-none transition-colors ${dansLeWizard || ['/fournisseurs', '/projets', '/a-propos', '/auth'].includes(location.pathname) ? 'text-sun font-medium' : 'text-forest-200 hover:text-white'}`}>
                 {t('menu')} <span aria-hidden="true">▾</span>
               </summary>
               <div className="absolute right-0 z-30 mt-2 min-w-56 rounded-md border border-forest-700 bg-forest-950 p-2 shadow-xl">
-                <NavLink to="/dimensionnement/projet" className="block rounded px-3 py-2 text-sm text-forest-100 hover:bg-forest-800">{t('sizing')}</NavLink>
-                <NavLink to="/projets" className="block rounded px-3 py-2 text-sm text-forest-100 hover:bg-forest-800">{t('savedProjects')}</NavLink>
-                <NavLink to="/fournisseurs" className="block rounded px-3 py-2 text-sm text-forest-100 hover:bg-forest-800">{t('supplierDirectory')}</NavLink>
-                <NavLink to="/a-propos" className="block rounded px-3 py-2 text-sm text-forest-100 hover:bg-forest-800">{t('about')}</NavLink>
-                <NavLink to="/statistiques" className="block rounded px-3 py-2 text-sm text-forest-100 hover:bg-forest-800">{t('analyticsMenu')}</NavLink>
+                <NavLink onClick={() => setMenuOpen(false)} to="/dimensionnement/projet" className="block rounded px-3 py-2 text-sm text-forest-100 hover:bg-forest-800">{t('sizing')}</NavLink>
+                <NavLink onClick={() => setMenuOpen(false)} to="/projets" className="block rounded px-3 py-2 text-sm text-forest-100 hover:bg-forest-800">{t('savedProjects')}</NavLink>
+                <NavLink onClick={() => setMenuOpen(false)} to="/fournisseurs" className="block rounded px-3 py-2 text-sm text-forest-100 hover:bg-forest-800">{t('supplierDirectory')}</NavLink>
+                <NavLink onClick={() => setMenuOpen(false)} to="/a-propos" className="block rounded px-3 py-2 text-sm text-forest-100 hover:bg-forest-800">{t('about')}</NavLink>
+                <NavLink onClick={() => setMenuOpen(false)} to="/statistiques" className="block rounded px-3 py-2 text-sm text-forest-100 hover:bg-forest-800">{t('analyticsMenu')}</NavLink>
                 <div className="my-1 border-t border-forest-800" />
                 {user ? (
-                  <button type="button" onClick={() => void signOut()} className="block w-full rounded px-3 py-2 text-left text-sm text-forest-100 hover:bg-forest-800" title={user.email ?? ''}>{t('signOut')}</button>
+                  <button type="button" onClick={() => { setMenuOpen(false); void signOut(); }} className="block w-full rounded px-3 py-2 text-left text-sm text-forest-100 hover:bg-forest-800" title={user.email ?? ''}>{t('signOut')}</button>
                 ) : (
-                  <NavLink to="/auth" className="block rounded px-3 py-2 text-sm text-forest-100 hover:bg-forest-800">{t('account')}</NavLink>
+                  <NavLink onClick={() => setMenuOpen(false)} to="/auth" className="block rounded px-3 py-2 text-sm text-forest-100 hover:bg-forest-800">{t('account')}</NavLink>
                 )}
               </div>
             </details>
