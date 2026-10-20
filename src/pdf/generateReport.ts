@@ -15,24 +15,42 @@ export function generateReport(state: ProjectState, results: Results, language: 
   const t = (key: string, vars?: Record<string, string | number>) => translate(language, key, vars);
   const doc = new jsPDF({ unit: 'pt', format: 'a4' });
   const marginX = 40;
-  let y = 50;
+  let y = 108;
 
-  const logoW = 40;
-  const logoH = logoW * ENERTECH_EMBLEM_ASPECT;
-  const logo = branding?.logoDataUrl || ENERTECH_EMBLEM_BASE64;
-  const logoFormat = logo.startsWith('data:image/png') ? 'PNG' : 'JPEG';
-  doc.addImage(logo, logoFormat, marginX, y - 30, logoW, logoH);
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(18);
-  doc.setTextColor(FOREST);
-  doc.text(branding?.companyName || 'EnerTech PV Calculator', marginX + logoW + 12, y);
-  if (branding?.address || branding?.phone || branding?.email || branding?.website) {
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(8);
-    doc.setTextColor('#666666');
-    doc.text([branding.address, branding.phone, branding.email, branding.website].filter(Boolean).join(' · '), marginX + logoW + 12, y + 12);
+  // En-tête professionnel : identité du technicien à gauche, EnerTech à droite.
+  const headerTop = 28;
+  const headerBottom = 92;
+  const clientLogoW = 62;
+  const clientLogoH = 42;
+  const enertechLogoW = 42;
+  const enertechLogoH = enertechLogoW * ENERTECH_EMBLEM_ASPECT;
+  const clientInfoX = branding?.logoDataUrl ? marginX + clientLogoW + 14 : marginX;
+  const contactLine = [branding?.address, branding?.phone, branding?.email, branding?.website].filter(Boolean).join(' · ');
+
+  if (branding?.logoDataUrl) {
+    const clientLogoFormat = branding.logoDataUrl.startsWith('data:image/png') ? 'PNG' : 'JPEG';
+    doc.addImage(branding.logoDataUrl, clientLogoFormat, marginX, headerTop, clientLogoW, clientLogoH);
   }
-  y += 22;
+
+  if (branding?.companyName || contactLine) {
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(15);
+    doc.setTextColor(FOREST);
+    if (branding?.companyName) doc.text(branding.companyName, clientInfoX, headerTop + 18);
+    if (contactLine) {
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8);
+      doc.setTextColor('#666666');
+      doc.text(doc.splitTextToSize(contactLine, 330), clientInfoX, headerTop + (branding?.companyName ? 32 : 18));
+    }
+  }
+
+  // L’emblème EnerTech est toujours présent et ne porte aucune description.
+  doc.addImage(ENERTECH_EMBLEM_BASE64, 'JPEG', 555 - enertechLogoW, headerTop, enertechLogoW, enertechLogoH);
+  doc.setDrawColor(FOREST);
+  doc.setLineWidth(1);
+  doc.line(marginX, headerBottom, 555, headerBottom);
+
   doc.setFontSize(13);
   doc.setTextColor(INK);
   doc.text(t('reportPdf'), marginX, y);
