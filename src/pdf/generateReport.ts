@@ -3,13 +3,16 @@ import autoTable from 'jspdf-autotable';
 import type { ProjectState } from '../types';
 import type { Results } from '../engine/useResults';
 import { energieQuotidienneAppareil } from '../engine/calculations';
-import { ENERTECH_EMBLEM_BASE64, ENERTECH_EMBLEM_ASPECT } from '../assets/logo/logoBase64';
 import { translate, type Language } from '../i18n';
 import type { ReportBranding } from '../lib/branding';
 import type { ReportEdits } from '../lib/reportEdits';
 
-const FOREST = '#0f3d2e';
-const INK = '#14181b';
+const FOREST = '#1F4D2E';
+const PALE = '#E8F0EA';
+const TEXT = '#4A5058';
+const BORDER = '#CDD2D0';
+const PLACEHOLDER = '#8A9490';
+const INK = TEXT;
 
 export function generateReport(state: ProjectState, results: Results, language: Language = 'fr', branding?: ReportBranding, edits?: ReportEdits) {
   const t = (key: string, vars?: Record<string, string | number>) => translate(language, key, vars);
@@ -23,6 +26,9 @@ export function generateReport(state: ProjectState, results: Results, language: 
     doc.text(lines, marginX, y);
     y += lines.length * 11 + 10;
   }
+
+  drawSummary(doc, results, marginX, y);
+  y += 82;
 
   doc.setDrawColor(FOREST);
   doc.line(marginX, y, 555, y);
@@ -195,7 +201,7 @@ export function generateReport(state: ProjectState, results: Results, language: 
 
   y = ensureSpace(doc, y, 60);
   y += 10;
-  doc.setDrawColor('#cccccc');
+  doc.setDrawColor(BORDER);
   doc.line(marginX, y, 555, y);
   y += 16;
   if (edits?.conclusion) {
@@ -234,11 +240,11 @@ function drawPageHeader(doc: jsPDF, state: ProjectState, language: Language, bra
   const clientLogoY = 18;
   const clientLogoW = 48;
   const clientLogoH = 42;
-  const enertechLogoW = 34;
-  const enertechLogoH = enertechLogoW * ENERTECH_EMBLEM_ASPECT;
+  const logo2W = 51;
+  const logo2H = 51;
   const clientInfoX = branding?.logoDataUrl ? clientLogoX + clientLogoW + 14 : clientLogoX;
   const contactLine = [branding?.address, branding?.phone, branding?.email, branding?.website].filter(Boolean).join(' · ');
-  const rightTextX = pageWidth - marginX - enertechLogoW - 10;
+  const rightTextX = pageWidth - marginX - logo2W - 10;
   const reportTitle = edits?.title || translate(language, 'reportPdf');
   const generatedLine = `${translate(language, 'generatedOn')} ${new Date().toLocaleDateString(language)}  |  ${translate(language, 'systemArchitecture')} : ${state.info.architectureSysteme}`;
 
@@ -272,10 +278,18 @@ function drawPageHeader(doc: jsPDF, state: ProjectState, language: Language, bra
   doc.text(translate(language, 'installationType') + '  |  ' + state.info.typeInstallation, rightTextX, 42, { align: 'right' });
   doc.text(generatedLine, rightTextX, 54, { align: 'right' });
 
-  // Logo EnerTech indépendant, sans nom ni description accolés.
+  // Second logo configurable, avec un emplacement visible même sans image.
   doc.setFillColor('#ffffff');
-  doc.roundedRect(pageWidth - marginX - enertechLogoW, 18, enertechLogoW, 34, 4, 4, 'F');
-  doc.addImage(ENERTECH_EMBLEM_BASE64, 'JPEG', pageWidth - marginX - enertechLogoW + 5, 22, enertechLogoW - 10, enertechLogoH - 4);
+  doc.roundedRect(pageWidth - marginX - logo2W, 18, logo2W, logo2H, 4, 4, 'F');
+  if (branding?.logo2DataUrl) {
+    const logo2Format = branding.logo2DataUrl.startsWith('data:image/png') ? 'PNG' : 'JPEG';
+    doc.addImage(branding.logo2DataUrl, logo2Format, pageWidth - marginX - logo2W + 5, 23, logo2W - 10, logo2H - 10);
+  } else {
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(8);
+    doc.setTextColor(PLACEHOLDER);
+    doc.text('LOGO 2', pageWidth - marginX - logo2W / 2, 45, { align: 'center' });
+  }
 
   doc.setFillColor('#d9dedb');
   doc.rect(0, headerHeight, pageWidth, 4, 'F');
@@ -293,6 +307,34 @@ function drawPageFooter(doc: jsPDF, page: number, pageCount: number, branding?: 
   doc.setTextColor('#666666');
   if (branding?.companyName) doc.text(branding.companyName + '  ·  Rapport de dimensionnement', 40, footerY);
   doc.text(`Page ${page} / ${pageCount}`, pageWidth - 40, footerY, { align: 'right' });
+}
+
+function drawSummary(doc: jsPDF, results: Results, x: number, y: number) {
+  const width = doc.internal.pageSize.getWidth() - x * 2;
+  const gap = 6;
+  const cardW = (width - gap * 3) / 4;
+  const cards = [
+    [`${(results.bilan.energieJourWh / 1000).toFixed(2)} kWh`, 'Consommation journalière'],
+    [`${(results.dimensionnementPanneaux.puissanceInstalleeW / 1000).toFixed(2)} kWc`, 'Puissance PV installée'],
+    [`${results.configBatterie.tensionTotale || '—'} V / ${results.configBatterie.capaciteTotaleAh ? results.configBatterie.capaciteTotaleAh.toFixed(0) : '—'} Ah`, results.configBatterie.totalBatteries ? `${results.configBatterie.enSerie}S × ${results.configBatterie.enParallele}P` : 'Configuration batterie'],
+    [`${results.regulateur.courantAvecMargeA.toFixed(1)} A`, 'Calibre du contrôleur'],
+  ];
+  cards.forEach(([value, label], index) => {
+    const left = x + index * (cardW + gap);
+    doc.setFillColor(PALE);
+    doc.rect(left, y, cardW, 58, 'F');
+    doc.setDrawColor(FOREST);
+    doc.setLineWidth(1.5);
+    doc.line(left, y, left + cardW, y);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(15);
+    doc.setTextColor(FOREST);
+    doc.text(value, left + cardW / 2, y + 24, { align: 'center' });
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(7.5);
+    doc.setTextColor(TEXT);
+    doc.text(doc.splitTextToSize(label, cardW - 8), left + cardW / 2, y + 39, { align: 'center' });
+  });
 }
 
 function section(doc: jsPDF, title: string, x: number, y: number) {
