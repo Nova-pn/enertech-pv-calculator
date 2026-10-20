@@ -6,13 +6,12 @@ export interface ReportBranding {
   website: string;
   primaryColor: string;
   logoDataUrl: string;
-  logo2DataUrl: string;
 }
 
 const KEY = 'enertech-report-branding';
 
 export const defaultBranding: ReportBranding = {
-  companyName: '', address: '', phone: '', email: '', website: '', primaryColor: '#1F4D2E', logoDataUrl: '', logo2DataUrl: '',
+  companyName: '', address: '', phone: '', email: '', website: '', primaryColor: '#1F4D2E', logoDataUrl: '',
 };
 
 export function loadBranding(): ReportBranding {

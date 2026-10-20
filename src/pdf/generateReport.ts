@@ -6,6 +6,7 @@ import { energieQuotidienneAppareil } from '../engine/calculations';
 import type { Language } from '../i18n';
 import type { ReportBranding } from '../lib/branding';
 import type { ReportEdits } from '../lib/reportEdits';
+import { ENERTECH_FULL_LOGO_BASE64 } from '../assets/logo/logoBase64';
 
 const FOREST = '#1F4D2E';
 const PALE = '#F2F4F3';
@@ -56,11 +57,13 @@ export function generateReport(state: ProjectState, results: Results, _language:
     alternateRowStyles: { fillColor: PALE },
   });
   y = (doc as any).lastAutoTable.finalY;
-  doc.setFillColor(SUMMARY_PALE); doc.rect(LEFT, y, CONTENT_W, 24, 'F');
-  doc.setFont('helvetica', 'bold'); doc.setFontSize(8.5); doc.setTextColor(FOREST); doc.text('Total', LEFT + 6, y + 15);
-  doc.setFont('helvetica', 'normal'); doc.setTextColor(TEXT); doc.text(` - Puissance nominale : ${results.bilan.puissanceTotaleW.toFixed(0)} W | Démarrage : `, LEFT + 38, y + 15);
-  doc.setFont('helvetica', 'bold'); doc.text(`${results.onduleur.puissanceDemarrageConnue ? `${results.onduleur.puissanceDemarrageTotaleW.toFixed(0)} W` : 'non renseigné'} | ${(results.bilan.energieJourWh / 1000).toFixed(2)} kWh/jour | ${(results.bilan.energieMoisWh / 1000).toFixed(1)} kWh/mois | ${(results.bilan.energieAnneeWh / 1000).toFixed(0)} kWh/an`, LEFT + 133, y + 15);
-  y += 34;
+  doc.setFillColor(SUMMARY_PALE); doc.rect(LEFT, y, CONTENT_W, 45, 'F');
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(8.5); doc.setTextColor(FOREST); doc.text('Total', LEFT + 7, y + 15);
+  doc.setFont('helvetica', 'normal'); doc.setTextColor(TEXT); doc.text(`Puissance nominale : ${results.bilan.puissanceTotaleW.toFixed(0)} W`, LEFT + 48, y + 15);
+  doc.text(`Puissance de démarrage : ${results.onduleur.puissanceDemarrageConnue ? `${results.onduleur.puissanceDemarrageTotaleW.toFixed(0)} W` : 'non renseignée'}`, LEFT + 235, y + 15);
+  doc.setFont('helvetica', 'bold'); doc.setTextColor(FOREST); doc.text('Énergie consommée', LEFT + 7, y + 33);
+  doc.setFont('helvetica', 'normal'); doc.setTextColor(TEXT); doc.text(`Jour : ${(results.bilan.energieJourWh / 1000).toFixed(2)} kWh`, LEFT + 100, y + 33); doc.text(`Mois : ${(results.bilan.energieMoisWh / 1000).toFixed(1)} kWh`, LEFT + 225, y + 33); doc.text(`Année : ${(results.bilan.energieAnneeWh / 1000).toFixed(0)} kWh`, LEFT + 355, y + 33);
+  y += 56;
 
   y = drawSection(doc, '3. Paramètres solaires et champ photovoltaïque', y);
   drawKeyValueTable(doc, y, [
@@ -105,7 +108,7 @@ export function generateReport(state: ProjectState, results: Results, _language:
     ['Longueur aller (m)', `${state.cablage.longueurAllerM} m`],
     ['Câble PV', state.cableChoisi ? `${state.cableChoisi.manufacturer} ${state.cableChoisi.model} (${state.cableChoisi.crossSectionMm2} mm²)` : 'À compléter'],
     ['Chute de tension', results.chuteDeTension ? `${results.chuteDeTension.chutePourcent.toFixed(2)} % (${results.chuteDeTension.chuteVoltsV.toFixed(2)} V)` : '—'],
-    ['Calibre protection recommandé', `${results.calibreProtectionRecommandeeA.toFixed(1)} A (1,25 × Isc)`],
+    ['Calibre protection recommandé', `${results.calibreProtectionRecommandeeA.toFixed(1)} A`],
     ['Protection DC', state.protectionChoisie ? `${state.protectionChoisie.manufacturer} ${state.protectionChoisie.model}` : 'À compléter'],
   ]);
   y += 12;
@@ -114,14 +117,14 @@ export function generateReport(state: ProjectState, results: Results, _language:
   doc.setFont('helvetica', 'normal'); doc.setTextColor(TEXT); doc.text(doc.splitTextToSize('Ce rapport présente le dimensionnement de l’installation selon les données saisies. Une vérification par un professionnel qualifié reste recommandée avant toute installation.', CONTENT_W - 82), LEFT + 72, y + 14);
 
   if (edits?.technicalNotes || edits?.conclusion) doc.setProperties({ subject: [edits.technicalNotes, edits.conclusion].filter(Boolean).join(' ') });
-  drawFooter(doc, 1, brand.companyName); drawFooter(doc, 2, brand.companyName);
+  for (let page = 1; page <= doc.getNumberOfPages(); page += 1) { doc.setPage(page); drawFooter(doc, page, brand.companyName); }
   const filename = `rapport-dimensionnement-${(state.info.nomProjet || 'projet').replace(/\s+/g, '-').toLowerCase()}.pdf`;
   doc.save(filename);
 }
 
 function drawHeader(doc: jsPDF, state: ProjectState, branding: ReportBranding | undefined, edits: ReportEdits | undefined, brand: { companyName: string; address: string; phone: string; email: string }, date: string) {
   doc.setFillColor(FOREST); doc.rect(0, 0, PAGE_W, 86, 'F');
-  drawLogoSlot(doc, LEFT, 18, 51, 51, branding?.logoDataUrl, 'LOGO'); drawLogoSlot(doc, RIGHT - 51, 18, 51, 51, branding?.logo2DataUrl, 'LOGO 2');
+  drawLogoSlot(doc, LEFT, 18, 51, 51, branding?.logoDataUrl, 'LOGO'); drawLogoSlot(doc, RIGHT - 51, 18, 51, 51, ENERTECH_FULL_LOGO_BASE64, 'ENERTECH');
   doc.setTextColor('#FFFFFF'); doc.setFont('helvetica', 'bold'); doc.setFontSize(14); doc.text(brand.companyName, LEFT + 65, 35);
   doc.setFont('helvetica', 'normal'); doc.setFontSize(8.5); doc.text(`${brand.address} | ${brand.phone} | ${brand.email}`, LEFT + 65, 50);
   const rightX = RIGHT - 65; doc.setFont('helvetica', 'bold'); doc.setFontSize(10.5); doc.text(edits?.title || 'RAPPORT DE DIMENSIONNEMENT', rightX, 27, { align: 'right' });
