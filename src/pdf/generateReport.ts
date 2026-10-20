@@ -17,56 +17,6 @@ export function generateReport(state: ProjectState, results: Results, language: 
   const marginX = 40;
   let y = 108;
 
-  // En-tête professionnel : identité du technicien à gauche, EnerTech à droite.
-  const headerTop = 28;
-  const headerBottom = 92;
-  const clientLogoW = 62;
-  const clientLogoH = 42;
-  const enertechLogoW = 42;
-  const enertechLogoH = enertechLogoW * ENERTECH_EMBLEM_ASPECT;
-  const clientInfoX = branding?.logoDataUrl ? marginX + clientLogoW + 14 : marginX;
-  const contactLine = [branding?.address, branding?.phone, branding?.email, branding?.website].filter(Boolean).join(' · ');
-
-  if (branding?.logoDataUrl) {
-    const clientLogoFormat = branding.logoDataUrl.startsWith('data:image/png') ? 'PNG' : 'JPEG';
-    doc.addImage(branding.logoDataUrl, clientLogoFormat, marginX, headerTop, clientLogoW, clientLogoH);
-  }
-
-  if (branding?.companyName || contactLine) {
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(15);
-    doc.setTextColor(FOREST);
-    if (branding?.companyName) doc.text(branding.companyName, clientInfoX, headerTop + 18);
-    if (contactLine) {
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(8);
-      doc.setTextColor('#666666');
-      doc.text(doc.splitTextToSize(contactLine, 330), clientInfoX, headerTop + (branding?.companyName ? 32 : 18));
-    }
-  }
-
-  // L’emblème EnerTech est toujours présent et ne porte aucune description.
-  doc.addImage(ENERTECH_EMBLEM_BASE64, 'JPEG', 555 - enertechLogoW, headerTop, enertechLogoW, enertechLogoH);
-  doc.setDrawColor(FOREST);
-  doc.setLineWidth(1);
-  doc.line(marginX, headerBottom, 555, headerBottom);
-
-  doc.setFontSize(13);
-  doc.setTextColor(INK);
-  doc.text(t('reportPdf'), marginX, y);
-  y += 16;
-  if (edits?.title) {
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(12);
-    doc.setTextColor(FOREST);
-    doc.text(edits.title, marginX, y);
-    y += 15;
-  }
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(9);
-  doc.setTextColor('#666666');
-  doc.text(`${t('generatedOn')} ${new Date().toLocaleDateString(language)} — ${t('systemArchitecture')} : ${state.info.architectureSysteme}`, marginX, y);
-  y += 20;
   if (edits?.introduction) {
     doc.setTextColor(INK);
     const lines = doc.splitTextToSize(edits.introduction, 500);
@@ -265,8 +215,84 @@ export function generateReport(state: ProjectState, results: Results, language: 
   );
   doc.text(mention, marginX, y);
 
+  const pageCount = doc.getNumberOfPages();
+  for (let page = 1; page <= pageCount; page += 1) {
+    doc.setPage(page);
+    drawPageHeader(doc, state, language, branding, edits);
+    drawPageFooter(doc, page, pageCount, branding);
+  }
+
   const filename = `rapport-dimensionnement-${(state.info.nomProjet || 'projet').replace(/\s+/g, '-').toLowerCase()}.pdf`;
   doc.save(filename);
+}
+
+function drawPageHeader(doc: jsPDF, state: ProjectState, language: Language, branding?: ReportBranding, edits?: ReportEdits) {
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const marginX = 40;
+  const headerHeight = 82;
+  const clientLogoX = marginX;
+  const clientLogoY = 18;
+  const clientLogoW = 48;
+  const clientLogoH = 42;
+  const enertechLogoW = 34;
+  const enertechLogoH = enertechLogoW * ENERTECH_EMBLEM_ASPECT;
+  const clientInfoX = branding?.logoDataUrl ? clientLogoX + clientLogoW + 14 : clientLogoX;
+  const contactLine = [branding?.address, branding?.phone, branding?.email, branding?.website].filter(Boolean).join(' · ');
+  const rightTextX = pageWidth - marginX - enertechLogoW - 10;
+  const reportTitle = edits?.title || translate(language, 'reportPdf');
+  const generatedLine = `${translate(language, 'generatedOn')} ${new Date().toLocaleDateString(language)}  |  ${translate(language, 'systemArchitecture')} : ${state.info.architectureSysteme}`;
+
+  doc.setFillColor(FOREST);
+  doc.rect(0, 0, pageWidth, headerHeight, 'F');
+
+  if (branding?.logoDataUrl) {
+    const clientLogoFormat = branding.logoDataUrl.startsWith('data:image/png') ? 'PNG' : 'JPEG';
+    doc.setFillColor('#ffffff');
+    doc.roundedRect(clientLogoX, clientLogoY, clientLogoW, clientLogoH, 4, 4, 'F');
+    doc.addImage(branding.logoDataUrl, clientLogoFormat, clientLogoX + 5, clientLogoY + 4, clientLogoW - 10, clientLogoH - 8);
+  }
+
+  doc.setTextColor('#ffffff');
+  if (branding?.companyName) {
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(14);
+    doc.text(branding.companyName, clientInfoX, 35);
+  }
+  if (contactLine) {
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(7.5);
+    doc.text(doc.splitTextToSize(contactLine, 260), clientInfoX, branding?.companyName ? 49 : 35);
+  }
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(10);
+  doc.text(reportTitle, rightTextX, 28, { align: 'right' });
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(7.5);
+  doc.text(translate(language, 'installationType') + '  |  ' + state.info.typeInstallation, rightTextX, 42, { align: 'right' });
+  doc.text(generatedLine, rightTextX, 54, { align: 'right' });
+
+  // Logo EnerTech indépendant, sans nom ni description accolés.
+  doc.setFillColor('#ffffff');
+  doc.roundedRect(pageWidth - marginX - enertechLogoW, 18, enertechLogoW, 34, 4, 4, 'F');
+  doc.addImage(ENERTECH_EMBLEM_BASE64, 'JPEG', pageWidth - marginX - enertechLogoW + 5, 22, enertechLogoW - 10, enertechLogoH - 4);
+
+  doc.setFillColor('#d9dedb');
+  doc.rect(0, headerHeight, pageWidth, 4, 'F');
+}
+
+function drawPageFooter(doc: jsPDF, page: number, pageCount: number, branding?: ReportBranding) {
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
+  const footerY = pageHeight - 28;
+  doc.setDrawColor('#c7cfca');
+  doc.setLineWidth(0.5);
+  doc.line(40, footerY - 8, pageWidth - 40, footerY - 8);
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(7.5);
+  doc.setTextColor('#666666');
+  if (branding?.companyName) doc.text(branding.companyName + '  ·  Rapport de dimensionnement', 40, footerY);
+  doc.text(`Page ${page} / ${pageCount}`, pageWidth - 40, footerY, { align: 'right' });
 }
 
 function section(doc: jsPDF, title: string, x: number, y: number) {
@@ -280,7 +306,7 @@ function ensureSpace(doc: jsPDF, y: number, needed: number): number {
   const pageHeight = doc.internal.pageSize.getHeight();
   if (y + needed > pageHeight - 40) {
     doc.addPage();
-    return 50;
+    return 108;
   }
   return y;
 }
