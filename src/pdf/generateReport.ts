@@ -218,7 +218,7 @@ export function generateReport(state: ProjectState, results: Results, language: 
   const pageCount = doc.getNumberOfPages();
   for (let page = 1; page <= pageCount; page += 1) {
     doc.setPage(page);
-    drawPageHeader(doc, state, language, branding, edits);
+    if (page === 1) drawPageHeader(doc, state, language, branding, edits);
     drawPageFooter(doc, page, pageCount, branding);
   }
 
@@ -306,7 +306,7 @@ function ensureSpace(doc: jsPDF, y: number, needed: number): number {
   const pageHeight = doc.internal.pageSize.getHeight();
   if (y + needed > pageHeight - 40) {
     doc.addPage();
-    return 108;
+    return 50;
   }
   return y;
 }
