@@ -34,7 +34,7 @@ export function generateReport(state: ProjectState, results: Results, _language:
 
   drawHeader(doc, state, branding, edits, brand, date);
   let y = 108;
-  y = drawSummary(doc, results, y);
+  y = drawSummary(doc, state, results, y);
   y = drawSection(doc, '1. Informations du projet', y + 18);
   y = drawKeyValueTable(doc, y, [
     ['Nom du projet', state.info.nomProjet || 'À compléter'],
@@ -135,7 +135,7 @@ function drawLogoSlot(doc: jsPDF, x: number, y: number, w: number, h: number, da
   else { doc.setFont('helvetica', 'bold'); doc.setFontSize(7.5); doc.setTextColor(FOREST); doc.text(label, x + w / 2, y + h / 2 + 3, { align: 'center' }); }
 }
 
-function drawSummary(doc: jsPDF, results: Results, y: number) {
+function drawSummary(doc: jsPDF, state: ProjectState, results: Results, y: number) {
   doc.setFont('helvetica', 'bold'); doc.setFontSize(12); doc.setTextColor(FOREST); doc.text('Synthèse du dimensionnement', LEFT, y);
   const top = y + 9; const cardW = CONTENT_W / 4; const h = 50;
   const cards = [[`${(results.bilan.energieJourWh / 1000).toFixed(2)} kWh`, 'Consommation', 'journalière'], [`${(results.dimensionnementPanneaux.puissanceInstalleeW / 1000).toFixed(2)} kWc`, 'Puissance PV', 'installée'], [`${results.configBatterie.tensionTotale || '—'} V / ${results.configBatterie.capaciteTotaleAh ? results.configBatterie.capaciteTotaleAh.toFixed(0) : '—'} Ah`, `Batterie ${state.batterie.technologie}`, results.configBatterie.totalBatteries ? `(${results.configBatterie.enSerie} × ${state.batterie.tensionNominale} V en série)` : ''], [`${results.regulateur.courantAvecMargeA.toFixed(0)} A`, 'Calibre du', 'contrôleur MPPT']];
