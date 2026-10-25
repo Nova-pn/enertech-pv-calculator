@@ -66,7 +66,7 @@ export function generateReport(state: ProjectState, results: Results, _language:
   y += 56;
 
   y = drawSection(doc, '3. Paramètres solaires et champ photovoltaïque', y);
-  drawKeyValueTable(doc, y, [
+  y = drawKeyValueTable(doc, y, [
     ['Heures solaires de pointe (HSP)', `${state.solaire.hsp} h/jour`],
     ['Rendement global du système', formatNumber(state.solaire.rendementGlobal)],
     ['Puissance PV théorique nécessaire', `${results.puissancePvW.toFixed(0)} W`],
@@ -76,8 +76,8 @@ export function generateReport(state: ProjectState, results: Results, _language:
     ['Configuration compatible', results.configPV.totalPanneaux > 0 ? `${results.configPV.enSerie}S × ${results.configPV.enParallele}P - Vmp ${results.configPV.vmpChamp.toFixed(1)} V, Voc ${results.configPV.vocChamp.toFixed(1)} V, ${results.configPV.courantChamp.toFixed(1)} A` : '—'],
   ]);
 
-  doc.addPage();
-  y = drawSection(doc, '4. Dimensionnement de la batterie', 54);
+  y = ensureSectionSpace(doc, y + 13, 70);
+  y = drawSection(doc, '4. Dimensionnement de la batterie', y);
   y = drawKeyValueTable(doc, y, [
     ['Autonomie souhaitée (jours)', `${state.batterieParams.autonomieJours} jour${state.batterieParams.autonomieJours > 1 ? 's' : ''}`],
     ['Profondeur de décharge (DcD)', formatNumber(state.batterieParams.dod)],
@@ -151,6 +151,14 @@ function drawSection(doc: jsPDF, title: string, y: number) { doc.setFont('helvet
 function drawKeyValueTable(doc: jsPDF, startY: number, rows: Cell[][]) {
   autoTable(doc, { startY, margin: { left: LEFT, right: PAGE_W - RIGHT }, tableWidth: CONTENT_W, theme: 'plain', body: rows, styles: { font: 'helvetica', fontSize: 9, textColor: TEXT, cellPadding: { top: 4, right: 6, bottom: 4, left: 6 }, lineColor: BORDER, lineWidth: 0.35, valign: 'middle' }, columnStyles: { 0: { cellWidth: 230, halign: 'left' }, 1: { cellWidth: CONTENT_W - 230, halign: 'right', fontStyle: 'bold', textColor: INK } }, alternateRowStyles: { fillColor: PALE }, didParseCell: (data) => { if (data.section === 'body' && data.column.index === 1 && String(data.cell.raw).toLowerCase().includes('compléter')) { data.cell.styles.fontStyle = 'italic'; data.cell.styles.textColor = PLACEHOLDER; } } });
   return (doc as any).lastAutoTable.finalY;
+}
+
+function ensureSectionSpace(doc: jsPDF, y: number, minimum: number) {
+  if (y + minimum > PAGE_H - 40) {
+    doc.addPage();
+    return 54;
+  }
+  return y;
 }
 
 function drawFooter(doc: jsPDF, page: number, companyName: string) { const y = PAGE_H - 28; doc.setDrawColor(BORDER); doc.setLineWidth(0.5); doc.line(LEFT, y - 8, RIGHT, y - 8); doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); doc.setTextColor('#666666'); doc.text(`${companyName} - Rapport de dimensionnement`, LEFT, y); doc.text(`Page ${page}`, RIGHT, y, { align: 'right' }); }
