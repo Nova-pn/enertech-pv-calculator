@@ -20,8 +20,19 @@ export default function StepInverter() {
     : inverterCatalog;
 
   const choisi = state.onduleurChoisi;
+  const saisieManuelle = choisi?.id === 'manual-hybrid-inverter';
 
   const choisirOnduleur = (o: InverterCatalogItem) => setOnduleurChoisi(o);
+  const activerSaisieManuelle = () => setOnduleurChoisi({
+    id: 'manual-hybrid-inverter',
+    manufacturer: 'Saisie manuelle',
+    model: 'Convertisseur hybride personnalisé',
+    type: 'Hybrid',
+    nominalPowerW: res.puissanceMinRecommandeeW,
+    maxPvPowerW: 0,
+    maxAcPowerW: 0,
+    mpptVoltageRange: '',
+  });
 
   return (
     <div className="max-w-2xl">
@@ -69,13 +80,35 @@ export default function StepInverter() {
         </div>
       )}
 
-      <h3 className="font-display font-medium text-forest-950 mb-3">{t('chooseInverter', { equipment: titreEquipement })}</h3>
-      <EquipmentPicker
+      {hybride && (
+        <div className="mb-6 rounded-md border border-forest-200 bg-white px-4 py-3">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <p className="text-sm font-medium text-forest-950">Convertisseur non présent dans le catalogue ?</p>
+            <button type="button" onClick={saisieManuelle ? () => setOnduleurChoisi(null) : activerSaisieManuelle} className="text-sm text-forest-800 hover:underline">
+              {saisieManuelle ? 'Utiliser le catalogue' : 'Renseigner manuellement'}
+            </button>
+          </div>
+          {saisieManuelle && choisi && (
+            <div className="grid sm:grid-cols-2 gap-4 mt-4">
+              <Field label="Puissance nominale (kW)">
+                <NumberInput value={choisi.nominalPowerW / 1000} min={0} step={0.01} onChange={(v) => setOnduleurChoisi({ ...choisi, nominalPowerW: Number.isFinite(v) ? v * 1000 : 0 })} />
+              </Field>
+              <Field label="Plage de tension MPPT">
+                <input value={choisi.mpptVoltageRange || ''} onChange={(e) => setOnduleurChoisi({ ...choisi, mpptVoltageRange: e.target.value })} placeholder="Ex. 120–450 V" className="w-full rounded-md border border-forest-200 bg-white px-3 py-2 text-sm focus:border-forest-500" />
+              </Field>
+            </div>
+          )}
+        </div>
+      )}
+
+      {!saisieManuelle && <h3 className="font-display font-medium text-forest-950 mb-3">{t('chooseInverter', { equipment: titreEquipement })}</h3>}
+      {!saisieManuelle && <EquipmentPicker
         items={catalogueFiltre}
         getId={(o) => o.id}
         getLabel={(o) => `${o.manufacturer} ${o.model} — ${(o.nominalPowerW / 1000).toFixed(1)} kW`}
         getSearchText={(o) => `${o.manufacturer} ${o.model} ${o.type}`}
         onSelect={choisirOnduleur}
+        onClear={() => setOnduleurChoisi(null)}
         placeholder={`${t('search')} ${titreEquipement}…`}
         renderDetails={(o) => (
           <dl className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-1.5 text-xs font-mono-num">
@@ -88,7 +121,7 @@ export default function StepInverter() {
             {hybride && <Spec label={t('batteryVoltageRange')} value={o.batteryVoltageRange || '—'} mono={false} />}
           </dl>
         )}
-      />
+      />}
       {hybride && catalogueFiltre.length === 0 && (
         <p className="text-xs text-ink/50 mt-2">{t('noHybrid')}</p>
       )}

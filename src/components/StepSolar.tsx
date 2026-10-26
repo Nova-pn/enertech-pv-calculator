@@ -59,6 +59,7 @@ export default function StepSolar() {
         getLabel={(p) => `${p.manufacturer} ${p.model} — ${p.powerWp} Wc`}
         getSearchText={(p) => `${p.manufacturer} ${p.model} ${p.technology}`}
         onSelect={choisirPanneau}
+        onClear={() => setPanneauChoisi(null)}
         placeholder={t('searchPanel')}
         renderDetails={(p) => (
           <dl className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-1.5 text-xs font-mono-num">

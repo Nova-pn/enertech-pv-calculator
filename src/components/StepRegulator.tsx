@@ -90,6 +90,7 @@ export default function StepRegulator() {
         getLabel={(r) => `${r.manufacturer} ${r.model} — ${r.maxChargeCurrentA} A`}
         getSearchText={(r) => `${r.manufacturer} ${r.model}`}
         onSelect={choisirRegulateur}
+        onClear={() => setRegulateurChoisi(null)}
         placeholder={`${t('search')} ${type}…`}
         renderDetails={(r) => (
           <dl className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-1.5 text-xs font-mono-num">

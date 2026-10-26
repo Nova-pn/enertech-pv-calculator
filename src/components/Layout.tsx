@@ -90,7 +90,7 @@ export default function Layout() {
                   <NavLink
                     to={s.to}
                     className={({ isActive }) =>
-                      `flex items-center gap-2.5 px-3 py-2 rounded-md text-sm font-body whitespace-nowrap border-l-2 md:border-l-4 transition-colors ${
+                      `flex items-start min-w-0 gap-2.5 px-3 py-2 rounded-md text-sm font-body whitespace-normal break-words border-l-2 md:border-l-4 transition-colors ${
                         isActive
                           ? 'border-sun bg-forest-100 text-forest-950 font-medium'
                           : 'border-transparent text-ink/70 hover:bg-forest-100/60'
@@ -98,7 +98,7 @@ export default function Layout() {
                     }
                   >
                     <span className="font-mono-num text-xs text-forest-700">{s.num}</span>
-                    {s.label}
+                    <span className="min-w-0">{s.label}</span>
                   </NavLink>
                 </li>
               ))}

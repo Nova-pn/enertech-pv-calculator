@@ -72,12 +72,12 @@ export default function StepCabling() {
               {t('theoreticalSectionText', { resistivity: RESISTIVITE_CUIVRE_OHM_MM2_PAR_M })}{' '}
               <span className="font-mono-num font-medium">{sectionTheorique.toFixed(2)} mm²</span>
             </p>
-            <p className="mt-1">
+            {!state.cableChoisi && <p className="mt-1">
               {t('catalogRecommended')}{' '}
               <span className="font-mono-num font-medium">
                 {cableRecommande ? `${cableRecommande.crossSectionMm2} mm² (${cableRecommande.manufacturer} ${cableRecommande.model})` : t('noCableCovers')}
               </span>
-            </p>
+            </p>}
           </>
         )}
       </div>
@@ -88,6 +88,7 @@ export default function StepCabling() {
         getLabel={(c: CableCatalogItem) => `${c.model} (${c.manufacturer})`}
         getSearchText={(c) => `${c.manufacturer} ${c.model} ${c.crossSectionMm2}mm2`}
         onSelect={(c) => setCableChoisi(c)}
+        onClear={() => setCableChoisi(null)}
         placeholder={t('chooseCable')}
         renderDetails={(c) => (
           <dl className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-1.5 text-xs font-mono-num">
@@ -118,10 +119,10 @@ export default function StepCabling() {
           <p>{t('insufficientData')}</p>
         ) : (
           <p>
-            {t('protectionCatalog')}{' '}
-            <span className="font-mono-num font-medium">
-              {protectionRecommandee ? `${protectionRecommandee.manufacturer} ${protectionRecommandee.model} (${protectionRecommandee.ratedCurrentARaw} A)` : t('noProtectionCovers')}
-            </span>
+            {!state.protectionChoisie && <>{t('protectionCatalog')}{' '}
+              <span className="font-mono-num font-medium">
+                {protectionRecommandee ? `${protectionRecommandee.manufacturer} ${protectionRecommandee.model} (${protectionRecommandee.ratedCurrentARaw} A)` : t('noProtectionCovers')}
+              </span></>}
           </p>
         )}
       </div>
@@ -132,6 +133,7 @@ export default function StepCabling() {
         getLabel={(p: ProtectionCatalogItem) => `${p.model} (${p.manufacturer})`}
         getSearchText={(p) => `${p.manufacturer} ${p.model}`}
         onSelect={(p) => setProtectionChoisie(p)}
+        onClear={() => setProtectionChoisie(null)}
         placeholder={t('chooseProtection')}
         renderDetails={(p) => (
           <dl className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-1.5 text-xs font-mono-num">

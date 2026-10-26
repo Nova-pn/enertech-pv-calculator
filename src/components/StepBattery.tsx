@@ -80,6 +80,7 @@ export default function StepBattery() {
         getLabel={(b) => `${b.manufacturer} ${b.model} — ${b.nominalVoltage ?? '—'} V / ${b.nominalCapacityAh ?? '—'} Ah`}
         getSearchText={(b) => `${b.manufacturer} ${b.model} ${b.technology}`}
         onSelect={choisirBatterie}
+        onClear={() => setBatterieChoisie(null)}
         isSelectable={() => true}
         placeholder={`${t('search')} ${state.batterie.technologie}…`}
         renderDetails={(b) => (
